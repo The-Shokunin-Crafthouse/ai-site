@@ -1,0 +1,69 @@
+name: PR Preview Deploy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Block search indexing
+        run: printf "User-agent: *\nDisallow: /\n" > robots.txt
+
+      - name: Deploy preview via rsync
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete --exclude='.git' --exclude='.github' --exclude='.DS_Store' --exclude='SPEC.md' --exclude='README.md'
+          path: ./
+          remote_path: ~/domains/levibahn.com/public_html/ai/_previews/${{ github.event.pull_request.number }}/
+          remote_host: ${{ secrets.HOSTINGER_HOST }}
+          remote_port: 65002
+          remote_user: ${{ secrets.HOSTINGER_USER }}
+          remote_key: ${{ secrets.HOSTINGER_SSH_KEY }}
+
+      - name: Post or update sticky preview comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const url = `https://ai.levibahn.com/_previews/${prNumber}/`;
+            const marker = '<!-- ai-site-preview-comment -->';
+            const body = [
+              marker,
+              `🔗 **Preview ready**`,
+              ``,
+              `${url}`,
+              ``,
+              `_Same URL on phone — copy and paste into iMessage._`,
+            ].join('\n');
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+            }
