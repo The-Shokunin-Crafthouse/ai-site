@@ -8,15 +8,17 @@
   <title>How I use AI as a design leader — Levi Bahn</title>
   <meta name="description" content="The studio operating system I built around AI. Studio memory, agent handoffs, approval gates. The working system, not a concept deck." />
 
-  <!-- Pre-paint theme: localStorage > prefers-color-scheme > light. Inline to avoid FOUC.
-       Storage key and class name match levibahn.com (color-scheme + dark). -->
+  <!-- Pre-paint theme: localStorage > dark. Inline to avoid FOUC.
+       Storage key and class name match levibahn.com (color-scheme + dark).
+       Visits coming from levibahn.com inherit the user's setting via the
+       shared localStorage key. Direct visits default to dark. -->
   <script>
     (function () {
       try {
         var stored = localStorage.getItem("color-scheme");
-        var resolved = stored || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        var resolved = stored || "dark";
         if (resolved === "dark") document.documentElement.classList.add("dark");
-      } catch (e) { /* private mode: default light */ }
+      } catch (e) { document.documentElement.classList.add("dark"); }
     })();
   </script>
 
