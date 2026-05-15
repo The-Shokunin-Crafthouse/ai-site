@@ -1,0 +1,176 @@
+/* Design tokens. Source: SPEC.md + studio-memory.md. */
+
+:root {
+  /* Typography — single family, Inter from Google Fonts. */
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-display: var(--font-body);
+  --font-mono: var(--font-body);
+
+  /* Typography — weights */
+  --font-light: 100;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+
+  /* Typography — scale (mobile defaults) */
+  --text-hero-size: 31px;
+  --text-hero-line: 35px;
+  --text-display-size: 31px;
+  --text-display-line: 38.75px;
+  --text-title-project-size: 13px;
+  --text-title-project-line: 18.2px;
+  --text-quote-size: 25px;
+  --text-quote-line: 32.5px;
+  --text-body-lg-size: 18px;
+  --text-body-lg-line: 25.6px;
+  --text-body-base-size: 16px;
+  --text-body-base-line: 24px;
+  --text-body-sm-size: 12px;
+  --text-body-sm-line: 19.5px;
+  --text-link-sm-size: 14px;
+  --text-link-sm-line: 24px;
+
+  /* Color — light */
+  --bg-base: #fdfdfc;
+  --bg-subtle: #f5f5f5;
+  --bg-surface-2: #ebebe9;
+  --bg-surface-3: #e2e2df;
+  --bg-inverse: #21201c;
+  --fg-primary: #21201c;
+  --fg-secondary: #595959;
+  --fg-tertiary: #7d7d77;
+  --fg-muted: #999999;
+  --fg-footer: #62615a;
+  --fg-link: #0071ec;
+  --fg-on-accent: #21201c;
+  --border-subtle: #c9c8c0;
+  --border-strong: #0a0a0a;
+  --accent-primary: #daff60;
+  --fg-accent: #ca4541;
+  --hover-accent: #daff60;
+  --hover-mint: #58f5d2;
+  --hover-row: #f5f4f4;
+  --bg-tooltip: #ffffff;
+  --fg-tooltip: #21201c;
+  --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.07);
+  --decoration-fg-primary: rgba(0, 0, 0, 0.4);
+
+  /* Spacing — 4pt scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Layout — containers */
+  --container-page: 1440px;
+  --container-wide: 1035px;
+  --container-feature: 984px;
+  --container-prose: 686px;
+
+  /* Layout — horizontal padding */
+  --pad-h: 24px;
+
+  /* Radius */
+  --radius-xs: 1px;
+  --radius-sm: 3px;
+  --radius-md: 8px;
+  --radius-full: 9999px;
+
+  /* Shadow */
+  --shadow-elevated: 0 8px 4px rgba(0, 0, 0, 0.07);
+
+  /* Motion — durations */
+  --dur-micro: 120ms;
+  --dur-fast: 180ms;
+  --dur-standard: 220ms;
+  --dur-expand: 280ms;
+  --dur-collapse: 220ms;
+  --dur-link-click: 420ms;
+  --dur-reveal: 800ms;
+  --dur-orchestrated: 900ms;
+  --stagger-section: 100ms;
+
+  /* Motion — durations (toggle slide) */
+  --dur-figma-slide: 1280ms;
+
+  /* Motion — easings */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-figma-gentle: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-standard: var(--ease-out-strong);
+
+  /* Z-index */
+  --z-1: 1;
+  --z-2: 2;
+  --z-10: 10;
+  --z-nav: 20;
+  --z-overlay: 50;
+
+  /* Layout — nav heights */
+  --nav-h-desktop: 64px;
+  --tabbar-h-mobile: 64px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --pad-h: 32px;
+    --text-hero-size: 68px;
+    --text-hero-line: 72px;
+    --text-display-size: 48px;
+    --text-display-line: 55.2px;
+    --text-title-project-size: 32px;
+    --text-title-project-line: 40px;
+    --text-body-sm-size: 13px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --pad-h: 48px;
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --pad-h: 128px;
+    --text-quote-size: 39px;
+    --text-quote-line: 46.8px;
+  }
+}
+
+/* Color — dark. Extended one register deeper for the AI/technical context, warm not slate.
+   Class is `dark` to match levibahn.com convention. */
+.dark {
+  --bg-base: #0e0e10;
+  --bg-subtle: #18181b;
+  --bg-surface-2: #1f1f23;
+  --bg-surface-3: #131316;
+  --bg-inverse: #fdfdfc;
+  --fg-primary: #e8e8ea;
+  --fg-secondary: #a8a8ac;
+  --fg-tertiary: #85858a;
+  --fg-muted: #6a6a6e;
+  --fg-footer: #9c9ca0;
+  --fg-link: #5aa3ff;
+  --fg-on-accent: #0e0e10;
+  --border-subtle: #2a2a2e;
+  --border-strong: #3d3d42;
+  --accent-primary: #daff60;
+  --hover-accent: #e5ff7a;
+  --hover-mint: #58f5d2;
+  --hover-row: #18181b;
+  --fg-accent: #c14d49;
+  --bg-tooltip: #1f1f23;
+  --fg-tooltip: #e8e8ea;
+  --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.35);
+  --shadow-elevated: 0 16px 32px rgba(0, 0, 0, 0.45);
+  --decoration-fg-primary: rgba(255, 255, 255, 0.4);
+}

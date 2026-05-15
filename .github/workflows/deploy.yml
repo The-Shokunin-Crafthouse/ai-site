@@ -1,0 +1,23 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via rsync
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete --exclude='.git' --exclude='.github' --exclude='.DS_Store' --exclude='SPEC.md' --exclude='README.md'
+          path: ./
+          remote_path: ~/domains/levibahn.com/public_html/ai/
+          remote_host: ${{ secrets.HOSTINGER_HOST }}
+          remote_port: 65002
+          remote_user: ${{ secrets.HOSTINGER_USER }}
+          remote_key: ${{ secrets.HOSTINGER_SSH_KEY }}
