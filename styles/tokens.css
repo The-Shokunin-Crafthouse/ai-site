@@ -32,28 +32,31 @@
 
   /* Color — light */
   --bg-base: #fdfdfc;
-  --bg-subtle: #f5f5f5;
-  --bg-surface-2: #ebebe9;
-  --bg-surface-3: #e2e2df;
+  --bg-nav: #fdfdfc;
+  --bg-subtle: #f7f5f3;
+  --bg-surface-2: #edebe8;
+  --bg-surface-3: #e4e1dd;
   --bg-inverse: #21201c;
   --fg-primary: #21201c;
-  --fg-secondary: #595959;
+  --fg-secondary: #5b5957;
   --fg-tertiary: #7d7d77;
-  --fg-muted: #999999;
+  --fg-quiet: #9c9997;
+  --fg-muted: #9b9997;
   --fg-footer: #62615a;
   --fg-link: #0071ec;
+  --fg-tag: #c1b29c;
   --fg-on-accent: #21201c;
   --border-subtle: #c9c8c0;
-  --border-strong: #0a0a0a;
+  --border-strong: #0d0c0a;
   --accent-primary: #daff60;
   --fg-accent: #ca4541;
   --hover-accent: #daff60;
   --hover-mint: #58f5d2;
-  --hover-row: #f5f4f4;
-  --bg-tooltip: #ffffff;
+  --hover-row: #f7f4f1;
+  --bg-tooltip: #fdfdfc;
   --fg-tooltip: #21201c;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.07);
-  --decoration-fg-primary: rgba(0, 0, 0, 0.4);
+  --decoration-fg-primary: rgba(33, 32, 28, 0.4);
 
   /* Spacing — 4pt scale */
   --space-1: 4px;
@@ -149,28 +152,31 @@
 /* Color — dark. Extended one register deeper for the AI/technical context, warm not slate.
    Class is `dark` to match levibahn.com convention. */
 .dark {
-  --bg-base: #0e0e10;
-  --bg-subtle: #18181b;
-  --bg-surface-2: #1f1f23;
-  --bg-surface-3: #131316;
+  --bg-base: #0d0c0b;
+  --bg-nav: #0d0c0b;
+  --bg-subtle: #2a2724;
+  --bg-surface-2: #302d2a;
+  --bg-surface-3: #3a3733;
   --bg-inverse: #fdfdfc;
-  --fg-primary: #e8e8ea;
-  --fg-secondary: #a8a8ac;
-  --fg-tertiary: #85858a;
-  --fg-muted: #6a6a6e;
-  --fg-footer: #9c9ca0;
+  --fg-primary: #d0ceca;
+  --fg-secondary: #989796;
+  --fg-tertiary: #545352;
+  --fg-quiet: #545352;
+  --fg-muted: #545352;
+  --fg-footer: #a09c98;
   --fg-link: #5aa3ff;
+  --fg-tag: #8e7d65;
   --fg-on-accent: #0e0e10;
-  --border-subtle: #2a2a2e;
-  --border-strong: #3d3d42;
+  --border-subtle: #1c1a18;
+  --border-strong: #d0ceca;
   --accent-primary: #daff60;
-  --hover-accent: #e5ff7a;
+  --hover-accent: #daff60;
   --hover-mint: #58f5d2;
-  --hover-row: #18181b;
-  --fg-accent: #c14d49;
-  --bg-tooltip: #1f1f23;
-  --fg-tooltip: #e8e8ea;
+  --hover-row: #2a2724;
+  --fg-accent: #ca4541;
+  --bg-tooltip: #d0ceca;
+  --fg-tooltip: #0d0c0b;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.35);
   --shadow-elevated: 0 16px 32px rgba(0, 0, 0, 0.45);
-  --decoration-fg-primary: rgba(255, 255, 255, 0.4);
+  --decoration-fg-primary: rgba(208, 206, 202, 0.4);
 }
