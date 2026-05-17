@@ -122,10 +122,10 @@
 @media (min-width: 768px) {
   :root {
     --pad-h: 32px;
-    --text-hero-size: 68px;
-    --text-hero-line: 72px;
-    --text-display-size: 48px;
-    --text-display-line: 55.2px;
+    /* Phase 0 reconcile: Figma "Dark/Full Page Composite — On Load" uses
+       size/hero=31/35 and size/display=31/38.75 across breakpoints, not the
+       SPEC.md desktop bump (68/72 + 48/55.2). Keeping hero + display at the
+       Figma value here; SPEC needs updating. */
     --text-title-project-size: 32px;
     --text-title-project-line: 40px;
     --text-body-sm-size: 13px;
@@ -146,30 +146,34 @@
   }
 }
 
-/* Color — dark. Extended one register deeper for the AI/technical context, warm not slate.
-   Class is `dark` to match levibahn.com convention. */
+/* Color — dark.
+   Adopted verbatim from Figma variables in "Dark/Full Page Composite — On Load"
+   (file 4KITzxRtNbH4PXBHWBvrIF). Phase 0 reconcile: the SPEC.md dark palette
+   (#0e0e10 / #e8e8ea / #a8a8ac / #2a2a2e) is now stale — update SPEC to match
+   these values, then re-sync. */
 .dark {
-  --bg-base: #0e0e10;
-  --bg-subtle: #18181b;
-  --bg-surface-2: #1f1f23;
-  --bg-surface-3: #131316;
+  --bg-base: #0d0c0b;            /* figma: semantic/bg/base */
+  --bg-subtle: #131211;          /* derived: +1 step warm from base */
+  --bg-surface-2: #181715;     /* derived */
+  --bg-surface-3: #131211;       /* derived */
   --bg-inverse: #fdfdfc;
-  --fg-primary: #e8e8ea;
-  --fg-secondary: #a8a8ac;
-  --fg-tertiary: #85858a;
-  --fg-muted: #6a6a6e;
-  --fg-footer: #9c9ca0;
+  --fg-primary: #d0ceca;         /* figma: semantic/text/heading */
+  --fg-secondary: #989796;       /* figma: semantic/text/body */
+  --fg-tertiary: #545352;        /* figma: semantic/text/quiet */
+  --fg-muted: #545352;           /* figma: semantic/text/muted (same as quiet) */
+  --fg-footer: #989796;
   --fg-link: #5aa3ff;
-  --fg-on-accent: #0e0e10;
-  --border-subtle: #2a2a2e;
-  --border-strong: #3d3d42;
-  --accent-primary: #daff60;
+  --fg-on-accent: #0d0c0b;
+  --border-subtle: #1c1a18;      /* figma: semantic/divider */
+  --border-strong: #2a2825;      /* derived: divider +6% */
+  --accent-primary: #daff60;     /* figma: semantic/action/primary */
   --hover-accent: #e5ff7a;
   --hover-mint: #58f5d2;
-  --hover-row: #18181b;
+  --hover-row: #131211;
   --fg-accent: #c14d49;
-  --bg-tooltip: #1f1f23;
-  --fg-tooltip: #e8e8ea;
+  --bg-tooltip: #181715;
+  --fg-tooltip: #d0ceca;
+  --bg-nav: #0d0c0b;             /* figma: semantic/bg/nav */
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.35);
   --shadow-elevated: 0 16px 32px rgba(0, 0, 0, 0.45);
   --decoration-fg-primary: rgba(255, 255, 255, 0.4);

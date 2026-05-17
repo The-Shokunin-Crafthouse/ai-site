@@ -445,11 +445,15 @@
     }
   }
 
-  /* ===== Section 6 — Hiring tabs ===== */
+  /* ===== Section 6 — Hiring tabs =====
+     On Load: no tab selected, all panels hidden, CTA hidden.
+     Tab click reveals its panel + the CTA. */
   const hiring = document.querySelector("[data-hiring]");
   if (hiring) {
     const tabs = Array.from(hiring.querySelectorAll("[data-hiring-tab]"));
     const panels = Array.from(hiring.querySelectorAll("[data-hiring-panel]"));
+    const cta = hiring.querySelector("[data-hiring-cta]");
+    const lede = hiring.parentElement && hiring.parentElement.querySelector(".section__lede");
 
     function selectTab(name, focusTab) {
       tabs.forEach(function (t) {
@@ -462,6 +466,9 @@
         const match = p.getAttribute("data-hiring-panel") === name;
         p.hidden = !match;
       });
+      if (cta) cta.hidden = false;
+      if (lede) lede.hidden = false;
+      hiring.setAttribute("data-hiring-state", "expanded");
     }
 
     tabs.forEach(function (t) {

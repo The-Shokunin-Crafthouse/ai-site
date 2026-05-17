@@ -8,15 +8,17 @@
   <title>How I use AI as a design leader — Levi Bahn</title>
   <meta name="description" content="The studio operating system I built around AI. Studio memory, agent handoffs, approval gates. The working system, not a concept deck." />
 
-  <!-- Pre-paint theme: localStorage > prefers-color-scheme > light. Inline to avoid FOUC.
-       Storage key and class name match levibahn.com (color-scheme + dark). -->
+  <!-- Pre-paint theme: localStorage > dark. Inline to avoid FOUC.
+       Storage key and class name match levibahn.com (color-scheme + dark).
+       Visits coming from levibahn.com inherit the user's setting via the
+       shared localStorage key. Direct visits default to dark. -->
   <script>
     (function () {
       try {
         var stored = localStorage.getItem("color-scheme");
-        var resolved = stored || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        var resolved = stored || "dark";
         if (resolved === "dark") document.documentElement.classList.add("dark");
-      } catch (e) { /* private mode: default light */ }
+      } catch (e) { document.documentElement.classList.add("dark"); }
     })();
   </script>
 
@@ -84,7 +86,7 @@
           <div class="hero__copy">
             <p class="hero__eyebrow reveal">
               <span class="hero__eyebrow-dot" aria-hidden="true"></span>
-              ai.levibahn.com
+              MEMORY // CONTEXT // SKILLS
             </p>
             <h1 class="t-hero hero__headline reveal">
               I don't theorize about AI in design. I run a studio on it. This is how.
@@ -99,15 +101,12 @@
                   <path d="M3 8h10M9 4l4 4-4 4" />
                 </svg>
               </a>
-              <a class="t-link-sm" href="#overview" style="color: var(--fg-secondary);">
-                Or start at the overview →
-              </a>
             </div>
           </div>
 
-          <div class="hero__visual reveal" aria-hidden="false">
-            <!-- Workflow schematic: Brief → Plan → Design → Build → Evaluate → Ship,
-                 returning as a loop. Hand-positioned hexagonal ring. -->
+          <!-- Schematic hidden in On Load layout — Figma 52:5679 shows hero copy column only.
+               Kept in DOM for potential revival in a later phase. -->
+          <div class="hero__visual reveal" aria-hidden="true" hidden>
             <div class="schematic" role="img" aria-label="Workflow loop: Brief to Plan to Design to Build to Evaluate to Ship, returning as a continuous loop.">
               <svg viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -181,21 +180,38 @@
          Four cards. Drawer overlays. One open at a time.
          ============================================================ -->
     <section class="section section--overview" data-section id="overview">
-      <div class="container">
-        <header class="section__header">
-          <nav class="section__crumbs" aria-label="Deep-dive sections">
-            <a href="#overview" aria-current="page">Overview</a>
-            <span class="section__crumbs-sep" aria-hidden="true">::</span>
-            <a href="#workflow">Workflow</a>
-            <span class="section__crumbs-sep" aria-hidden="true">::</span>
-            <a href="#brain">Studio Brain</a>
-            <span class="section__crumbs-sep" aria-hidden="true">::</span>
-            <a href="#tools">Tools</a>
-          </nav>
-          <h2 class="t-display section__title">The system, in 90 seconds.</h2>
-          <p class="section__lede">Four pieces. They depend on each other. Tap a card to see how it works.</p>
-        </header>
+      <!-- Overview accordion. On Load = all collapsed; click is a no-op for now
+           (Phase 2 will wire expanded states from later Figma frames). Full-bleed
+           numbered rows replace the prior 4-tile card grid + section header. -->
+      <ul class="overview" data-overview>
+        <li>
+          <button type="button" class="overview-row" data-overview-row="hero" aria-expanded="false" disabled>
+            <span class="overview-row__index" aria-hidden="true">01</span>
+            <span class="overview-row__title">The system, in 90 seconds.</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="overview-row" data-overview-row="workflow" aria-expanded="false" disabled>
+            <span class="overview-row__index" aria-hidden="true">02</span>
+            <span class="overview-row__title">Thirteen steps from brief to ship</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="overview-row" data-overview-row="brain" aria-expanded="false" disabled>
+            <span class="overview-row__index" aria-hidden="true">03</span>
+            <span class="overview-row__title">Structure is the brain. Tools are the hands.</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="overview-row" data-overview-row="tools" aria-expanded="false" disabled>
+            <span class="overview-row__index" aria-hidden="true">04</span>
+            <span class="overview-row__title">Right tool, right phase.</span>
+          </button>
+        </li>
+      </ul>
 
+      <!-- Prior card grid kept in DOM (hidden) — Phase 2 will repurpose as expanded content. -->
+      <div class="container" hidden data-phase2-cards>
         <ul class="cards" data-cards>
           <li>
             <button class="card" type="button" data-card="brain" aria-expanded="false">
@@ -382,7 +398,8 @@
          Psychology: Goal Gradient Effect + Flow State + Feedback Loop
          13 inline-expand steps. Click-based progress indicator.
          ============================================================ -->
-    <section class="section section--workflow" data-section id="workflow">
+    <!-- Hidden on Load. Kept in DOM for Phase 2 expanded-state wiring. -->
+    <section class="section section--workflow" data-section id="workflow" hidden>
       <div class="container">
         <header class="section__header">
           <nav class="section__crumbs" aria-label="Deep-dive sections">
@@ -718,7 +735,8 @@
          Psychology: Commitment & Consistency + Endowment Effect
          4 sub-sections. Native <details>. Multi-open allowed.
          ============================================================ -->
-    <section class="section section--brain" data-section id="brain">
+    <!-- Hidden on Load. Kept in DOM for Phase 2 expanded-state wiring. -->
+    <section class="section section--brain" data-section id="brain" hidden>
       <div class="container">
         <header class="section__header">
           <nav class="section__crumbs" aria-label="Deep-dive sections">
@@ -910,7 +928,9 @@
          Psychology: Authority Bias + Aesthetic-Usability Effect
          3 quick-reference tables + Claude Design callout + Cowork callout.
          ============================================================ -->
-    <section class="section section--tools" data-section id="tools">
+    <!-- Hidden on Load. Kept in DOM for Phase 2 expanded-state wiring.
+         Block/CostNote and Callout/Design components removed (not in On Load). -->
+    <section class="section section--tools" data-section id="tools" hidden>
       <div class="container">
         <header class="section__header">
           <nav class="section__crumbs" aria-label="Deep-dive sections">
@@ -923,7 +943,7 @@
             <a href="#tools" aria-current="page">Tools</a>
           </nav>
           <h2 class="t-display section__title">Right tool, right phase.</h2>
-          <p class="section__lede">Three tables. Designed to scan, not read. Claude Design and Cowork get their own callouts because they're often misunderstood.</p>
+          <p class="section__lede">Three tables. Designed to scan, not read.</p>
         </header>
 
         <article class="tool-table">
@@ -1068,18 +1088,6 @@
         </article>
 
         <div class="callouts">
-          <aside class="callout callout--design">
-            <header class="callout__head">
-              <p class="callout__eyebrow">Free creative resource</p>
-              <h3 class="callout__title">Claude Design runs on its own budget.</h3>
-            </header>
-            <div class="callout__body">
-              <p>Claude Design runs on Opus 4.7 with its own independent weekly usage limit. It does not draw from the Max token pool. Heavy Design sessions have zero impact on Claude Code or chat budget.</p>
-              <p>I use it for visual exploration before committing anything to Figma. The pattern that works: my instinct, then its opposite. Two opposing directions force a decision about point of view.</p>
-              <p>Output saves to <code>stages/02-design/claude-design/</code>. The hand-off to Claude Code is built in — I use that rather than screenshotting.</p>
-            </div>
-          </aside>
-
           <aside class="callout callout--cowork">
             <header class="callout__head">
               <p class="callout__eyebrow">Knowledge work surface</p>
@@ -1094,11 +1102,6 @@
         </div>
 
         <p class="section__next"><a href="#hiring">How I'd apply this at your company <span data-arrow aria-hidden="true">→</span></a></p>
-
-        <aside class="cost-note">
-          <p class="cost-note__eyebrow">Token strategy + cost</p>
-          <p class="cost-note__body">Sonnet 4.6 is the default — cheap, fast, fits planning, content, scaffolding, and file edits. Opus 4.6 only when the task explicitly needs deep reasoning, design grading, or full sprint builds. Claude Design runs on Opus 4.7 with its own weekly budget that never touches the Max pool. <strong>Total monthly tooling: ~$120</strong>, including Claude Max ($100), Figma Professional ($16), and Hostinger shared hosting (~$3–5). Apple Developer ($99/yr) only when an app is ready to ship.</p>
-        </aside>
       </div>
     </section>
 
@@ -1111,14 +1114,16 @@
     <section class="section section--hiring" data-section id="hiring">
       <div class="container">
         <header class="section__header">
-          <p class="section__eyebrow">06 :: For Hiring Managers</p>
+          <p class="section__eyebrow">For Hiring Managers</p>
           <h2 class="t-display section__title">How I'd apply this at your company.</h2>
-          <p class="section__lede">Pick your company size. The card answers what I would build first and what changes about how your design team operates. No hedging.</p>
+          <!-- Lede hidden in On Load per Figma 57:11619; revealed once a tab is chosen. -->
+          <p class="section__lede" hidden>Pick your company size. The card answers what I would build first and what changes about how your design team operates. No hedging.</p>
         </header>
 
-        <div class="hiring" data-hiring>
+        <div class="hiring" data-hiring data-hiring-state="collapsed">
           <div class="hiring__tabs" role="tablist" aria-label="Company size">
-            <button class="hiring__tab" type="button" role="tab" aria-selected="true" aria-controls="hire-startup" id="tab-startup" data-hiring-tab="startup">
+            <!-- On Load: no tab selected, no panel revealed (Figma 52:5679 collapsed state). -->
+            <button class="hiring__tab" type="button" role="tab" aria-selected="false" aria-controls="hire-startup" id="tab-startup" data-hiring-tab="startup">
               <span class="hiring__tab-size">5–30</span>
               <span class="hiring__tab-label">Startup</span>
             </button>
@@ -1133,7 +1138,7 @@
           </div>
 
           <div class="hiring__panels">
-            <article class="hiring__panel" role="tabpanel" id="hire-startup" aria-labelledby="tab-startup" data-hiring-panel="startup">
+            <article class="hiring__panel" role="tabpanel" id="hire-startup" aria-labelledby="tab-startup" data-hiring-panel="startup" hidden>
               <p class="hiring__role">I am the design team.</p>
               <ul class="hiring__points">
                 <li>This system is how one designer ships at the pace of three.</li>
@@ -1179,7 +1184,8 @@
             </article>
           </div>
 
-          <footer class="hiring__cta">
+          <!-- Hidden on Load. JS reveals once a tab is selected. -->
+          <footer class="hiring__cta" data-hiring-cta hidden>
             <p class="hiring__cta-text">If any of this maps to a role you're hiring for, the next move is short.</p>
             <a class="hiring__cta-link" href="https://levibahn.com/#contact">
               <span>Get in touch</span>
@@ -1191,6 +1197,20 @@
     </section>
 
   </main>
+
+  <!-- Page footer. Figma 57:11700 — centered breadcrumb + © year. -->
+  <footer class="page-footer" role="contentinfo">
+    <p class="page-footer__crumb">
+      <span>Craft</span>
+      <span class="page-footer__sep" aria-hidden="true">→</span>
+      <span>Systems</span>
+      <span class="page-footer__sep" aria-hidden="true">→</span>
+      <span>Teams</span>
+      <span class="page-footer__sep" aria-hidden="true">→</span>
+      <span>Transformation</span>
+    </p>
+    <p class="page-footer__copy">© 2026</p>
+  </footer>
 
   <!-- Back to top — appears after scrolling past hero -->
   <button type="button" class="back-to-top" data-back-to-top aria-label="Back to top">
