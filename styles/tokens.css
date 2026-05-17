@@ -125,10 +125,10 @@
 @media (min-width: 768px) {
   :root {
     --pad-h: 32px;
-    --text-hero-size: 68px;
-    --text-hero-line: 72px;
-    --text-display-size: 48px;
-    --text-display-line: 55.2px;
+    /* Phase 0 reconcile: Figma "Dark/Full Page Composite — On Load" uses
+       size/hero=31/35 and size/display=31/38.75 across breakpoints, not the
+       SPEC.md desktop bump (68/72 + 48/55.2). Keeping hero + display at the
+       Figma value here; SPEC needs updating. */
     --text-title-project-size: 32px;
     --text-title-project-line: 40px;
     --text-body-sm-size: 13px;
@@ -149,8 +149,7 @@
   }
 }
 
-/* Color — dark. Extended one register deeper for the AI/technical context, warm not slate.
-   Class is `dark` to match levibahn.com convention. */
+/* Color — dark. Reconciled from Figma variables. */
 .dark {
   --bg-base: #0d0c0b;
   --bg-nav: #0d0c0b;
