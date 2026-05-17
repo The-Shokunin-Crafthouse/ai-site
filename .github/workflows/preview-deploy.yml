@@ -18,7 +18,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Block search indexing
-        run: printf "User-agent: *\nDisallow: /\n" > robots.txt
+        run: |
+          printf "User-agent: *\nDisallow: /\n" > robots.txt
 
       - name: Deploy preview via rsync
         uses: burnett01/rsync-deployments@7.0.1
