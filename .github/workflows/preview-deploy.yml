@@ -21,6 +21,16 @@ jobs:
         run: |
           printf "User-agent: *\nDisallow: /\n" > robots.txt
 
+      - name: Ensure preview parent directory exists
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: 65002
+          script: |
+            mkdir -p ~/domains/levibahn.com/public_html/ai/_previews
+
       - name: Deploy preview via rsync
         uses: burnett01/rsync-deployments@7.0.1
         with:
