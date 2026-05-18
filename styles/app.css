@@ -384,7 +384,7 @@ body {
 .hero__visual { min-width: 0; }
 html, body { overflow-x: clip; }
 .hero__eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
   color: var(--fg-tertiary);
@@ -564,24 +564,32 @@ html, body { overflow-x: clip; }
   background: transparent;
   color: inherit;
   transition: border-color var(--dur-fast) var(--ease-out-strong),
-              background-color var(--dur-fast) var(--ease-out-strong),
               transform var(--dur-fast) var(--ease-out-strong);
 }
 @media (max-width: 1023px) { .card { min-height: 220px; } }
-.card:active { transform: scale(0.985); }
+@media (min-width: 1024px) { .card { height: 200px; } }
 .card:focus-visible {
   outline: 2px solid var(--fg-primary);
   outline-offset: 4px;
 }
+/* Hover = active state. Border + index + CTA (text + arrow via currentColor)
+   fade to accent. Title + summary stay. Press-scale handled by .btn-press. */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { border-color: var(--accent-primary); }
+  .card:hover .card__index,
+  .card:hover .card__cta { color: var(--accent-primary); }
+}
 .card__index {
-  font-size: var(--text-body-sm-size);
+  font-size: 12px;
+  line-height: var(--text-body-sm-line);
   letter-spacing: 0.08em;
   color: var(--fg-tertiary);
   font-feature-settings: "tnum";
+  transition: color var(--dur-fast) var(--ease-out-strong);
 }
 .card__title {
-  font-size: var(--text-title-project-size);
-  line-height: var(--text-title-project-line);
+  font-size: 18px;
+  line-height: 18.2px;
   font-weight: var(--font-medium);
   color: var(--fg-primary);
 }
@@ -591,14 +599,18 @@ html, body { overflow-x: clip; }
   color: var(--fg-secondary);
   flex: 1;
 }
+@media (min-width: 1024px) {
+  .card__summary { font-size: 14px; line-height: 21px; }
+}
 .card__cta {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
-  color: var(--fg-primary);
+  color: var(--fg-secondary);
   margin-top: var(--space-2);
+  transition: color var(--dur-fast) var(--ease-out-strong);
 }
 .card__arrow {
   transition: transform var(--dur-fast) var(--ease-out-strong);
@@ -1209,7 +1221,7 @@ html, body { overflow-x: clip; }
   margin-top: var(--space-6);
   margin-bottom: var(--space-3);
   color: var(--fg-tertiary);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--text-body-sm-size);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1556,7 +1568,7 @@ html, body { overflow-x: clip; }
 }
 
 .hiring__eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
   letter-spacing: 0.08em;
@@ -1900,7 +1912,9 @@ html, body { overflow-x: clip; }
   /* Figma 52:5710-5716 uses gap 24 across rows 02-04; row 01 shows 32 (likely
      a Figma oversight). Normalized to 24 for visual consistency. */
   column-gap: var(--space-6);
-  align-items: center;
+  /* Figma 52:5535 — "01" number top-aligns with eyebrow cap height in the expanded
+     row. Top-align both states so the number stays anchored to the row's top edge. */
+  align-items: start;
   padding: var(--space-8) var(--pad-h);
   background: transparent;
   border: 0;
@@ -1957,7 +1971,7 @@ html, body { overflow-x: clip; }
 .overview-row__main {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-4);
   min-width: 0;
 }
 .overview-row__title {
@@ -1969,13 +1983,14 @@ html, body { overflow-x: clip; }
   color: var(--fg-primary);
 }
 
-/* Crumbs sit ABOVE the title inside the button's main column.
-   Hidden when row collapsed; visible only when aria-expanded="true". */
+/* Crumbs sit ABOVE the title inside the button's main column. Figma 55:9631 —
+   Inter 12px (Figma's `--family/mono` var resolves to Inter, not a real
+   monospace), 0.96px tracking, 8px gap between every crumb/separator. */
 .overview-row__crumbs {
   display: none;
-  font-family: var(--font-mono);
-  font-size: var(--text-body-sm-size);
-  letter-spacing: 0.12em;
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: var(--tracking-eyebrow-strong);
   text-transform: uppercase;
   color: var(--fg-tertiary);
 }
@@ -1983,7 +1998,10 @@ html, body { overflow-x: clip; }
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  max-height: 30px;
+  overflow: hidden;
+  animation: overview-eyebrow-in 640ms var(--ease-out-strong) both;
 }
 .overview-row__crumb.is-active { color: var(--accent-primary); }
 .overview-row__crumb-sep { color: var(--fg-muted); }
@@ -2057,6 +2075,13 @@ html, body { overflow-x: clip; }
   z-index: 2;
 }
 .hover-trace[data-active="true"] { opacity: 1; }
+
+/* Divider comet only renders when the row is collapsed. Scoped to the host's
+   immediate row button so nested expanded items inside folded sections (e.g.
+   brain-row__head, tools-row__head inside row 03/04) don't suppress the comet. */
+[data-hover="divider"]:has(> [aria-expanded="true"]) .hover-trace--divider {
+  display: none;
+}
 
 .hover-trace--divider {
   /* Sits on the divider line at the row's bottom edge. The trail's 1px line aligns
@@ -2157,7 +2182,9 @@ html, body { overflow-x: clip; }
 .btn-press,
 .btn-trace,
 .copy-btn {
-  transition: transform var(--dur-micro) var(--ease-out-strong),
+  /* 160ms transform — Emil review: 120ms felt too snappy for press feedback;
+     140–160ms reads as deliberate without losing the responsive bias. */
+  transition: transform 160ms var(--ease-out-strong),
               color var(--dur-standard) var(--ease-out-strong),
               border-color var(--dur-fast) var(--ease-out-strong);
 }
@@ -2276,40 +2303,162 @@ html, body { overflow-x: clip; }
    Section 1 — Overview accordion expanded content (Figma 52:5535 + 57:10767)
    Row 01 expands to show crumbs + lede + 4 cards + inline open-card panel.
    ============================================================ */
-.overview-row[aria-expanded="false"] + .overview-row__open { display: none; }
+/* Open container grows on aria-expanded="true" so the page content below
+   slides down with the height change. Open uses Ionic drawer curve for
+   cinematic reveal. Close uses pure ease-out — single smooth motion,
+   sequenced in JS to fire after a 240ms fade phase. */
 .overview-row__open {
-  padding: var(--space-4) 0 var(--space-12);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
-  animation: overview-open-in var(--dur-expand) var(--ease-out-strong);
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 360ms var(--ease-out-strong),
+              padding 360ms var(--ease-out-strong);
 }
-/* Per-child padding so the inner .container (folded sections) handles its own pad-h
-   without double-applying. Lede aligns past the index gutter to match the title.
-   Cards / panel get straight pad-h so they span edge-to-edge of the page padding. */
-.overview-row__open > .overview-row__lede {
-  padding-right: var(--pad-h);
-  padding-left: calc(var(--pad-h) + 44px + var(--space-8));
-}
-@media (min-width: 768px) {
-  .overview-row__open > .overview-row__lede {
-    padding-left: calc(var(--pad-h) + 56px + var(--space-8));
-  }
+.overview-row[aria-expanded="true"] + .overview-row__open {
+  max-height: 2000px;
+  padding: 0 0 var(--space-12);
+  transition: max-height 760ms cubic-bezier(0.32, 0.72, 0, 1),
+              padding 760ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 .overview-row__open > .cards,
 .overview-row__open > .overview-row__panel {
   padding-inline: var(--pad-h);
 }
-@keyframes overview-open-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+/* First card left edge aligns with eyebrow/title/lede (title column starts at
+   pad-h + index col + col-gap = 128 + 44 + 24 = 196). Right padding stays at
+   192 — keeps row width on the 8pt grid. */
+@media (min-width: 1440px) {
+  .overview-row__open > .cards {
+    padding-left: calc(var(--pad-h) + 44px + var(--space-6));
+    padding-right: 192px;
+  }
 }
 
+/* Lede sits in the main column directly under the title (Figma 53:6489 —
+   16px gap, left-aligned to title). Hidden when the row is collapsed; revealed
+   with the expand animation. */
 .overview-row__lede {
+  display: none;
   font-size: var(--text-body-lg-size);
   line-height: var(--text-body-lg-line);
-  color: var(--fg-secondary);
+  color: var(--fg-primary);
   max-width: 60ch;
+}
+.overview-row[aria-expanded="true"] .overview-row__lede {
+  display: block;
+  max-height: 60px;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Expand reveal sequence.
+   Title still uses a keyframe (slides down each open; nothing to fade on close).
+   Eyebrow + lede use CSS transitions so the close fade can run before the
+   drawer drops — driven by the .is-closing class set in JS.
+   ============================================================ */
+.overview-row[aria-expanded="true"] .overview-row__title {
+  animation: overview-title-slide 720ms var(--ease-out-strong) both;
+}
+.overview-row[aria-expanded="true"] .overview-row__lede {
+  animation: overview-lede-slide 720ms var(--ease-out-strong) 160ms both;
+}
+/* Single-phase close. Every transition fires on click — no delay. Opacity,
+   max-height, main gap, and drawer max-height all start collapsing at t=0
+   and finish at ~360ms. Title moves UP naturally via flex layout as
+   crumbs/lede max-height + gap collapse. When .is-closing is removed,
+   layout is already at collapsed values — no jump. */
+.overview > li.is-closing .overview-row__crumbs {
+  display: inline-flex;
+  animation: none;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 240ms var(--ease-out-strong),
+              max-height 360ms var(--ease-out-strong);
+}
+.overview > li.is-closing .overview-row__lede {
+  display: block;
+  animation: none;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 240ms var(--ease-out-strong),
+              max-height 360ms var(--ease-out-strong);
+}
+.overview > li.is-closing .overview-row__main {
+  gap: 0;
+  transition: gap 360ms var(--ease-out-strong);
+}
+.overview > li.is-closing .overview-row__title {
+  animation: none;
+}
+/* Cards animate DOWN: start at translateY(-12) (above natural), settle at 0.
+   Open uses spring overshoot. Close uses opacity-only via .is-closing (no
+   transform animation on the way out, so cards don't slide back up before
+   the drawer drops). 2x durations from prior pass. */
+.overview-row + .overview-row__open .cards > li {
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 480ms var(--ease-out-strong);
+}
+.overview-row[aria-expanded="true"] + .overview-row__open .cards > li {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 640ms var(--ease-spring),
+              transform 640ms var(--ease-spring);
+}
+.overview-row[aria-expanded="true"] + .overview-row__open .cards > li:nth-child(1) { transition-delay: 280ms; }
+.overview-row[aria-expanded="true"] + .overview-row__open .cards > li:nth-child(2) { transition-delay: 400ms; }
+.overview-row[aria-expanded="true"] + .overview-row__open .cards > li:nth-child(3) { transition-delay: 520ms; }
+.overview-row[aria-expanded="true"] + .overview-row__open .cards > li:nth-child(4) { transition-delay: 640ms; }
+@starting-style {
+  .overview-row[aria-expanded="true"] + .overview-row__open .cards > li {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+/* .is-closing phase: aria-expanded still "true" so cards are visible. Force
+   opacity to 0 (no transform change — they don't slide back up). When the
+   class is added, all 4 cards start fading concurrently, no stagger. */
+.overview > li.is-closing .overview-row[aria-expanded="true"] + .overview-row__open .cards > li {
+  opacity: 0;
+  transition: opacity 240ms var(--ease-out-strong);
+  transition-delay: 0ms;
+}
+
+@keyframes overview-eyebrow-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes overview-title-slide {
+  from { transform: translateY(-40px); }
+  to { transform: translateY(0); }
+}
+@keyframes overview-title-slide-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-40px); }
+}
+@keyframes overview-lede-slide {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Reduced motion: keep identity via opacity fade with ease, drop transforms.
+   Emil review: "Reduced motion means less motion, not erase identity." */
+@media (prefers-reduced-motion: reduce) {
+  .overview-row[aria-expanded="true"] .overview-row__crumbs,
+  .overview-row[aria-expanded="true"] .overview-row__title,
+  .overview-row[aria-expanded="true"] .overview-row__lede {
+    animation: overview-eyebrow-in 200ms ease both;
+  }
+  .overview-row + .overview-row__open .cards > li,
+  .overview-row[aria-expanded="true"] + .overview-row__open .cards > li {
+    transform: none;
+    transition: opacity 200ms ease;
+    transition-delay: 0ms;
+  }
 }
 
 /* Card "open" state — accent border + index, dot eyebrow */
@@ -2379,7 +2528,7 @@ html, body { overflow-x: clip; }
   letter-spacing: -0.02em;
 }
 .overview-row__panel-stat-label {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--text-body-sm-size);
   letter-spacing: 0.08em;
   text-transform: uppercase;

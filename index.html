@@ -199,7 +199,7 @@
            numbered rows replace the prior 4-tile card grid + section header. -->
       <ul class="overview" data-overview>
         <li id="overview" data-hover="divider" data-row-hover>
-          <button type="button" class="overview-row" data-overview-row="hero" aria-expanded="false" aria-controls="overview-row-1-body">
+          <button type="button" class="overview-row" data-overview-row="hero" aria-expanded="true" aria-controls="overview-row-1-body">
             <span class="overview-row__index" data-row-accent aria-hidden="true">01</span>
             <span class="overview-row__main">
               <span class="overview-row__crumbs" aria-hidden="true">
@@ -212,16 +212,16 @@
                 <span class="overview-row__crumb">Tools</span>
               </span>
               <span class="overview-row__title">The system, in 90 seconds.</span>
+              <span class="overview-row__lede">Four pieces. They depend on each other. Tap a card to see how it works.</span>
             </span>
           </button>
           <div class="overview-row__open" id="overview-row-1-body">
-            <p class="overview-row__lede">Four pieces. They depend on each other. Tap a card to see how it works.</p>
             <ul class="cards" data-cards>
               <li>
                 <button class="card btn-press" type="button" data-card="brain" aria-expanded="false">
                   <span class="card__index" data-row-accent>01</span>
                   <span class="card__title" data-row-accent>The Brain</span>
-                  <span class="card__summary">Studio memory that compounds. Every session starts smarter than the last because the context files persist.</span>
+                  <span class="card__summary">Studio memory that compounds. Every session starts smarter than the last.</span>
                   <span class="card__cta" aria-hidden="true">Open<svg class="icon icon--md card__arrow" data-arrow><use href="#ph-arrow-right"/></svg></span>
                 </button>
               </li>
@@ -229,7 +229,7 @@
                 <button class="card btn-press" type="button" data-card="workflow" aria-expanded="false">
                   <span class="card__index" data-row-accent>02</span>
                   <span class="card__title" data-row-accent>The Workflow</span>
-                  <span class="card__summary">Brief, plan, design, build, evaluate, ship. Thirteen steps, four approval gates. Every gate is human.</span>
+                  <span class="card__summary">Brief, plan, design, build, evaluate, ship. Every gate is human.</span>
                   <span class="card__cta" aria-hidden="true">Open<svg class="icon icon--md card__arrow" data-arrow><use href="#ph-arrow-right"/></svg></span>
                 </button>
               </li>
@@ -237,7 +237,7 @@
                 <button class="card btn-press" type="button" data-card="agents" aria-expanded="false">
                   <span class="card__index" data-row-accent>03</span>
                   <span class="card__title" data-row-accent>The Agents</span>
-                  <span class="card__summary">Planner, Generator, Evaluator, and me. AI executes. I direct, review, and merge.</span>
+                  <span class="card__summary">Planner, Generator, Evaluator. AI executes. I direct, review, and merge.</span>
                   <span class="card__cta" aria-hidden="true">Open<svg class="icon icon--md card__arrow" data-arrow><use href="#ph-arrow-right"/></svg></span>
                 </button>
               </li>
@@ -245,7 +245,7 @@
                 <button class="card btn-press" type="button" data-card="stack" aria-expanded="false">
                   <span class="card__index" data-row-accent>04</span>
                   <span class="card__title" data-row-accent>The Tools</span>
-                  <span class="card__summary">Claude Max, Claude Code, Claude Design, Cowork, Figma MCP, GitHub Actions, Hostinger. Right tool, right phase.</span>
+                  <span class="card__summary">Claude, Figma, GitHub. Right tool, right phase.</span>
                   <span class="card__cta" aria-hidden="true">Open<svg class="icon icon--md card__arrow" data-arrow><use href="#ph-arrow-right"/></svg></span>
                 </button>
               </li>
@@ -268,6 +268,7 @@
                 <span class="overview-row__crumb">Tools</span>
               </span>
               <span class="overview-row__title">Thirteen steps from brief to ship</span>
+              <span class="overview-row__lede">Thirteen steps, four human gates. Brief, plan, design, build, evaluate, ship.</span>
             </span>
           </button>
         </li>
@@ -285,6 +286,7 @@
                 <span class="overview-row__crumb">Tools</span>
               </span>
               <span class="overview-row__title">Structure is the brain. Tools are the hands.</span>
+              <span class="overview-row__lede">Studio memory, workspace files, quality gates. The system that compounds.</span>
             </span>
           </button>
         </li>
@@ -302,6 +304,7 @@
                 <span class="overview-row__crumb is-active">Tools</span>
               </span>
               <span class="overview-row__title">Right tool, right phase.</span>
+              <span class="overview-row__lede">Three quick-reference tables. Two callouts: Claude Design and Cowork.</span>
             </span>
           </button>
         </li>

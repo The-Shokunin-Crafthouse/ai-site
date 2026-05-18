@@ -312,13 +312,37 @@
   foldSectionIntoRow("tools",    ".section--tools",    "overview-row-4-body");
 
   /* ===== Section 1 — Overview row toggle =====
-     Click .overview-row → toggle aria-expanded (CSS hides/shows .overview-row__open).
-     Row 01 ships open (aria-expanded="true" in HTML); others ship collapsed. */
+     Click .overview-row → toggle aria-expanded. Close is two-phase: fade
+     eyebrow + lede + cards (FADE_MS) → then drop drawer (DRAWER_CLOSE_MS).
+     `.is-closing` class on the li drives the phase-1 fade via CSS so the
+     button can stay in aria-expanded="true" until the fade is done. */
+  /* Drawer + title slide-up + eyebrow/lede/cards fade all start on click —
+     no sequencing. .is-closing keeps crumbs/lede in layout (display still
+     set) so they can animate height alongside the drawer rather than
+     snapping to display:none. CLOSE_MS covers the longest transition. */
+  const CLOSE_MS = 360;
   document.querySelectorAll(".overview-row").forEach(function (btn) {
     if (btn.hasAttribute("disabled")) return;
     btn.addEventListener("click", function () {
       const isOpen = btn.getAttribute("aria-expanded") === "true";
-      btn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      const li = btn.closest("li");
+      if (isOpen) {
+        const lockedY = window.scrollY;
+        function holdScroll() {
+          if (window.scrollY !== lockedY) window.scrollTo(0, lockedY);
+        }
+        window.addEventListener("scroll", holdScroll, { passive: false });
+
+        if (li) li.classList.add("is-closing");
+        btn.setAttribute("aria-expanded", "false");
+        setTimeout(function () {
+          if (li) li.classList.remove("is-closing");
+          window.removeEventListener("scroll", holdScroll);
+        }, CLOSE_MS);
+      } else {
+        if (li) li.classList.remove("is-closing");
+        btn.setAttribute("aria-expanded", "true");
+      }
     });
   });
 
