@@ -20,12 +20,9 @@ html {
   scroll-behavior: smooth;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  /* Setting bg on <html> moves the canvas-bg promotion off <body>. Body's bg
-     then paints as a normal element-box decoration — same paint path as nav,
-     hiring section, and footer. All four surfaces drift identically, so they
-     all sample at the same display value (instead of body drifting away from
-     the rest via Chrome's canvas-paint path). */
-  background-color: var(--bg-base);
+  /* No html bg. Lets Chrome promote body's bg to canvas-bg — one paint
+     surface for the entire page (canvas paint extends through overscroll
+     too). No html-canvas-vs-body-element-box boundary at footer/doc end. */
 }
 
 body {
@@ -120,17 +117,8 @@ body {
 
 /* ===== Nav — desktop sticky ===== */
 .nav {
-  /* Sticky (not fixed) so the nav lives in the main document compositor layer
-     alongside body/hiring/footer. Fixed-position elements paint through a
-     separate GPU layer that quantizes to display with a tiny gamma offset at
-     near-black, producing 1-LSB drift vs the rest of the page. Sticky avoids
-     that — same paint path, same display value across every surface. */
-  position: sticky;
-  top: 0;
-  z-index: var(--z-nav);
+  /* Static + transparent + no border. Body bg shows through uniformly. */
   height: var(--nav-h-desktop);
-  background: var(--bg-base);
-  border-bottom: 1px solid var(--border-subtle);
   display: none;
 }
 @media (min-width: 768px) {
@@ -322,7 +310,6 @@ body {
 [data-toggle-container] {
   transform: translateX(calc(-100% - 28px));
   transition: transform var(--dur-figma-slide) var(--ease-figma-gentle);
-  will-change: transform;
 }
 [data-toggle-container][data-toggle-shown="true"] {
   transform: translateX(0);
@@ -343,7 +330,6 @@ body {
 [data-toggle-slide="pill"] {
   transform: translateX(calc(-1 * var(--label-shift, 78px)));
   transition: transform var(--dur-figma-slide) var(--ease-figma-gentle);
-  will-change: transform;
 }
 [data-toggle-container][data-toggle-shown="true"] [data-toggle-slide="pill"] {
   transform: translateX(0);
@@ -459,7 +445,6 @@ html, body { overflow-x: clip; }
 /* ===== Section foundation (shared across Sections 2-6) ===== */
 .section {
   padding-block: var(--space-20);
-  border-top: 1px solid var(--border-subtle);
   position: relative;
 }
 @media (min-width: 768px) {
@@ -565,7 +550,7 @@ html, body { overflow-x: clip; }
   padding: var(--space-6) var(--space-6) var(--space-4);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--bg-base);
+  background: transparent;
   color: inherit;
   transition: border-color var(--dur-fast) var(--ease-out-strong),
               background-color var(--dur-fast) var(--ease-out-strong),
@@ -758,7 +743,6 @@ html, body { overflow-x: clip; }
   transform-style: preserve-3d;
   animation: brain-spin 14s linear infinite;
   transform-origin: center;
-  will-change: transform;
 }
 .d-media--brain[data-paused="true"] .d-media__svg { animation-play-state: paused; }
 .d-media--brain[data-dragging="true"] .d-media__svg { animation: none; }
@@ -1065,7 +1049,7 @@ html, body { overflow-x: clip; }
   font-size: 0.92em;
   padding: 1px 6px;
   border-radius: var(--radius-sm);
-  background: var(--bg-base);
+  background: transparent;
   color: var(--fg-primary);
 }
 .gates__scroll { width: 100%; overflow-x: auto; }
@@ -1226,7 +1210,7 @@ html, body { overflow-x: clip; }
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--bg-base);
+  background: transparent;
 }
 .learning__head {
   font-size: var(--text-body-base-size);
@@ -1483,9 +1467,7 @@ html, body { overflow-x: clip; }
    page uniformly. The Von Restorff break is now structural (top border + the
    accent CTA + the dashed bullet rule), not chromatic. */
 .section--hiring {
-  background: var(--bg-base);
   color: var(--fg-primary);
-  border-top: 1px solid var(--border-subtle);
   margin-top: calc(-1 * var(--space-4));
 }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
@@ -1584,7 +1566,7 @@ html, body { overflow-x: clip; }
   color: var(--fg-secondary);
   margin-bottom: var(--space-8);
 }
-.dark .hiring__brain-card { background: #080707; }
+.dark .hiring__brain-card { background: transparent; }
 .hiring__brain-icon {
   flex: 0 0 48px;
   width: 48px;
@@ -1864,8 +1846,7 @@ html, body { overflow-x: clip; }
   content: "";
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: calc(50% - 50vw);
   width: 100vw;
   height: 1px;
   background: var(--border-subtle);
@@ -1875,8 +1856,7 @@ html, body { overflow-x: clip; }
   content: "";
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: calc(50% - 50vw);
   width: 100vw;
   height: 1px;
   background: var(--border-subtle);
@@ -1948,8 +1928,6 @@ html, body { overflow-x: clip; }
 
 /* ===== Page footer (Figma 57:11700) — centered breadcrumb + © year ===== */
 .page-footer {
-  background: var(--bg-base);
-  border-top: 1px solid var(--border-subtle);
   padding: var(--space-6) var(--pad-h);
   display: flex;
   align-items: center;
@@ -2165,7 +2143,7 @@ html, body { overflow-x: clip; }
   overflow: hidden;
 }
 .dark .step__prompt {
-  background: var(--bg-surface);
+  background: var(--bg-surface-2);
 }
 .step__prompt-head {
   display: flex;

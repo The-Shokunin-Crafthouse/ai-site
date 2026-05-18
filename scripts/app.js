@@ -635,4 +635,15 @@
     });
   });
 
+  /* ===== Drop .reveal class after animation completes so Chrome dismantles
+     the compositor layer it created for the transform animation. Persistent
+     compositor layers at near-black drift ~1 LSB on P3 displays. */
+  document.querySelectorAll(".reveal").forEach(function (el) {
+    el.addEventListener("animationend", function (e) {
+      if (e.animationName === "reveal-in") {
+        el.classList.remove("reveal");
+      }
+    }, { once: true });
+  });
+
 })();
