@@ -153,68 +153,163 @@
   }
 
   // ============================================================
-  // BUTTONS — linear top-edge comet, same grow-from-anchor pattern as dividers.
-  // Pinhead anchors at the button's top-left corner; tail grows 0→TRAIL_BTN on the
-  // first lap as the head moves right; subsequent laps wrap to just-off-button-left
-  // with the tail already at full length. Scoped to the button (not viewport-wide).
+  // BUTTONS — clockwise perimeter orbit. Pinhead starts at the button's
+  // top-left rounded corner. Tail grows 0 → TRAIL_BTN on the first quarter-lap;
+  // then loops indefinitely around the border. On mouseleave the comet keeps
+  // moving while opacity fades to 0 over FADE_MS.
+  // Implemented with an SVG path traced via stroke-dasharray + stroke-dashoffset,
+  // with a separate <circle> head positioned via path.getPointAtLength().
   // ============================================================
-  function mountButtonTrace(host) {
-    const trace = document.createElement("div");
-    trace.className = "hover-trace hover-trace--button-line";
-    trace.innerHTML =
-      '<span class="hover-trace__line"></span>' +
-      '<span class="hover-trace__head"></span>';
-    host.appendChild(trace);
-    return {
-      el: trace,
-      line: trace.querySelector(".hover-trace__line"),
-      head: trace.querySelector(".hover-trace__head"),
-    };
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  let _orbitUid = 0;
+
+  function mountButtonOrbit(host) {
+    _orbitUid++;
+    const uid = "orbit-" + _orbitUid;
+    const wrap = document.createElement("div");
+    wrap.className = "hover-trace hover-trace--button-orbit";
+
+    const svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("class", "orbit-svg");
+    svg.setAttribute("preserveAspectRatio", "none");
+
+    // Radial mask centered on the head. Stops: opaque at head, transparent
+    // at radius=TRAIL_BTN. Multiplied with the stroke so the visible trail
+    // segment fades out toward its tail end — same look as the divider's
+    // linear-gradient tail, just projected onto a curved perimeter.
+    const defs = document.createElementNS(SVG_NS, "defs");
+    const grad = document.createElementNS(SVG_NS, "radialGradient");
+    grad.id = uid + "-grad";
+    grad.setAttribute("gradientUnits", "userSpaceOnUse");
+    grad.setAttribute("r", String(TRAIL_BTN));
+    const s0 = document.createElementNS(SVG_NS, "stop");
+    s0.setAttribute("offset", "0%");
+    s0.setAttribute("stop-color", "white");
+    s0.setAttribute("stop-opacity", "1");
+    const s1 = document.createElementNS(SVG_NS, "stop");
+    s1.setAttribute("offset", "100%");
+    s1.setAttribute("stop-color", "white");
+    s1.setAttribute("stop-opacity", "0");
+    grad.appendChild(s0);
+    grad.appendChild(s1);
+
+    const mask = document.createElementNS(SVG_NS, "mask");
+    mask.id = uid + "-mask";
+    mask.setAttribute("maskUnits", "userSpaceOnUse");
+    // Explicit bounds (default -10%/120% would clip the mask circle since it
+    // extends TRAIL_BTN above/below the button rect). Generous box around any
+    // realistic button size keeps the radial fade fully painted.
+    mask.setAttribute("x", String(-TRAIL_BTN * 2));
+    mask.setAttribute("y", String(-TRAIL_BTN * 2));
+    mask.setAttribute("width", String(TRAIL_BTN * 6));
+    mask.setAttribute("height", String(TRAIL_BTN * 6));
+    const maskCircle = document.createElementNS(SVG_NS, "circle");
+    maskCircle.setAttribute("r", String(TRAIL_BTN));
+    maskCircle.setAttribute("fill", "url(#" + uid + "-grad)");
+    mask.appendChild(maskCircle);
+
+    defs.appendChild(grad);
+    defs.appendChild(mask);
+
+    const trail = document.createElementNS(SVG_NS, "path");
+    trail.setAttribute("class", "orbit-trail");
+    trail.setAttribute("fill", "none");
+    trail.setAttribute("stroke", "var(--accent-primary)");
+    trail.setAttribute("stroke-width", "1.5");
+    trail.setAttribute("stroke-linecap", "round");
+    trail.setAttribute("mask", "url(#" + uid + "-mask)");
+
+    const head = document.createElementNS(SVG_NS, "circle");
+    head.setAttribute("class", "orbit-head");
+    head.setAttribute("r", "2");
+    head.setAttribute("fill", "var(--accent-primary)");
+
+    svg.appendChild(defs);
+    svg.appendChild(trail);
+    svg.appendChild(head);
+    wrap.appendChild(svg);
+    host.appendChild(wrap);
+    return { wrap, svg, trail, head, maskCircle, grad };
   }
 
   function setupButton(host) {
-    const trace = mountButtonTrace(host);
+    const orbit = mountButtonOrbit(host);
     let raf = null;
     let lastT = 0;
-    let anchorX = 0;
-    let wrapX = 0;
-    let endX = 0;
-    let headX = 0;
-    let isFirstLap = true;
+    let perim = 0;
+    let headDist = 0;
+    let firstLap = true;
     let active = false;
     let fading = false;
     let fadeStart = 0;
 
     function measure() {
       const rect = host.getBoundingClientRect();
-      anchorX = 0;                       // button's top-left corner
-      wrapX = -TRAIL_BTN;                // off-button-left, full tail in place at wrap
-      endX = rect.width + TRAIL_BTN;     // head past button's right edge
+      const w = rect.width;
+      const h = rect.height;
+      const cs = window.getComputedStyle(host);
+      let rx = parseFloat(cs.borderTopLeftRadius) || 0;
+      rx = Math.min(rx, w / 2, h / 2);
+
+      orbit.svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      // Clockwise from top-left corner end-of-arc, around the perimeter.
+      const d = rx > 0
+        ? `M ${rx} 0 L ${w - rx} 0` +
+          ` A ${rx} ${rx} 0 0 1 ${w} ${rx}` +
+          ` L ${w} ${h - rx}` +
+          ` A ${rx} ${rx} 0 0 1 ${w - rx} ${h}` +
+          ` L ${rx} ${h}` +
+          ` A ${rx} ${rx} 0 0 1 0 ${h - rx}` +
+          ` L 0 ${rx}` +
+          ` A ${rx} ${rx} 0 0 1 ${rx} 0 Z`
+        : `M 0 0 L ${w} 0 L ${w} ${h} L 0 ${h} Z`;
+      orbit.trail.setAttribute("d", d);
+      perim = orbit.trail.getTotalLength();
     }
 
     function paint() {
-      const tailLength = isFirstLap
-        ? Math.max(0, Math.min(headX - anchorX, TRAIL_BTN))
-        : TRAIL_BTN;
-      trace.head.style.transform = `translateX(${headX}px)`;
-      trace.line.style.width = tailLength + "px";
-      trace.line.style.transform = `translateX(${headX - tailLength}px)`;
+      if (!perim) return;
+      const tailLen = Math.min(
+        firstLap ? Math.max(0, headDist) : TRAIL_BTN,
+        TRAIL_BTN,
+        perim
+      );
+      // Pattern length MUST equal perim so the dash tiles seamlessly around
+      // the closed path. Using `perim + tailLen` made the pattern length and
+      // path length incommensurate, producing a visible jump at the path's
+      // join when the trail wrapped from end → start.
+      orbit.trail.setAttribute("stroke-dasharray", `${tailLen} ${perim - tailLen}`);
+      orbit.trail.setAttribute("stroke-dashoffset", String(tailLen - headDist));
+
+      const wrapped = ((headDist % perim) + perim) % perim;
+      const p = orbit.trail.getPointAtLength(wrapped);
+      orbit.head.setAttribute("cx", p.x);
+      orbit.head.setAttribute("cy", p.y);
+      // Mask circle and its radial gradient ride with the head — opaque at
+      // the head, fading to transparent at radius = TRAIL_BTN. Gives the same
+      // tail fade as the divider's linear-gradient line.
+      orbit.maskCircle.setAttribute("cx", p.x);
+      orbit.maskCircle.setAttribute("cy", p.y);
+      orbit.grad.setAttribute("cx", p.x);
+      orbit.grad.setAttribute("cy", p.y);
+      orbit.grad.setAttribute("fx", p.x);
+      orbit.grad.setAttribute("fy", p.y);
     }
 
     function frame(t) {
       if (!raf) return;
       const dt = lastT ? (t - lastT) / 1000 : 0;
       lastT = t;
-      headX += SPEED * dt;
-      if (headX > endX) {
-        headX = wrapX;
-        isFirstLap = false;
+      headDist += SPEED * dt;
+      if (headDist >= perim) {
+        headDist -= perim;
+        firstLap = false;
       }
       paint();
 
       if (fading && t - fadeStart >= FADE_MS) {
-        trace.el.dataset.active = "false";
-        trace.el.style.opacity = "";
+        orbit.wrap.dataset.active = "false";
+        orbit.wrap.style.opacity = "";
         fading = false;
         stop();
         return;
@@ -224,14 +319,15 @@
 
     function start() {
       measure();
-      headX = anchorX;
-      isFirstLap = true;
+      headDist = 0;
+      firstLap = true;
       paint();
       active = true;
       fading = false;
       host.dataset.btnState = "hot";
-      trace.el.style.opacity = "";
-      trace.el.dataset.active = "true";
+      orbit.wrap.style.opacity = "";
+      orbit.wrap.style.transition = "";
+      orbit.wrap.dataset.active = "true";
       if (!raf) {
         lastT = 0;
         raf = requestAnimationFrame(frame);
@@ -250,8 +346,8 @@
       fading = true;
       fadeStart = t || performance.now();
       host.dataset.btnState = "";
-      trace.el.style.transition = `opacity ${FADE_MS}ms var(--ease-out-strong)`;
-      trace.el.dataset.active = "false";
+      orbit.wrap.style.transition = `opacity ${FADE_MS}ms var(--ease-out-strong)`;
+      orbit.wrap.dataset.active = "false";
     }
 
     host.addEventListener("mouseenter", start);
