@@ -1479,9 +1479,8 @@ html, body { overflow-x: clip; }
    accent CTA + the dashed bullet rule), not chromatic. */
 .section--hiring {
   color: var(--fg-primary);
-  /* -16 (prior) - 8 (user adjustment) = -24px. Pulls hiring tighter into the
-     overview rows above so the section reads as one continuous slab. */
-  margin-top: calc(-1 * var(--space-6));
+  margin-top: 0;
+  padding-top: var(--space-16);
 }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
 /* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero. */
