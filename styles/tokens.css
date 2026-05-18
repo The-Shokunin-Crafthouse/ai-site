@@ -166,9 +166,9 @@
 .dark {
   --bg-base: #0d0c0b;
   --bg-nav: #0d0c0b;
-  --bg-subtle: #2a2522;
-  --bg-surface-2: #302a26;
-  --bg-surface-3: #3a342f;
+  --bg-subtle: #0d0c0b;
+  --bg-surface-2: #0d0c0b;
+  --bg-surface-3: #0d0c0b;
   --bg-inverse: #fdfdfc;
   --fg-primary: #d0ceca;
   --fg-secondary: #98938d;
