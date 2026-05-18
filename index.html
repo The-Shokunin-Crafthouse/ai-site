@@ -25,7 +25,7 @@
   <!-- Inter (body/display) + Cascadia Mono (code/prompts) via Google Fonts. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400;500;600&family=Inter:wght@100;300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400;500;600&family=Inter:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Favicon — same accent dot as levibahn.com. -->
   <link rel="icon" href="./icon.svg" type="image/svg+xml" sizes="any" />
@@ -1437,14 +1437,14 @@ Commit the updated file and push.</code></pre>
     <section class="section section--hiring" data-section id="hiring">
       <div class="container">
         <header class="section__header">
-          <p class="section__eyebrow">For Hiring Managers</p>
-          <h2 class="t-display section__title">How I'd apply this at your company.</h2>
+          <p class="section__eyebrow reveal">For Hiring Managers</p>
+          <h2 class="t-display section__title reveal">How I'd apply this at your company.</h2>
           <!-- Lede hidden in On Load per Figma 57:11619; revealed once a tab is chosen. -->
           <p class="section__lede" hidden>Pick your company size. The card answers what I would build first and what changes about how your design team operates. No hedging.</p>
         </header>
 
         <div class="hiring" data-hiring data-hiring-state="collapsed">
-          <div class="hiring__tabs" role="tablist" aria-label="Company size">
+          <div class="hiring__tabs reveal" role="tablist" aria-label="Company size">
             <!-- On Load: no tab selected, no panel revealed (Figma 52:5679 collapsed state). -->
             <button class="hiring__tab" type="button" role="tab" aria-selected="false" aria-controls="hire-startup" id="tab-startup" data-hiring-tab="startup">
               <span class="hiring__tab-size">5–30</span>

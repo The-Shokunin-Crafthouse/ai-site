@@ -57,13 +57,14 @@ body {
   font-weight: var(--font-light);
   font-size: var(--text-hero-size);
   line-height: var(--text-hero-line);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-hero);
 }
 .t-display {
   font-family: var(--font-display);
   font-weight: var(--font-light);
   font-size: var(--text-display-size);
   line-height: var(--text-display-line);
+  letter-spacing: var(--tracking-display);
 }
 .t-title {
   font-family: var(--font-body);
@@ -78,6 +79,7 @@ body {
 .t-body-sm {
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
+  letter-spacing: var(--tracking-body-sm);
 }
 .t-link-sm {
   font-size: var(--text-link-sm-size);
@@ -115,11 +117,14 @@ body {
   outline-offset: -2px;
 }
 
-/* ===== Nav — desktop sticky ===== */
+/* ===== Nav — desktop sticky =====
+   Figma 57:11410 — height 64, bg --bg-nav, bottom hairline divider, brand sits
+   24px from frame edge (not aligned with the 128 content gutter at 1440). */
 .nav {
-  /* Static + transparent + no border. Body bg shows through uniformly. */
   height: var(--nav-h-desktop);
   display: none;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-nav);
 }
 @media (min-width: 768px) {
   .nav { display: block; }
@@ -129,15 +134,16 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  max-width: var(--container-page);
-  margin-inline: auto;
-  padding-inline: var(--pad-h);
+  /* Nav uses a fixed 24px gutter on all breakpoints so the brand reads as
+     chrome, not as part of the 128px content column. */
+  padding-inline: var(--space-6);
 }
 .nav__brand {
   font-family: var(--font-body);
   font-weight: var(--font-medium);
   font-size: var(--text-link-sm-size);
   letter-spacing: -0.005em;
+  color: var(--fg-primary);
 }
 .nav__brand .nav__brand-dim { color: var(--fg-tertiary); }
 .nav__list {
@@ -147,7 +153,7 @@ body {
   margin-left: auto;
 }
 .nav__sep {
-  color: color-mix(in srgb, var(--fg-secondary) 40%, transparent);
+  color: var(--fg-quiet);
   font-size: var(--text-link-sm-size);
   line-height: 1;
   user-select: none;
@@ -157,7 +163,7 @@ body {
   font-size: var(--text-link-sm-size);
   line-height: var(--text-link-sm-line);
   font-weight: var(--font-medium);
-  color: var(--fg-secondary);
+  color: var(--fg-primary);
   padding: var(--space-2) 0;
   position: relative;
   transition: color var(--dur-fast) var(--ease-standard);
@@ -373,7 +379,8 @@ body {
   }
 }
 
-.hero__copy { max-width: 686px; min-width: 0; }
+/* Figma "Hero/Copy" (55:9574) fixes the column at 600px. */
+.hero__copy { max-width: 600px; min-width: 0; }
 .hero__visual { min-width: 0; }
 html, body { overflow-x: clip; }
 .hero__eyebrow {
@@ -381,13 +388,14 @@ html, body { overflow-x: clip; }
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
   color: var(--fg-tertiary);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 .hero__eyebrow .hero__eyebrow-dot {
-  /* Loops between yellow (accent) and teal (hover-mint) forever, starting at
-     yellow. Mirrors the favicon animation cadence. */
+  /* 12s loop: 2s yellow hold → 4s ease to mint → 2s mint hold → 4s ease back
+     to yellow. Holds short, transitions slow + deliberate. Favicon SMIL in
+     icon.svg uses the same keyTimes. */
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -395,11 +403,12 @@ html, body { overflow-x: clip; }
   background: var(--accent-primary);
   margin-right: var(--space-2);
   vertical-align: 2px;
-  animation: hero-dot-pulse 3s ease-in-out infinite;
+  animation: hero-dot-pulse 12s linear infinite;
 }
 @keyframes hero-dot-pulse {
-  0%, 100% { background: var(--accent-primary); }
-  50%      { background: var(--hover-mint); }
+  0%, 16.67%  { background: var(--accent-primary); } /* 0–2s hold yellow */
+  50%, 66.67% { background: var(--hover-mint); }     /* 6–8s hold mint */
+  100%        { background: var(--accent-primary); } /* 12s back to yellow */
 }
 @media (prefers-reduced-motion: reduce) {
   .hero__eyebrow .hero__eyebrow-dot {
@@ -409,16 +418,18 @@ html, body { overflow-x: clip; }
 }
 /* Hero headline — Gentona Light. Sole use of Gentona on the site.
    CSS matches portfolio-site/src/scss/_homepage.scss h1: family, sizes,
-   weight, line-heights all carried over from levibahn.com. */
+   weight, line-heights all carried over from levibahn.com.
+   Figma "Frame 15" (55:9578) — 8px gap between headline + subline. */
 .hero__headline {
   font-family: "GentonaLight", sans-serif;
   font-weight: 100;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-2);
 }
 .hero__subline {
+  font-size: var(--text-subline-size);
+  line-height: var(--text-subline-line);
   color: var(--fg-secondary);
-  max-width: 56ch;
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-4);
 }
 .hero__actions {
   display: flex;
@@ -458,7 +469,7 @@ html, body { overflow-x: clip; }
 .section__eyebrow {
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-eyebrow-strong);
   text-transform: uppercase;
   color: var(--fg-tertiary);
   margin-bottom: var(--space-3);
@@ -1468,22 +1479,32 @@ html, body { overflow-x: clip; }
    accent CTA + the dashed bullet rule), not chromatic. */
 .section--hiring {
   color: var(--fg-primary);
-  margin-top: calc(-1 * var(--space-4));
+  /* -16 (prior) - 8 (user adjustment) = -24px. Pulls hiring tighter into the
+     overview rows above so the section reads as one continuous slab. */
+  margin-top: calc(-1 * var(--space-6));
 }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
-.section--hiring .section__title { color: var(--fg-primary); }
+/* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero. */
+.section--hiring .section__title {
+  color: var(--fg-primary);
+  font-family: var(--font-body);
+  font-weight: 200;
+}
 .section--hiring .section__lede { color: var(--fg-secondary); }
 
 .hiring { max-width: none; }
+/* Figma 56:10489 — header sits 24px above the tabs row, not the default 48. */
+.section--hiring .section__header { margin-bottom: var(--space-6); }
 .hiring__tabs {
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
   margin-bottom: var(--space-8);
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--border-subtle);
 }
 
+/* Figma 56:10494 (Tab/Startup selected) — accent border + accent label, with
+   the prefix number dimmed to 50% opacity for hierarchy. Hover mirrors active
+   (border + label flip to accent) without dimming the number. */
 .hiring__tab {
   display: inline-flex;
   align-items: baseline;
@@ -1500,10 +1521,12 @@ html, body { overflow-x: clip; }
 }
 .hiring__tab:active { transform: scale(0.97); }
 .hiring__tab[aria-selected="true"] {
-  color: var(--fg-on-accent);
-  background: var(--accent-primary);
+  color: var(--accent-primary);
   border-color: var(--accent-primary);
+  background: transparent;
 }
+.hiring__tab[aria-selected="true"] .hiring__tab-label { color: var(--accent-primary); }
+.hiring__tab[aria-selected="true"] .hiring__tab-size { opacity: 0.5; color: var(--accent-primary); }
 .hiring__tab:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 4px;
@@ -1511,11 +1534,13 @@ html, body { overflow-x: clip; }
 .hiring__tab-size {
   font-size: var(--text-body-sm-size);
   font-feature-settings: "tnum";
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--fg-tertiary);
 }
 .hiring__tab-label {
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
+  color: var(--fg-secondary);
 }
 
 .hiring__panels { position: relative; }
@@ -1752,19 +1777,59 @@ html, body { overflow-x: clip; }
 }
 
 /* Reveal-on-mount for hero copy */
+/* Reveal pattern — opacity 0 + 8px lift, settles via spring overshoot.
+   Delay = group base + sibling step. --reveal-base is set per-scope (hero,
+   hiring); --reveal-step is set per element (nth-child or explicit). */
 .reveal {
   opacity: 0;
   transform: translateY(-8px);
-  animation: reveal-in var(--dur-reveal) var(--ease-spring) forwards;
+  animation: reveal-in var(--dur-reveal) var(--ease-spring) both;
+  animation-delay: calc(var(--reveal-base, 0ms) + var(--reveal-step, 0ms));
 }
-.reveal:nth-child(1) { animation-delay: 0ms; }
-.reveal:nth-child(2) { animation-delay: var(--stagger-section); }
-.reveal:nth-child(3) { animation-delay: calc(var(--stagger-section) * 2); }
-.reveal:nth-child(4) { animation-delay: calc(var(--stagger-section) * 3); }
-.reveal:nth-child(5) { animation-delay: calc(var(--stagger-section) * 4); }
+.reveal:nth-child(1) { --reveal-step: 0ms; }
+.reveal:nth-child(2) { --reveal-step: var(--stagger-section); }
+.reveal:nth-child(3) { --reveal-step: calc(var(--stagger-section) * 2); }
+.reveal:nth-child(4) { --reveal-step: calc(var(--stagger-section) * 3); }
+.reveal:nth-child(5) { --reveal-step: calc(var(--stagger-section) * 4); }
+
+/* Per-scope bases. Hiring eyebrow/title/tabs share the same reveal-in but
+   fire after the overview rows have settled. */
+.hero .reveal { --reveal-base: var(--load-hero-base); }
+.section--hiring .reveal { --reveal-base: var(--load-hiring-base); }
+.section--hiring .section__eyebrow.reveal { --reveal-step: 0ms; }
+.section--hiring .section__title.reveal { --reveal-step: var(--load-hiring-stagger); }
+.section--hiring .hiring__tabs.reveal { --reveal-step: calc(var(--load-hiring-stagger) * 2); }
 
 @keyframes reveal-in {
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Nav unit — fades + slides down 8px as one block, ahead of everything. */
+.nav {
+  animation: load-nav var(--load-nav-dur) var(--ease-out-strong) var(--load-nav-delay) both;
+}
+@keyframes load-nav {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Overview rows — slide in from -32px left to 0, fading. Stagger 120ms.
+   Targets each <li> so the divider pseudo-elements move with the row.
+   Plain ease-out (no overshoot, no asymptotic creep). will-change stays
+   permanent — li is transparent, so no compositor-layer color drift. */
+.overview > li {
+  animation: load-row var(--load-row-dur) ease-out both;
+  will-change: transform, opacity;
+}
+.overview > li:nth-child(1) { animation-delay: var(--load-row-base); }
+.overview > li:nth-child(2) { animation-delay: calc(var(--load-row-base) + var(--load-row-stagger)); }
+.overview > li:nth-child(3) { animation-delay: calc(var(--load-row-base) + var(--load-row-stagger) * 2); }
+.overview > li:nth-child(4) { animation-delay: calc(var(--load-row-base) + var(--load-row-stagger) * 3); }
+
+@keyframes load-row {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 /* Reduced motion — opacity only, no translates/scales/overshoot */
@@ -1776,7 +1841,9 @@ html, body { overflow-x: clip; }
     scroll-behavior: auto;
   }
   .reveal,
-  .schematic__node {
+  .schematic__node,
+  .nav,
+  .overview > li {
     transform: none !important;
   }
   .schematic__edge {
@@ -1790,12 +1857,18 @@ html, body { overflow-x: clip; }
    Per fixes: NO background-color, NO border-color, NO text-color changes on hover.
    The comet system (.hover-trace) + arrow translate provide the only hover signal. */
 @media (hover: hover) and (pointer: fine) {
-  .nav__link:hover { color: var(--fg-primary); }
+  .nav__link:hover { color: var(--accent-primary); }
   .hero__skip:hover .hero__arrow { transform: translateX(4px); }
   .card:hover .card__arrow { transform: translateX(4px); }
   .drawer__link a:hover [data-arrow] { transform: translateX(4px); }
   .hiring__cta-link:hover .hiring__cta-arrow { transform: translateX(4px); }
   .section__next a:hover [data-arrow] { transform: translateX(6px); }
+  /* Hiring tab hover: border + label shift to accent. Number stays muted. */
+  .hiring__tab:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+  }
+  .hiring__tab:hover .hiring__tab-label { color: var(--accent-primary); }
 }
 
 /* ===== Hero — single-column when the visual is hidden (On Load layout) ===== */
@@ -1824,7 +1897,9 @@ html, body { overflow-x: clip; }
   width: 100%;
   display: grid;
   grid-template-columns: auto 1fr;
-  column-gap: var(--space-8);
+  /* Figma 52:5710-5716 uses gap 24 across rows 02-04; row 01 shows 32 (likely
+     a Figma oversight). Normalized to 24 for visual consistency. */
+  column-gap: var(--space-6);
   align-items: center;
   padding: var(--space-8) var(--pad-h);
   background: transparent;
@@ -1868,11 +1943,11 @@ html, body { overflow-x: clip; }
 }
 
 .overview-row__index {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: var(--font-light);
-  font-size: 34px;
-  line-height: 1.1;
-  letter-spacing: -0.01em;
+  font-size: var(--text-overview-num-size);
+  line-height: var(--text-overview-num-line);
+  letter-spacing: var(--tracking-overview-num);
   color: var(--fg-muted);
   /* Proportional numbers (no tnum) — Figma uses Inter's default proportional metrics
      so the "1" reads narrower than a tabular figure. */
@@ -1886,11 +1961,11 @@ html, body { overflow-x: clip; }
   min-width: 0;
 }
 .overview-row__title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: var(--font-regular);
-  font-size: 31px;
-  line-height: 38.75px;
-  letter-spacing: -0.01em;
+  font-size: var(--text-display-size);
+  line-height: var(--text-display-line);
+  letter-spacing: var(--tracking-display);
   color: var(--fg-primary);
 }
 
@@ -1926,34 +2001,35 @@ html, body { overflow-x: clip; }
   .overview-row__title { font-size: 22px; line-height: 28px; }
 }
 
-/* ===== Page footer (Figma 57:11700) — centered breadcrumb + © year ===== */
+/* ===== Page footer (Figma 57:11700) — centered breadcrumb + © year.
+   Figma spec: full width, py 24, gap 32 between crumb and copy, no h-padding,
+   crumb segments separated by → at fg-quiet, body-sm tracking. */
 .page-footer {
-  padding: var(--space-6) var(--pad-h);
+  padding: var(--space-6) 0;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: var(--space-6);
-  max-width: var(--container-page);
+  gap: var(--space-8);
   margin: 0 auto;
-  color: var(--fg-tertiary);
+  color: var(--fg-secondary);
 }
 .page-footer__crumb {
   margin: 0;
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-2);
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-body-sm);
 }
-.page-footer__sep { color: var(--fg-muted); }
+.page-footer__sep { color: var(--fg-quiet); }
 .page-footer__copy {
   margin: 0;
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
-  color: var(--fg-tertiary);
+  color: var(--fg-secondary);
   font-feature-settings: "tnum";
 }
 
@@ -2016,36 +2092,27 @@ html, body { overflow-x: clip; }
   box-shadow: var(--hover-comet-glow);
 }
 
-.hover-trace--button-line {
-  /* Linear comet along the button's top edge. Mirrors the divider comet but
-     scoped to the button bounds (head loops at button-right + trail, wraps to
-     button-left - trail). Anchored top-left per fix #4 in the May 17 batch. */
-  top: 0;
-  bottom: auto;
-  left: 0;
-  height: 1px;
+/* Button perimeter orbit. SVG fills the button's box; the rounded-rect path
+   is stroked with a dasharray that exposes only the trail segment, and a
+   separate circle <head> rides the same path via getPointAtLength. */
+.hover-trace--button-orbit {
+  inset: 0;
   width: 100%;
+  height: 100%;
   overflow: visible;
 }
-.hover-trace--button-line .hover-trace__line {
+.hover-trace--button-orbit .orbit-svg {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 1px;
-  width: 120px;
-  transform: translateX(-120px);
-  background: linear-gradient(90deg, rgba(218, 255, 96, 0) 0%, var(--accent-primary) 100%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
-.hover-trace--button-line .hover-trace__head {
-  position: absolute;
-  left: 0;
-  top: -1.5px;
-  width: var(--hover-comet-head);
-  height: var(--hover-comet-head);
-  transform: translateX(-120px);
-  background: var(--accent-primary);
-  border-radius: 3px;
-  box-shadow: var(--hover-comet-glow);
+.hover-trace--button-orbit .orbit-trail {
+  filter: drop-shadow(0 0 4px rgba(218, 255, 96, 0.6));
+}
+.hover-trace--button-orbit .orbit-head {
+  filter: drop-shadow(0 0 4px var(--accent-primary));
 }
 
 /* Row title accent shift — fades both directions, independent from comet.

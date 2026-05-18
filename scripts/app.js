@@ -39,10 +39,11 @@
       }
     }
 
-    // (2) Slide in 1s after load (was: on first scroll).
+    // (2) Slide in 2.2s after load — last beat in the page-load cascade.
+    // Mirrors --load-toggle-delay in styles/tokens.css; keep in sync.
     window.setTimeout(function () {
       toggle.setAttribute("data-toggle-shown", "true");
-    }, 1000);
+    }, 2200);
 
     // (3) Past one viewport: collapse the "Dark Mode" label (pill slides over)
     let labelHidden = false;
@@ -65,7 +66,11 @@
     const updateBottom = function () {
       rafId = 0;
       const base = getBase();
-      const footer = document.querySelector("footer");
+      // Target the page footer specifically. A plain `footer` selector grabs
+      // the first <footer> in the DOM — which is the hidden `.hiring__cta`
+      // footer, whose rect is (0,0). That zero-top makes the math here lift
+      // the toggle far above the viewport.
+      const footer = document.querySelector(".page-footer");
       if (!footer) {
         toggle.style.bottom = base + "px";
         return;
@@ -110,7 +115,24 @@
   const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
   const tabLinks = Array.from(document.querySelectorAll("[data-tab-link]"));
 
+  function clearActive() {
+    navLinks.forEach(function (link) {
+      link.classList.remove("is-active");
+      link.removeAttribute("aria-current");
+    });
+    tabLinks.forEach(function (link) {
+      link.classList.remove("is-active");
+      link.removeAttribute("aria-current");
+    });
+  }
+
   function setActive(id) {
+    // Figma "Dark/Full Page Composite — On Load" shows no nav highlight at top
+    // of page. Only highlight once the user has scrolled away from the top.
+    if (window.scrollY === 0) {
+      clearActive();
+      return;
+    }
     navLinks.forEach(function (link) {
       const match = link.getAttribute("href") === "#" + id;
       link.classList.toggle("is-active", match);
@@ -124,6 +146,12 @@
       else link.removeAttribute("aria-current");
     });
   }
+
+  // Scroll back to the top → clear all nav highlights (observer may not fire
+  // again once we're already at 0, so we listen explicitly).
+  window.addEventListener("scroll", function () {
+    if (window.scrollY === 0) clearActive();
+  }, { passive: true });
 
   if (sections.length) {
     let visible = new Map();

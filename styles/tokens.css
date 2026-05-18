@@ -30,6 +30,25 @@
   --text-link-sm-size: 14px;
   --text-link-sm-line: 24px;
 
+  /* Typography — hero subline. Distinct from --text-body-lg (18/25.6):
+     Figma "Dark/Full Page Composite — On Load" 55:9580 uses 16/25.6. */
+  --text-subline-size: 16px;
+  --text-subline-line: 25.6px;
+
+  /* Typography — overview row number (Inter Thin 100, 34px). */
+  --text-overview-num-size: 34px;
+  --text-overview-num-line: 1.1;
+
+  /* Tracking — sourced from Figma vars (type/body/sm letterSpacing 0.5,
+     hero eyebrow 0.48, hiring eyebrow 0.96) and the On Load frame nodes.
+     px instead of em so the token transfers cleanly across font-sizes. */
+  --tracking-hero: -0.31px;
+  --tracking-display: -0.31px;
+  --tracking-overview-num: -0.34px;
+  --tracking-eyebrow: 0.48px;
+  --tracking-eyebrow-strong: 0.96px;
+  --tracking-body-sm: 0.5px;
+
   /* Color — light */
   --bg-base: #fdfdfc;
   --bg-nav: #fdfdfc;
@@ -63,6 +82,7 @@
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
+  --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
   --space-12: 48px;
@@ -119,6 +139,22 @@
   --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-figma-gentle: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-standard: var(--ease-out-strong);
+
+  /* ===== On-load entrance cascade =====
+     Sequence: nav → hero (existing reveal) → overview rows → hiring section
+     → dark toggle. Each phase starts before the previous one finishes (Emil:
+     stagger is decorative, never block). Tune any single value here to retime
+     the whole cascade without touching component CSS. */
+  --load-nav-delay: 0ms;
+  --load-nav-dur: 700ms;
+  --load-hero-base: 200ms;       /* hero's first .reveal child fires here */
+  --load-hero-stagger: 100ms;    /* between successive hero .reveal siblings */
+  --load-row-base: 700ms;        /* overview row 01 fires here */
+  --load-row-stagger: 120ms;     /* between successive rows */
+  --load-row-dur: 700ms;
+  --load-hiring-base: 1300ms;    /* hiring eyebrow fires here */
+  --load-hiring-stagger: 100ms;
+  --load-toggle-delay: 2200ms;   /* dark mode toggle slides in last */
 
   /* Z-index */
   --z-1: 1;
