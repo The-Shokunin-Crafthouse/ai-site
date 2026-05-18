@@ -1,10 +1,10 @@
 /* Design tokens. Source: SPEC.md + studio-memory.md. */
 
 :root {
-  /* Typography — single family, Inter from Google Fonts. */
+  /* Typography. Inter for body/display, Cascadia Mono for code/prompts. */
   --font-body: "Inter", system-ui, sans-serif;
   --font-display: var(--font-body);
-  --font-mono: var(--font-body);
+  --font-mono: "Cascadia Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Typography — weights */
   --font-light: 100;
@@ -103,6 +103,16 @@
   /* Motion — durations (toggle slide) */
   --dur-figma-slide: 1280ms;
 
+  /* Hover comet — 6s edge-to-edge at 1440px = 240 px/s linear (per Figma proto 57:10951/57:11158). */
+  --hover-comet-speed: 240;
+  --hover-comet-trail: 200px;
+  --hover-comet-head: 4px;
+  --hover-comet-glow: 0 0 4px rgba(218, 255, 96, 0.9);
+
+  /* Press scale — matches levibahn.com convention from studio-memory.md §Motion. */
+  --press-scale-button: 0.985;
+  --press-scale-tap: 0.92;
+
   /* Motion — easings */
   --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -149,29 +159,32 @@
   }
 }
 
-/* Color — dark. Reconciled from Figma variables. */
+/* Color — dark. 1:1 with Figma "Dark/Full Page Composite" variables.
+   bg/base, bg/nav: #0d0c0b · semantic/divider: #1c1a18
+   text/heading: #d0ceca · text/body: #98938d · text/quiet, text/muted: #545352
+   action/primary: #daff60 */
 .dark {
   --bg-base: #0d0c0b;
   --bg-nav: #0d0c0b;
-  --bg-subtle: #2a2724;
-  --bg-surface-2: #302d2a;
-  --bg-surface-3: #3a3733;
+  --bg-subtle: #2a2522;
+  --bg-surface-2: #302a26;
+  --bg-surface-3: #3a342f;
   --bg-inverse: #fdfdfc;
   --fg-primary: #d0ceca;
-  --fg-secondary: #989796;
+  --fg-secondary: #98938d;
   --fg-tertiary: #545352;
   --fg-quiet: #545352;
   --fg-muted: #545352;
-  --fg-footer: #a09c98;
+  --fg-footer: #98938d;
   --fg-link: #5aa3ff;
   --fg-tag: #8e7d65;
-  --fg-on-accent: #0e0e10;
+  --fg-on-accent: #0d0c0b;
   --border-subtle: #1c1a18;
   --border-strong: #d0ceca;
   --accent-primary: #daff60;
   --hover-accent: #daff60;
   --hover-mint: #58f5d2;
-  --hover-row: #2a2724;
+  --hover-row: #2a2522;
   --fg-accent: #ca4541;
   --bg-tooltip: #d0ceca;
   --fg-tooltip: #0d0c0b;

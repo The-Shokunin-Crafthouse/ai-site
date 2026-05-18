@@ -20,6 +20,12 @@ html {
   scroll-behavior: smooth;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
+  /* Setting bg on <html> moves the canvas-bg promotion off <body>. Body's bg
+     then paints as a normal element-box decoration — same paint path as nav,
+     hiring section, and footer. All four surfaces drift identically, so they
+     all sample at the same display value (instead of body drifting away from
+     the rest via Chrome's canvas-paint path). */
+  background-color: var(--bg-base);
 }
 
 body {
@@ -114,24 +120,18 @@ body {
 
 /* ===== Nav — desktop sticky ===== */
 .nav {
-  position: fixed;
+  /* Sticky (not fixed) so the nav lives in the main document compositor layer
+     alongside body/hiring/footer. Fixed-position elements paint through a
+     separate GPU layer that quantizes to display with a tiny gamma offset at
+     near-black, producing 1-LSB drift vs the rest of the page. Sticky avoids
+     that — same paint path, same display value across every surface. */
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: var(--z-nav);
   height: var(--nav-h-desktop);
-  background: color-mix(in srgb, var(--bg-base) 88%, transparent);
-  backdrop-filter: saturate(140%) blur(12px);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
-  border-bottom: 1px solid transparent;
-  transform: translateY(-100%);
-  transition: transform var(--dur-standard) var(--ease-out-strong),
-              border-color var(--dur-standard) var(--ease-standard);
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--border-subtle);
   display: none;
-}
-.nav.is-visible {
-  transform: translateY(0);
-  border-bottom-color: var(--border-subtle);
 }
 @media (min-width: 768px) {
   .nav { display: block; }
@@ -175,7 +175,7 @@ body {
   transition: color var(--dur-fast) var(--ease-standard);
 }
 .nav__link.is-active {
-  color: var(--hover-mint);
+  color: var(--accent-primary);
 }
 .nav__link.is-active::after {
   content: "";
@@ -184,7 +184,7 @@ body {
   right: 0;
   bottom: -2px;
   height: 2px;
-  background: var(--hover-mint);
+  background: var(--accent-primary);
   border-radius: var(--radius-xs);
 }
 
@@ -400,6 +400,8 @@ html, body { overflow-x: clip; }
   margin-bottom: var(--space-6);
 }
 .hero__eyebrow .hero__eyebrow-dot {
+  /* Loops between yellow (accent) and teal (hover-mint) forever, starting at
+     yellow. Mirrors the favicon animation cadence. */
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -407,6 +409,17 @@ html, body { overflow-x: clip; }
   background: var(--accent-primary);
   margin-right: var(--space-2);
   vertical-align: 2px;
+  animation: hero-dot-pulse 3s ease-in-out infinite;
+}
+@keyframes hero-dot-pulse {
+  0%, 100% { background: var(--accent-primary); }
+  50%      { background: var(--hover-mint); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__eyebrow .hero__eyebrow-dot {
+    animation: none;
+    background: var(--accent-primary);
+  }
 }
 /* Hero headline — Gentona Light. Sole use of Gentona on the site.
    CSS matches portfolio-site/src/scss/_homepage.scss h1: family, sizes,
@@ -893,9 +906,8 @@ html, body { overflow-x: clip; }
   display: grid;
   grid-template-columns: auto 1fr auto;
   grid-template-areas:
-    "num main chev"
-    "num meta meta";
-  align-items: start;
+    "num main meta";
+  align-items: center;
   column-gap: var(--space-4);
   row-gap: var(--space-2);
   width: 100%;
@@ -906,11 +918,9 @@ html, body { overflow-x: clip; }
 }
 @media (min-width: 768px) {
   .step__head {
-    grid-template-columns: 56px 1fr auto auto;
-    grid-template-areas: "num main meta chev";
+    grid-template-columns: 56px 1fr auto;
     column-gap: var(--space-6);
     padding: var(--space-6) 0;
-    align-items: center;
   }
 }
 .step__head:focus-visible { outline: 2px solid var(--fg-primary); outline-offset: -2px; }
@@ -940,10 +950,11 @@ html, body { overflow-x: clip; }
 }
 .step__meta {
   grid-area: meta;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  min-width: 120px;
 }
 .step__badge {
   display: inline-flex;
@@ -952,15 +963,15 @@ html, body { overflow-x: clip; }
   font-weight: var(--font-semibold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  border: 1px solid currentColor;
-  color: var(--fg-tertiary);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  color: var(--fg-secondary);
   white-space: nowrap;
 }
-.step__badge--you { color: var(--fg-primary); background: color-mix(in srgb, var(--fg-primary) 6%, transparent); }
-.step__badge--prompt { color: var(--fg-link); background: color-mix(in srgb, var(--fg-link) 8%, transparent); }
-.step__badge--mixed { color: var(--fg-accent); background: color-mix(in srgb, var(--fg-accent) 8%, transparent); }
+.step__badge--you { color: var(--fg-secondary); }
+.step__badge--prompt { color: var(--fg-secondary); }
+.step__badge--mixed { color: var(--fg-secondary); }
 .step__tool {
   font-size: var(--text-body-sm-size);
   color: var(--fg-tertiary);
@@ -977,19 +988,17 @@ html, body { overflow-x: clip; }
   transform: rotate(180deg);
   color: var(--fg-primary);
 }
-.step__head[aria-expanded="true"] {
-  background: var(--hover-row);
-}
 .step__head[aria-expanded="true"] .step__title { color: var(--fg-primary); }
 
 .step__body {
   padding: 0 0 var(--space-6) calc(56px + var(--space-4));
-  max-width: 56ch;
   font-size: var(--text-body-base-size);
   line-height: var(--text-body-base-line);
   color: var(--fg-secondary);
   animation: step-body-in var(--dur-expand) var(--ease-out-strong);
 }
+.step__body > p { max-width: 56ch; }
+.step__body > .step__prompt { max-width: 720px; }
 @media (min-width: 768px) {
   .step__body { padding-left: calc(56px + var(--space-6)); }
 }
@@ -1096,82 +1105,119 @@ html, body { overflow-x: clip; }
 }
 .gates__table td { color: var(--fg-secondary); }
 
-/* ===== Section 4 — Subsections (native <details>) ===== */
-.subsections {
+/* ===== Section 3 — Studio Brain rows (Figma 55:9391) =====
+   Same row+accordion pattern as workflow steps, but no meta/summary column
+   and a 22px title per Figma "Brain/Panel" spec. */
+.brain-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   border-top: 1px solid var(--border-subtle);
 }
-.subsection { border-bottom: 1px solid var(--border-subtle); }
-.subsection__head {
+/* Figma "Brain/PanelStack" uses px-[192px] vs the section's pad-h of 128px at 1440.
+   Add the 64px delta as an inner indent at desktop so the brain rows visually nest
+   inside the outer section padding, matching the Figma frame. */
+@media (min-width: 1440px) {
+  .brain-list { padding-inline: var(--space-16); }
+}
+.brain-row {
+  position: relative;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.brain-row__head {
   display: grid;
-  grid-template-columns: 56px 1fr auto;
+  grid-template-columns: auto 1fr;
   align-items: center;
   column-gap: var(--space-4);
-  padding: var(--space-6) 0;
+  width: 100%;
+  padding: var(--space-5) 0;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: inherit;
   cursor: pointer;
-  list-style: none;
+  font: inherit;
 }
-.subsection__head::-webkit-details-marker { display: none; }
-.subsection__head::marker { display: none; content: ""; }
 @media (min-width: 768px) {
-  .subsection__head { padding: var(--space-8) 0; }
+  .brain-row__head {
+    grid-template-columns: 56px 1fr;
+    column-gap: var(--space-6);
+    padding: var(--space-8) 0;
+  }
 }
-.subsection__head:focus-visible { outline: 2px solid var(--fg-primary); outline-offset: -2px; }
-.subsection__index {
+.brain-row__head:focus-visible {
+  outline: 2px solid var(--fg-primary);
+  outline-offset: -2px;
+}
+.brain-row__num {
   font-size: var(--text-body-sm-size);
-  color: var(--fg-tertiary);
-  letter-spacing: 0.05em;
   font-feature-settings: "tnum";
+  letter-spacing: 0.05em;
+  color: var(--fg-tertiary);
+  padding-top: 2px;
 }
-.subsection__title {
+.brain-row__main { min-width: 0; }
+.brain-row__title {
+  display: block;
   font-family: var(--font-body);
   font-weight: var(--font-medium);
   font-size: 22px;
   line-height: 28px;
   color: var(--fg-primary);
   letter-spacing: -0.005em;
+  transition: color var(--dur-fast) var(--ease-out-strong);
 }
-@media (min-width: 768px) {
-  .subsection__title { font-size: 28px; line-height: 34px; }
+/* Open state: number + title turn accent (Figma 55:9391 "Brain/Panel" active style). */
+.brain-row__head[aria-expanded="true"] .brain-row__num,
+.brain-row__head[aria-expanded="true"] .brain-row__title {
+  color: var(--accent-primary);
 }
-.subsection__chev {
-  font-size: 16px;
-  color: var(--fg-tertiary);
-  transition: transform var(--dur-standard) var(--ease-out-strong);
-}
-.subsection[open] .subsection__chev { transform: rotate(180deg); color: var(--fg-primary); }
-.subsection[open] .subsection__head { background: var(--hover-row); }
-.subsection__body {
-  padding: 0 0 var(--space-8) calc(56px + var(--space-4));
-  max-width: 70ch;
+.brain-row__body {
+  padding: 0 0 var(--space-8) 0;
   color: var(--fg-secondary);
   font-size: var(--text-body-base-size);
   line-height: var(--text-body-base-line);
+  animation: step-body-in var(--dur-expand) var(--ease-out-strong);
 }
-@media (max-width: 767px) {
-  .subsection__body { padding-left: 0; padding-right: 0; }
+@media (min-width: 768px) {
+  .brain-row__body { padding-left: calc(56px + var(--space-6)); }
 }
-.subsection__body p + p { margin-top: var(--space-4); }
-.subsection__body code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+@media (prefers-reduced-motion: reduce) {
+  .brain-row__body { animation: none; }
+}
+.brain-row__body > p { max-width: 70ch; }
+.brain-row__body p + p { margin-top: var(--space-4); }
+.brain-row__body code {
+  font-family: var(--font-mono);
   font-size: 0.92em;
   padding: 1px 6px;
   border-radius: var(--radius-sm);
   background: var(--bg-subtle);
   color: var(--fg-primary);
 }
-.subsection__body strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
-.subsection__lead {
-  margin-top: var(--space-6);
-  margin-bottom: var(--space-3);
-  color: var(--fg-tertiary);
-  font-size: var(--text-body-sm-size);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.subsection__body a {
+.brain-row__body strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
+.brain-row__body a {
   color: var(--fg-link);
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+.brain-row__lede {
+  font-size: var(--text-body-lg-size);
+  line-height: var(--text-body-lg-line);
+  color: var(--fg-secondary);
+  margin-bottom: var(--space-4);
+}
+.brain-row__lede + p { margin-top: var(--space-3); }
+.brain-row__eyebrow {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+  color: var(--fg-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* Accumulated learnings list */
@@ -1287,29 +1333,98 @@ html, body { overflow-x: clip; }
   width: 16px;
 }
 
-/* ===== Section 5 — Tool tables + callouts ===== */
-.tool-table { margin-bottom: var(--space-16); }
-.tool-table:last-of-type { margin-bottom: var(--space-12); }
-.tool-table__head { margin-bottom: var(--space-5); padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-subtle); display: grid; grid-template-columns: auto 1fr; align-items: baseline; column-gap: var(--space-4); row-gap: var(--space-1); }
-.tool-table__count { font-size: var(--text-body-sm-size); letter-spacing: 0.06em; color: var(--fg-tertiary); font-feature-settings: "tnum"; }
-.tool-table__title { font-family: var(--font-body); font-weight: var(--font-medium); font-size: 22px; line-height: 28px; color: var(--fg-primary); letter-spacing: -0.005em; }
-@media (min-width: 768px) { .tool-table__title { font-size: 26px; line-height: 32px; } }
-.tool-table__source { grid-column: 2; font-size: var(--text-body-sm-size); color: var(--fg-tertiary); }
-.tool-table__source code, .tool-table table code, .callout__body code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+/* ===== Section 4 — Tools rows (Figma 55:9840) =====
+   Same row+accordion pattern as Section 3 (Brain). The expanded body holds the
+   `If I need to / Use this / Why` table. Single-open behavior is enforced in
+   app.js (clicking a closed row closes the others). */
+.tools-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border-subtle);
+}
+@media (min-width: 1440px) {
+  .tools-list { padding-inline: var(--space-16); }
+}
+.tools-row {
+  position: relative;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.tools-row__head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-5) 0;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+@media (min-width: 768px) {
+  .tools-row__head {
+    grid-template-columns: 56px 1fr;
+    column-gap: var(--space-6);
+    padding: var(--space-8) 0;
+  }
+}
+.tools-row__head:focus-visible {
+  outline: 2px solid var(--fg-primary);
+  outline-offset: -2px;
+}
+.tools-row__num {
+  font-size: var(--text-body-sm-size);
+  font-feature-settings: "tnum";
+  letter-spacing: 0.05em;
+  color: var(--fg-tertiary);
+  padding-top: 2px;
+}
+.tools-row__main { min-width: 0; }
+.tools-row__title {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: var(--font-medium);
+  font-size: 22px;
+  line-height: 28px;
+  color: var(--fg-primary);
+  letter-spacing: -0.005em;
+  transition: color var(--dur-fast) var(--ease-out-strong);
+}
+.tools-row__head[aria-expanded="true"] .tools-row__num,
+.tools-row__head[aria-expanded="true"] .tools-row__title {
+  color: var(--accent-primary);
+}
+.tools-row__body {
+  padding: 0 0 var(--space-8) 0;
+  animation: step-body-in var(--dur-expand) var(--ease-out-strong);
+}
+@media (min-width: 768px) {
+  .tools-row__body { padding-left: var(--space-12); padding-right: var(--space-12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tools-row__body { animation: none; }
+}
+
+/* Tool table styling (rendered inside each tools-row__body). */
+.tool-table__scroll { width: 100%; }
+.tool-table__scroll table { width: 100%; border-collapse: collapse; }
+.tool-table__scroll table code {
+  font-family: var(--font-mono);
   font-size: 0.92em;
   padding: 1px 6px;
   border-radius: var(--radius-sm);
   background: var(--bg-subtle);
   color: var(--fg-primary);
 }
-
-.tool-table__scroll { width: 100%; }
-.tool-table table { width: 100%; border-collapse: collapse; }
-.tool-table thead { display: none; }
+.tool-table__scroll thead { display: none; }
 @media (min-width: 768px) {
-  .tool-table thead { display: table-header-group; }
-  .tool-table thead th {
+  .tool-table__scroll thead { display: table-header-group; }
+  .tool-table__scroll thead th {
     text-align: left;
     font-size: var(--text-body-sm-size);
     color: var(--fg-tertiary);
@@ -1321,19 +1436,19 @@ html, body { overflow-x: clip; }
   }
 }
 @media (max-width: 767px) {
-  .tool-table tbody tr {
+  .tool-table__scroll tbody tr {
     display: block;
     padding: var(--space-4) 0;
     border-bottom: 1px solid var(--border-subtle);
   }
-  .tool-table tbody td {
+  .tool-table__scroll tbody td {
     display: grid;
     grid-template-columns: 96px 1fr;
     column-gap: var(--space-3);
     align-items: baseline;
     padding: var(--space-1) 0;
   }
-  .tool-table tbody td::before {
+  .tool-table__scroll tbody td::before {
     content: attr(data-label);
     color: var(--fg-tertiary);
     font-size: 11px;
@@ -1342,7 +1457,7 @@ html, body { overflow-x: clip; }
   }
 }
 @media (min-width: 768px) {
-  .tool-table tbody td {
+  .tool-table__scroll tbody td {
     padding: var(--space-4);
     vertical-align: top;
     border-bottom: 1px solid var(--border-subtle);
@@ -1350,9 +1465,9 @@ html, body { overflow-x: clip; }
     font-size: var(--text-body-base-size);
     line-height: var(--text-body-base-line);
   }
-  .tool-table tbody td:first-child { font-weight: var(--font-medium); color: var(--fg-primary); width: 32%; }
-  .tool-table tbody td:nth-child(2) { width: 28%; color: var(--fg-primary); }
-  .tool-table tbody tr:last-child td { border-bottom: 0; }
+  .tool-table__scroll tbody td:first-child { font-weight: var(--font-medium); color: var(--fg-primary); width: 32%; }
+  .tool-table__scroll tbody td:nth-child(2) { width: 28%; color: var(--fg-primary); }
+  .tool-table__scroll tbody tr:last-child td { border-bottom: 0; }
 }
 .tool-table__row--accent td:first-child::after {
   content: " ★";
@@ -1363,52 +1478,6 @@ html, body { overflow-x: clip; }
   font-weight: var(--font-medium);
 }
 
-/* Callouts (Claude Design + Cowork) */
-.callouts {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-6);
-  margin-top: var(--space-16);
-  margin-bottom: var(--space-12);
-}
-@media (min-width: 1024px) {
-  .callouts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-8); }
-}
-.callout {
-  padding: var(--space-8) var(--space-6);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--bg-base);
-  position: relative;
-  overflow: hidden;
-}
-@media (min-width: 768px) { .callout { padding: var(--space-12); } }
-.callout--cowork { border-top: 3px solid var(--hover-mint); }
-.callout__head { margin-bottom: var(--space-5); }
-.callout__eyebrow {
-  font-size: var(--text-body-sm-size);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  margin-bottom: var(--space-2);
-}
-.callout__title {
-  font-family: var(--font-body);
-  font-weight: var(--font-light);
-  font-size: 28px;
-  line-height: 34px;
-  color: var(--fg-primary);
-  letter-spacing: -0.005em;
-}
-@media (min-width: 768px) { .callout__title { font-size: 32px; line-height: 38px; } }
-.callout__body {
-  color: var(--fg-secondary);
-  font-size: var(--text-body-base-size);
-  line-height: var(--text-body-base-line);
-}
-.callout__body p + p { margin-top: var(--space-3); }
-.callout__body strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
-
 /* ===== Section 6 — For Hiring Managers =====
    Follows the page register (light or dark) so the toggle controls the whole
    page uniformly. The Von Restorff break is now structural (top border + the
@@ -1417,7 +1486,7 @@ html, body { overflow-x: clip; }
   background: var(--bg-base);
   color: var(--fg-primary);
   border-top: 1px solid var(--border-subtle);
-  margin-top: 0;
+  margin-top: calc(-1 * var(--space-4));
 }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
 .section--hiring .section__title { color: var(--fg-primary); }
@@ -1479,73 +1548,100 @@ html, body { overflow-x: clip; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.hiring__role {
-  font-family: var(--font-body);
-  font-weight: var(--font-light);
-  font-size: 28px;
-  line-height: 34px;
-  letter-spacing: -0.005em;
-  color: var(--fg-primary);
-  margin-bottom: var(--space-6);
-}
-@media (min-width: 768px) {
-  .hiring__role { font-size: 36px; line-height: 42px; }
-}
-
-.hiring__points {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
-}
-.hiring__points li {
-  position: relative;
-  padding-left: var(--space-5);
-  font-size: var(--text-body-base-size);
-  line-height: var(--text-body-base-line);
-  color: var(--fg-secondary);
-}
-@media (min-width: 768px) {
-  .hiring__points li { font-size: var(--text-body-lg-size); line-height: var(--text-body-lg-line); }
-}
-.hiring__points li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.65em;
-  width: 12px;
-  height: 1px;
-  background: var(--accent-primary);
-}
-
-.hiring__build {
-  padding: var(--space-6);
-  border: 1px solid var(--border-subtle);
-  border-left: 3px solid var(--accent-primary);
-  border-radius: var(--radius-md);
-  background: var(--bg-subtle);
-}
-.hiring__build-label {
-  display: block;
+.hiring__eyebrow {
+  font-family: var(--font-mono);
   font-size: var(--text-body-sm-size);
-  letter-spacing: 0.06em;
+  line-height: var(--text-body-sm-line);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--fg-tertiary);
   margin-bottom: var(--space-2);
 }
-.hiring__build-text {
-  display: block;
-  color: var(--fg-primary);
-  font-size: var(--text-body-base-size);
-  line-height: var(--text-body-base-line);
+.hiring__eyebrow s {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
 }
-.hiring__build-text code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+.hiring__role {
+  font-family: var(--font-body);
+  font-weight: var(--font-medium);
+  font-size: 22px;
+  line-height: 25.6px;
+  letter-spacing: -0.005em;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-6);
+}
+
+/* Brain callout — inset card with 48px Phosphor icon + label + body copy.
+   In dark mode the card sinks darker than bg-base (#080707 per Figma);
+   in light mode it floats lighter via bg-subtle. */
+.hiring__brain-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--bg-subtle);
+  color: var(--fg-secondary);
+  margin-bottom: var(--space-8);
+}
+.dark .hiring__brain-card { background: #080707; }
+.hiring__brain-icon {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-primary);
+}
+.hiring__brain-icon .icon { width: 48px; height: 48px; }
+.hiring__brain-text {
+  flex: 1 1 0;
+  min-width: 0;
+  font-size: var(--text-body-base-size);
+  line-height: 21px;
+}
+.hiring__brain-label {
+  font-weight: var(--font-medium);
+  color: var(--fg-primary);
+}
+.hiring__brain-text code {
+  font-family: var(--font-mono);
   font-size: 0.92em;
   padding: 1px 6px;
   border-radius: var(--radius-sm);
-  background: var(--bg-base);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--fg-primary);
+}
+.section--hiring:not(.dark *) .hiring__brain-text code { background: rgba(0, 0, 0, 0.04); }
+
+/* Bullet table — `//` marker + body copy, dividers between rows. */
+.hiring__points {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-8);
+  padding-inline: var(--space-6);
+}
+.hiring__points li {
+  display: flex;
+  gap: var(--space-8);
+  padding: var(--space-4) 0;
+  padding-left: var(--space-16);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: var(--text-link-sm-size);
+  line-height: 21px;
+  color: var(--fg-secondary);
+}
+.hiring__points li::before {
+  content: "//";
+  flex: 0 0 auto;
+  font-family: var(--font-body);
+  font-weight: var(--font-medium);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-base-line);
+  letter-spacing: 0;
+  color: var(--fg-tertiary);
+  white-space: nowrap;
 }
 
 .hiring__cta {
@@ -1620,23 +1716,6 @@ html, body { overflow-x: clip; }
 }
 .back-to-top svg { width: 16px; height: 16px; }
 
-/* ===== Section forward link (no dead ends) ===== */
-.section__next {
-  margin-top: var(--space-12);
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--border-subtle);
-  font-size: var(--text-body-lg-size);
-  font-weight: var(--font-medium);
-}
-.section__next a {
-  color: var(--fg-primary);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-.section__next a [data-arrow] {
-  transition: transform var(--dur-fast) var(--ease-out-strong);
-}
 /* ===== Hero schematic ===== */
 .schematic {
   width: 100%;
@@ -1725,31 +1804,15 @@ html, body { overflow-x: clip; }
   .schematic__pulse { display: none; }
 }
 
-/* Hover-only states — fire only on devices with a real pointer (no sticky hover on touch) */
+/* Hover-only states — fire only on devices with a real pointer.
+   Per fixes: NO background-color, NO border-color, NO text-color changes on hover.
+   The comet system (.hover-trace) + arrow translate provide the only hover signal. */
 @media (hover: hover) and (pointer: fine) {
   .nav__link:hover { color: var(--fg-primary); }
-  .hero__skip:hover {
-    border-color: var(--fg-tertiary);
-    background: var(--hover-row);
-  }
   .hero__skip:hover .hero__arrow { transform: translateX(4px); }
-  .card:hover { border-color: var(--fg-tertiary); background: var(--hover-row); }
   .card:hover .card__arrow { transform: translateX(4px); }
-  .drawer__close:hover { color: var(--fg-primary); border-color: var(--fg-tertiary); }
   .drawer__link a:hover [data-arrow] { transform: translateX(4px); }
-  .timeline__btn:hover {
-    color: var(--fg-primary);
-    border-color: var(--fg-tertiary);
-    background: var(--hover-row);
-  }
-  .step__head:hover { background: var(--hover-row); }
-  .subsection__head:hover { background: var(--hover-row); }
-  .tree__node summary:hover { background: var(--hover-row); }
-    .tool-table tbody tr:hover { background: var(--hover-row); }
-  .hiring__tab:hover { color: var(--fg-primary); border-color: var(--fg-tertiary); }
-  .hiring__cta-link:hover { background: var(--hover-accent); }
   .hiring__cta-link:hover .hiring__cta-arrow { transform: translateX(4px); }
-  .back-to-top:hover { color: var(--fg-primary); border-color: var(--fg-tertiary); }
   .section__next a:hover [data-arrow] { transform: translateX(6px); }
 }
 
@@ -1777,26 +1840,47 @@ html, body { overflow-x: clip; }
 
 .overview-row {
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-8);
   align-items: center;
-  gap: var(--space-8);
   padding: var(--space-8) var(--pad-h);
   background: transparent;
   border: 0;
-  border-top: 1px solid var(--border-subtle);
   color: inherit;
   text-align: left;
   font: inherit;
   appearance: none;
-  cursor: default;
+  cursor: pointer;
 }
-.overview > li:last-child .overview-row {
-  border-bottom: 1px solid var(--border-subtle);
+.overview-row[disabled] { cursor: default; opacity: 1; }
+
+/* Dividers between rows are drawn as full-viewport-width pseudo-elements on each li
+   so the line extends beyond the .overview ul's 1440px max-width. We use ::after on
+   EACH row (not ::before on the next) so the divider lives in the same stacking
+   context as the comet — z-index on .hover-trace then keeps the pinhead on top.
+   First-child gets ::before for the top edge above row 01. */
+.overview > li::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 1px;
+  background: var(--border-subtle);
+  pointer-events: none;
 }
-.overview-row:not([disabled]) { cursor: pointer; }
-.overview-row[disabled] {
-  /* Disabled = "no-op until Phase 2"; appearance unchanged. */
-  opacity: 1;
+.overview > li:first-child::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 1px;
+  background: var(--border-subtle);
+  pointer-events: none;
 }
 .overview-row:focus-visible {
   outline: 2px solid var(--fg-primary);
@@ -1804,18 +1888,24 @@ html, body { overflow-x: clip; }
 }
 
 .overview-row__index {
-  flex: 0 0 auto;
-  min-width: 44px;
   font-family: var(--font-display);
   font-weight: var(--font-light);
   font-size: 34px;
   line-height: 1.1;
   letter-spacing: -0.01em;
   color: var(--fg-muted);
-  font-feature-settings: "tnum";
+  /* Proportional numbers (no tnum) — Figma uses Inter's default proportional metrics
+     so the "1" reads narrower than a tabular figure. */
+  font-feature-settings: "lnum", "pnum";
+  min-width: 44px;
+}
+.overview-row__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
 }
 .overview-row__title {
-  flex: 1 1 auto;
   font-family: var(--font-display);
   font-weight: var(--font-regular);
   font-size: 31px;
@@ -1823,9 +1913,33 @@ html, body { overflow-x: clip; }
   letter-spacing: -0.01em;
   color: var(--fg-primary);
 }
+
+/* Crumbs sit ABOVE the title inside the button's main column.
+   Hidden when row collapsed; visible only when aria-expanded="true". */
+.overview-row__crumbs {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+.overview-row[aria-expanded="true"] .overview-row__crumbs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+.overview-row__crumb.is-active { color: var(--accent-primary); }
+.overview-row__crumb-sep { color: var(--fg-muted); }
+
+/* Number stays vertically centered against the main column. When expanded the main
+   column grows taller (crumbs above title), so the number's center sits near the
+   title midpoint — matches Figma 52:5535. */
+
 @media (max-width: 767px) {
   .overview-row {
-    gap: var(--space-4);
+    column-gap: var(--space-4);
     padding-block: var(--space-6);
   }
   .overview-row__index { font-size: 24px; min-width: 32px; }
@@ -1834,6 +1948,7 @@ html, body { overflow-x: clip; }
 
 /* ===== Page footer (Figma 57:11700) — centered breadcrumb + © year ===== */
 .page-footer {
+  background: var(--bg-base);
   border-top: 1px solid var(--border-subtle);
   padding: var(--space-6) var(--pad-h);
   display: flex;
@@ -1862,4 +1977,382 @@ html, body { overflow-x: clip; }
   line-height: var(--text-body-sm-line);
   color: var(--fg-tertiary);
   font-feature-settings: "tnum";
+}
+
+/* ============================================================
+   Hover comet system
+   Figma proto 57:10951 (start) → 57:11158 (end).
+   - Dividers: SVG line + glowing dot travels left → right at 240 px/s linear.
+     Loops on right-edge cross; on mouseleave, keeps moving while opacity fades.
+   - Buttons: same comet traces clockwise around the perimeter (rect path).
+   - Row title color shift fades in AND out via CSS transition.
+   ============================================================ */
+
+/* Position context so the absolute .hover-trace renders relative to the host. */
+[data-hover="divider"],
+[data-hover="button"] {
+  position: relative;
+}
+
+.hover-trace {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out-strong);
+  /* Promote above the row's ::after divider pseudo so the trail + pinhead render on top. */
+  z-index: 2;
+}
+.hover-trace[data-active="true"] { opacity: 1; }
+
+.hover-trace--divider {
+  /* Sits on the divider line at the row's bottom edge. The trail's 1px line aligns
+     with the divider via the row's ::after pseudo at the same y. The 4×4 glow dot
+     centers vertically on the line via top: -1.5px. */
+  bottom: 0;
+  top: auto;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  overflow: visible;
+}
+.hover-trace--divider .hover-trace__line {
+  /* Fixed 200px width slid along the bottom edge by JS via transform.
+     Initial transform places it off-canvas left so it can't flash at left:0 on mount. */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  width: 200px;
+  transform: translateX(-100vw);
+  background: linear-gradient(90deg, rgba(218, 255, 96, 0) 0%, var(--accent-primary) 100%);
+}
+.hover-trace--divider .hover-trace__head {
+  position: absolute;
+  left: 0;
+  top: -1.5px;       /* centers 4px dot vertically on the 1px line */
+  width: var(--hover-comet-head);
+  height: var(--hover-comet-head);
+  transform: translateX(-100vw);
+  background: var(--accent-primary);
+  border-radius: 3px;
+  box-shadow: var(--hover-comet-glow);
+}
+
+.hover-trace--button-line {
+  /* Linear comet along the button's top edge. Mirrors the divider comet but
+     scoped to the button bounds (head loops at button-right + trail, wraps to
+     button-left - trail). Anchored top-left per fix #4 in the May 17 batch. */
+  top: 0;
+  bottom: auto;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  overflow: visible;
+}
+.hover-trace--button-line .hover-trace__line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1px;
+  width: 120px;
+  transform: translateX(-120px);
+  background: linear-gradient(90deg, rgba(218, 255, 96, 0) 0%, var(--accent-primary) 100%);
+}
+.hover-trace--button-line .hover-trace__head {
+  position: absolute;
+  left: 0;
+  top: -1.5px;
+  width: var(--hover-comet-head);
+  height: var(--hover-comet-head);
+  transform: translateX(-120px);
+  background: var(--accent-primary);
+  border-radius: 3px;
+  box-shadow: var(--hover-comet-glow);
+}
+
+/* Row title accent shift — fades both directions, independent from comet.
+   Generic via [data-row-accent] so any row pattern (overview, step, brain) opts in.
+   Scoped to `> button [data-row-accent]` so a hot outer row doesn't bleed accent
+   into nested rows (e.g. brain rows inside the open overview row 03). */
+[data-row-hover] > button [data-row-accent] {
+  transition: color var(--dur-standard) var(--ease-out-strong);
+}
+[data-row-hover][data-row-state="hot"] > button [data-row-accent] {
+  color: var(--accent-primary);
+}
+
+/* Button: ONLY the arrow translates on hover. No text color shift, no border change. */
+.btn-trace {
+  position: relative;
+}
+.btn-trace [data-btn-arrow] {
+  transition: transform var(--dur-fast) var(--ease-out-strong);
+}
+.btn-trace[data-btn-state="hot"] [data-btn-arrow] {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-trace { display: none !important; }
+  [data-row-hover] .overview-row__index,
+  [data-row-hover] .overview-row__title,
+  .btn-trace,
+  .btn-trace [data-btn-arrow] {
+    transition: color var(--dur-fast) var(--ease-out-strong) !important;
+  }
+  .btn-trace[data-btn-state="hot"] [data-btn-arrow] { transform: none; }
+}
+
+/* ============================================================
+   Press / release scale — match levibahn.com convention.
+   Buttons (0.985), tap-targets (0.92). Released with --ease-out-strong over --dur-micro.
+   NOTE: row buttons (.overview-row, .step__head) do NOT press-scale — per fix,
+   row hover is comet + index accent only, no scaling.
+   ============================================================ */
+.btn-press,
+.btn-trace,
+.copy-btn {
+  transition: transform var(--dur-micro) var(--ease-out-strong),
+              color var(--dur-standard) var(--ease-out-strong),
+              border-color var(--dur-fast) var(--ease-out-strong);
+}
+.btn-press:active,
+.btn-trace:active,
+.copy-btn:active {
+  transform: scale(var(--press-scale-button));
+}
+.btn-tap:active,
+[data-tap]:active {
+  transform: scale(var(--press-scale-tap));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-press:active,
+  .btn-trace:active,
+  .btn-tap:active,
+  .copy-btn:active,
+  [data-tap]:active {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   Phosphor icons — sizing helpers
+   ============================================================ */
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+  fill: none;
+  stroke: currentColor;
+}
+.icon--sm { width: 14px; height: 14px; }
+.icon--md { width: 16px; height: 16px; }
+.icon--lg { width: 20px; height: 20px; }
+.icon--xl { width: 24px; height: 24px; }
+
+/* ============================================================
+   Step prompt block — Section 2 workflow, Figma 54:7438 step 06 open state
+   Cascadia Mono prompt + copy-to-clipboard button.
+   ============================================================ */
+.step__prompt {
+  margin-top: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-base) 60%, transparent);
+  overflow: hidden;
+}
+.dark .step__prompt {
+  background: var(--bg-surface);
+}
+.step__prompt-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.step__prompt-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: var(--font-medium);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  margin: 0;
+}
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--font-medium);
+  color: var(--fg-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.copy-btn[data-copy-state="copied"] {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+.copy-btn .icon { width: 14px; height: 14px; }
+
+.step__prompt pre {
+  margin: 0;
+  padding: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--fg-primary);
+  background: transparent;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  tab-size: 2;
+  -moz-tab-size: 2;
+}
+
+.step__prompt + p { margin-top: var(--space-4); }
+
+/* Inline code inside body — switch from generic monospace to Cascadia Mono */
+.step__body code,
+.brain-row__body code,
+.drawer code {
+  font-family: var(--font-mono);
+}
+
+/* ============================================================
+   Section 1 — Overview accordion expanded content (Figma 52:5535 + 57:10767)
+   Row 01 expands to show crumbs + lede + 4 cards + inline open-card panel.
+   ============================================================ */
+.overview-row[aria-expanded="false"] + .overview-row__open { display: none; }
+.overview-row__open {
+  padding: var(--space-4) 0 var(--space-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  animation: overview-open-in var(--dur-expand) var(--ease-out-strong);
+}
+/* Per-child padding so the inner .container (folded sections) handles its own pad-h
+   without double-applying. Lede aligns past the index gutter to match the title.
+   Cards / panel get straight pad-h so they span edge-to-edge of the page padding. */
+.overview-row__open > .overview-row__lede {
+  padding-right: var(--pad-h);
+  padding-left: calc(var(--pad-h) + 44px + var(--space-8));
+}
+@media (min-width: 768px) {
+  .overview-row__open > .overview-row__lede {
+    padding-left: calc(var(--pad-h) + 56px + var(--space-8));
+  }
+}
+.overview-row__open > .cards,
+.overview-row__open > .overview-row__panel {
+  padding-inline: var(--pad-h);
+}
+@keyframes overview-open-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.overview-row__lede {
+  font-size: var(--text-body-lg-size);
+  line-height: var(--text-body-lg-line);
+  color: var(--fg-secondary);
+  max-width: 60ch;
+}
+
+/* Card "open" state — accent border + index, dot eyebrow */
+.card[aria-expanded="true"] {
+  border-color: var(--accent-primary);
+}
+.card[aria-expanded="true"] .card__index { color: var(--accent-primary); }
+.card[aria-expanded="true"] .card__title { color: var(--accent-primary); }
+
+.card .card__arrow { transition: transform var(--dur-fast) var(--ease-out-strong); }
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .card__arrow { transform: translateX(4px); }
+}
+
+/* ===== Inline panel for the open card =====
+   Sits below the 4-card grid. Click another card → swap content. */
+.overview-row__panel {
+  border-top: 1px solid var(--border-subtle);
+  padding: var(--space-12) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--container-feature);
+}
+.overview-row__panel[hidden] { display: none; }
+.overview-row__panel-title {
+  font-family: var(--font-display);
+  font-weight: var(--font-light);
+  font-size: var(--text-display-size);
+  line-height: var(--text-display-line);
+  color: var(--fg-primary);
+  letter-spacing: -0.01em;
+}
+.overview-row__panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-size: var(--text-body-base-size);
+  line-height: var(--text-body-base-line);
+  color: var(--fg-secondary);
+  max-width: 56ch;
+}
+.overview-row__panel-body p { margin: 0; }
+.overview-row__panel-body strong { color: var(--fg-primary); }
+.overview-row__panel-body code { font-family: var(--font-mono); }
+
+.overview-row__panel-stats {
+  display: flex;
+  gap: var(--space-12);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+}
+.overview-row__panel-stats li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.overview-row__panel-stat-num {
+  font-family: var(--font-display);
+  font-weight: var(--font-light);
+  font-size: 56px;
+  line-height: 1;
+  color: var(--fg-primary);
+  letter-spacing: -0.02em;
+}
+.overview-row__panel-stat-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.overview-row__panel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-link-sm-size);
+  font-weight: var(--font-medium);
+  color: var(--fg-primary);
+  margin-top: var(--space-4);
+}
+.overview-row__panel-link:hover [data-arrow] { transform: translateX(4px); }
+.overview-row__panel-link .icon { transition: transform var(--dur-fast) var(--ease-out-strong); }
+
+@media (prefers-reduced-motion: reduce) {
+  .overview-row__open { animation: none; }
 }

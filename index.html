@@ -22,15 +22,31 @@
     })();
   </script>
 
-  <!-- Inter via Google Fonts CDN. Single typeface for the entire site. -->
+  <!-- Inter (body/display) + Cascadia Mono (code/prompts) via Google Fonts. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400;500;600&family=Inter:wght@100;300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Favicon — same accent dot as levibahn.com. -->
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" sizes="any" />
 
   <link rel="stylesheet" href="./styles/tokens.css" />
   <link rel="stylesheet" href="./styles/app.css" />
 </head>
 <body>
+  <!-- Phosphor Icons sprite (Regular weight subset, MIT). Inlined for zero icon flash.
+       Source: ./icons/phosphor.svg — mirror updates there if extending. -->
+  <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden" data-phosphor-sprite>
+    <symbol id="ph-arrow-right" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="M40 128h176m-72-72 72 72-72 72"/></symbol>
+    <symbol id="ph-arrow-up" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="M128 216V40m-72 72 72-72 72 72"/></symbol>
+    <symbol id="ph-caret-down" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="m208 96-80 80-80-80"/></symbol>
+    <symbol id="ph-x" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="M200 56 56 200M200 200 56 56"/></symbol>
+    <symbol id="ph-copy" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="M168 168h40V40H80v40m-40 0v136h128V80Z"/></symbol>
+    <symbol id="ph-check" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="m224 72-128 128-56-56"/></symbol>
+    <symbol id="ph-brain" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="14" d="M128 56v160M88 56a32 32 0 0 0-32 32v0a24 24 0 0 0-16 41.6A28 28 0 0 0 56 184v0a28 28 0 0 0 0 32 32 32 0 0 0 60 0V56a32 32 0 0 0-28-32Zm80 0a32 32 0 0 1 32 32v0a24 24 0 0 1 16 41.6A28 28 0 0 1 200 184v0a28 28 0 0 1 0 32 32 32 0 0 1-60 0V56a32 32 0 0 1 28-32Z"/></symbol>
+    <symbol id="ph-dot" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></symbol>
+  </svg>
+
   <a class="skip-link" href="#hiring">Skip to: How I'd apply this at your company</a>
 
   <!-- Desktop sticky nav. Hidden on mobile (bottom tab bar handles it). -->
@@ -95,11 +111,9 @@
               Studio memory that compounds, agents that hand off, approval gates that stay human. This is the working system, not a concept deck.
             </p>
             <div class="hero__actions reveal">
-              <a class="hero__skip" href="#hiring">
+              <a class="hero__skip btn-trace btn-press" href="#hiring" data-hover="button">
                 Skip to: How I'd apply this at your company
-                <svg class="hero__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M3 8h10M9 4l4 4-4 4" />
-                </svg>
+                <svg class="icon icon--md hero__arrow" data-btn-arrow aria-hidden="true"><use href="#ph-arrow-right"/></svg>
               </a>
             </div>
           </div>
@@ -184,88 +198,120 @@
            (Phase 2 will wire expanded states from later Figma frames). Full-bleed
            numbered rows replace the prior 4-tile card grid + section header. -->
       <ul class="overview" data-overview>
-        <li>
-          <button type="button" class="overview-row" data-overview-row="hero" aria-expanded="false" disabled>
-            <span class="overview-row__index" aria-hidden="true">01</span>
-            <span class="overview-row__title">The system, in 90 seconds.</span>
+        <li id="overview" data-hover="divider" data-row-hover>
+          <button type="button" class="overview-row" data-overview-row="hero" aria-expanded="false" aria-controls="overview-row-1-body">
+            <span class="overview-row__index" data-row-accent aria-hidden="true">01</span>
+            <span class="overview-row__main">
+              <span class="overview-row__crumbs" aria-hidden="true">
+                <span class="overview-row__crumb is-active">Overview</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb">Workflow</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb">Studio Brain</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb">Tools</span>
+              </span>
+              <span class="overview-row__title">The system, in 90 seconds.</span>
+            </span>
+          </button>
+          <div class="overview-row__open" id="overview-row-1-body">
+            <p class="overview-row__lede">Four pieces. They depend on each other. Tap a card to see how it works.</p>
+            <ul class="cards" data-cards>
+              <li>
+                <button class="card btn-press" type="button" data-card="brain" aria-expanded="false">
+                  <span class="card__index" data-row-accent>01</span>
+                  <span class="card__title" data-row-accent>The Brain</span>
+                  <span class="card__summary">Studio memory that compounds. Every session starts smarter than the last because the context files persist.</span>
+                  <span class="card__cta" aria-hidden="true">Open<svg class="icon icon--md card__arrow" data-arrow><use href="#ph-arrow-right"/></svg></span>
+                </button>
+              </li>
+              <li>
+                <button class="card btn-press" type="button" data-card="workflow" aria-expanded="false">
+                  <span class="card__index" data-row-accent>02</span>
+                  <span class="card__title" data-row-accent>The Workflow</span>
+                  <span class="card__summary">Brief, plan, design, build, evaluate, ship. Thirteen steps, four approval gates. Every gate is human.</span>
+                  <span class="card__cta" aria-hidden="true">Open<svg class="icon icon--md card__arrow" data-arrow><use href="#ph-arrow-right"/></svg></span>
+                </button>
+              </li>
+              <li>
+                <button class="card btn-press" type="button" data-card="agents" aria-expanded="false">
+                  <span class="card__index" data-row-accent>03</span>
+                  <span class="card__title" data-row-accent>The Agents</span>
+                  <span class="card__summary">Planner, Generator, Evaluator, and me. AI executes. I direct, review, and merge.</span>
+                  <span class="card__cta" aria-hidden="true">Open<svg class="icon icon--md card__arrow" data-arrow><use href="#ph-arrow-right"/></svg></span>
+                </button>
+              </li>
+              <li>
+                <button class="card btn-press" type="button" data-card="stack" aria-expanded="false">
+                  <span class="card__index" data-row-accent>04</span>
+                  <span class="card__title" data-row-accent>The Tools</span>
+                  <span class="card__summary">Claude Max, Claude Code, Claude Design, Cowork, Figma MCP, GitHub Actions, Hostinger. Right tool, right phase.</span>
+                  <span class="card__cta" aria-hidden="true">Open<svg class="icon icon--md card__arrow" data-arrow><use href="#ph-arrow-right"/></svg></span>
+                </button>
+              </li>
+            </ul>
+            <!-- Inline panel for the currently-open card. JS swaps in template content. -->
+            <div class="overview-row__panel" data-card-panel hidden aria-live="polite"></div>
+          </div>
+        </li>
+        <li data-hover="divider" data-row-hover>
+          <button type="button" class="overview-row" data-overview-row="workflow" aria-expanded="false">
+            <span class="overview-row__index" data-row-accent aria-hidden="true">02</span>
+            <span class="overview-row__main">
+              <span class="overview-row__crumbs" aria-hidden="true">
+                <span class="overview-row__crumb">Overview</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb is-active">Workflow</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb">Studio Brain</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb">Tools</span>
+              </span>
+              <span class="overview-row__title">Thirteen steps from brief to ship</span>
+            </span>
           </button>
         </li>
-        <li>
-          <button type="button" class="overview-row" data-overview-row="workflow" aria-expanded="false" disabled>
-            <span class="overview-row__index" aria-hidden="true">02</span>
-            <span class="overview-row__title">Thirteen steps from brief to ship</span>
+        <li data-hover="divider" data-row-hover>
+          <button type="button" class="overview-row" data-overview-row="brain" aria-expanded="false">
+            <span class="overview-row__index" data-row-accent aria-hidden="true">03</span>
+            <span class="overview-row__main">
+              <span class="overview-row__crumbs" aria-hidden="true">
+                <span class="overview-row__crumb">Overview</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb">Workflow</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb is-active">Studio Brain</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb">Tools</span>
+              </span>
+              <span class="overview-row__title">Structure is the brain. Tools are the hands.</span>
+            </span>
           </button>
         </li>
-        <li>
-          <button type="button" class="overview-row" data-overview-row="brain" aria-expanded="false" disabled>
-            <span class="overview-row__index" aria-hidden="true">03</span>
-            <span class="overview-row__title">Structure is the brain. Tools are the hands.</span>
-          </button>
-        </li>
-        <li>
-          <button type="button" class="overview-row" data-overview-row="tools" aria-expanded="false" disabled>
-            <span class="overview-row__index" aria-hidden="true">04</span>
-            <span class="overview-row__title">Right tool, right phase.</span>
+        <li data-hover="divider" data-row-hover>
+          <button type="button" class="overview-row" data-overview-row="tools" aria-expanded="false">
+            <span class="overview-row__index" data-row-accent aria-hidden="true">04</span>
+            <span class="overview-row__main">
+              <span class="overview-row__crumbs" aria-hidden="true">
+                <span class="overview-row__crumb">Overview</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb">Workflow</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb">Studio Brain</span>
+                <span class="overview-row__crumb-sep">::</span>
+                <span class="overview-row__crumb is-active">Tools</span>
+              </span>
+              <span class="overview-row__title">Right tool, right phase.</span>
+            </span>
           </button>
         </li>
       </ul>
 
-      <!-- Prior card grid kept in DOM (hidden) — Phase 2 will repurpose as expanded content. -->
-      <div class="container" hidden data-phase2-cards>
-        <ul class="cards" data-cards>
-          <li>
-            <button class="card" type="button" data-card="brain" aria-expanded="false">
-              <span class="card__index">01</span>
-              <span class="card__title">The Brain</span>
-              <span class="card__summary">Studio memory that compounds. Every session starts smarter than the last because the context files persist.</span>
-              <span class="card__cta" aria-hidden="true">Open<span class="card__arrow" data-arrow>→</span></span>
-            </button>
-          </li>
-          <li>
-            <button class="card" type="button" data-card="workflow" aria-expanded="false">
-              <span class="card__index">02</span>
-              <span class="card__title">The Workflow</span>
-              <span class="card__summary">Brief, plan, design, build, evaluate, ship. Thirteen steps, four approval gates. Every gate is human.</span>
-              <span class="card__cta" aria-hidden="true">Open<span class="card__arrow" data-arrow>→</span></span>
-            </button>
-          </li>
-          <li>
-            <button class="card" type="button" data-card="agents" aria-expanded="false">
-              <span class="card__index">03</span>
-              <span class="card__title">The Agents</span>
-              <span class="card__summary">Planner, Generator, Evaluator, and me. AI executes. I direct, review, and merge.</span>
-              <span class="card__cta" aria-hidden="true">Open<span class="card__arrow" data-arrow>→</span></span>
-            </button>
-          </li>
-          <li>
-            <button class="card" type="button" data-card="stack" aria-expanded="false">
-              <span class="card__index">04</span>
-              <span class="card__title">The Tools</span>
-              <span class="card__summary">Claude Max, Claude Code, Claude Design, Cowork, Figma MCP, GitHub Actions, Hostinger. Right tool, right phase.</span>
-              <span class="card__cta" aria-hidden="true">Open<span class="card__arrow" data-arrow>→</span></span>
-            </button>
-          </li>
-        </ul>
-      </div>
     </section>
 
-    <!-- Drawer overlays for Section 2 cards. Rendered once, content swaps via data-card -->
-    <div class="drawer-scrim" data-drawer-scrim hidden></div>
-    <aside class="drawer" data-drawer role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
-      <div class="drawer__handle" data-drawer-handle aria-hidden="true"></div>
-      <button type="button" class="drawer__close" data-drawer-close aria-label="Close">
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </button>
-      <div class="drawer__media" data-drawer-media aria-hidden="true"></div>
-      <div class="drawer__head">
-        <p class="drawer__eyebrow" data-drawer-eyebrow></p>
-        <h3 class="drawer__title" id="drawer-title" data-drawer-title></h3>
-      </div>
-      <div class="drawer__body" data-drawer-body></div>
-      <div class="drawer__foot" data-drawer-foot></div>
-    </aside>
-
-    <!-- Drawer content templates. Hidden until cloned into the drawer. -->
+    <!-- Card detail templates. JS clones the matching template into the inline
+         .overview-row__panel beneath the 4-card grid when a card is clicked. -->
+    <!-- (Drawer overlay markup removed — replaced by inline-panel pattern per Figma 57:10767.) -->
     <template data-drawer-tpl="brain">
       <div data-tpl-media>
         <div class="d-media d-media--brain" data-brain-3d>
@@ -398,7 +444,9 @@
          Psychology: Goal Gradient Effect + Flow State + Feedback Loop
          13 inline-expand steps. Click-based progress indicator.
          ============================================================ -->
-    <!-- Hidden on Load. Kept in DOM for Phase 2 expanded-state wiring. -->
+    <!-- Folded into .overview row 02 at boot via app.js (Figma 55:9949 / 54:7438).
+         Stays hidden until JS moves its inner content into row 02's .overview-row__open
+         and removes this wrapper entirely. -->
     <section class="section section--workflow" data-section id="workflow" hidden>
       <div class="container">
         <header class="section__header">
@@ -418,8 +466,8 @@
         <div class="timeline" data-timeline>
           <div class="timeline__toolbar">
             <div class="timeline__actions">
-              <button type="button" class="timeline__btn" data-expand-all>Expand all</button>
-              <button type="button" class="timeline__btn" data-collapse-all>Collapse all</button>
+              <button type="button" class="timeline__btn btn-press" data-expand-all>Expand all</button>
+              <button type="button" class="timeline__btn btn-press" data-collapse-all>Collapse all</button>
             </div>
             <div class="timeline__progress" aria-live="polite">
               <span class="timeline__progress-num"><span data-progress-count>0</span> of 13 explored</span>
@@ -430,9 +478,9 @@
           </div>
 
           <ol class="steps" data-steps>
-            <li class="step" data-step="1">
+            <li class="step" data-row-hover data-step="1">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-1-body">
-                <span class="step__num">01</span>
+                <span class="step__num" data-row-accent>01</span>
                 <span class="step__main">
                   <span class="step__title">Write the brief</span>
                   <span class="step__summary">Four sentences. Who is the visitor, what do they need, what makes this different.</span>
@@ -441,17 +489,30 @@
                   <span class="step__badge step__badge--you">You do</span>
                   <span class="step__tool">Notes</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-1-body" hidden>
                 <p>The brief is direction, not detail. The Planner expands it into a full product spec in the next step. I keep this short on purpose because length here makes the spec rigid downstream.</p>
                 <p><strong>What I write:</strong> what the site is for, who the visitor is, what they need to do or understand, what makes it different from every other site in the category.</p>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Optional · paste in Claude.ai</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-1-prompt">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-1-prompt">I'm starting a new project and need help sharpening my brief to 1–4 sentences.
+
+Here are my rough notes: [paste your notes]
+
+Apply the Shokunin Crafthouse lens — the brief should define who the visitor is, what they need to accomplish, and what makes this different. No fluff. Give me 2–3 brief options to choose from.</code></pre>
+                </div>
               </div>
             </li>
 
-            <li class="step" data-step="2">
+            <li class="step" data-row-hover data-step="2">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-2-body">
-                <span class="step__num">02</span>
+                <span class="step__num" data-row-accent>02</span>
                 <span class="step__main">
                   <span class="step__title">Run the Planner</span>
                   <span class="step__summary">Brief in, full product spec out. Sprint breakdown, success criteria, tech stack.</span>
@@ -460,18 +521,40 @@
                   <span class="step__badge step__badge--prompt">Prompt Claude</span>
                   <span class="step__tool">Claude.ai</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-2-body" hidden>
                 <p>The Planner runs in the Shokunin Crafthouse project on Claude.ai. <code>studio-memory.md</code> is already in the project knowledge, so it reads our identity and design principles before expanding the brief.</p>
                 <p><strong>What it returns:</strong> project overview, complete deliverables list, design direction tied to the seven Shokunin principles, technical stack, three to six sprints, and specific success criteria per sprint.</p>
                 <p><strong>Approval gate one — Concept.</strong> I read the spec carefully and edit anything I disagree with before moving on.</p>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt · Claude.ai project chat</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-2-prompt">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-2-prompt">You are the Planner agent for The Shokunin Crafthouse.
+Read studio-memory.md from project knowledge.
+
+My brief: [your 1–4 sentences from Step 1]
+
+Produce a complete product spec including:
+1. Project overview and purpose
+2. Complete deliverables list (all pages or pieces)
+3. Design direction referencing the 7 Shokunin principles
+4. Technical stack and architecture decisions
+5. Sprint breakdown — 3–6 sprints, each a self-contained deliverable
+6. Success criteria per sprint — specific and testable, not vague
+
+Be ambitious. Look for opportunities where AI-native features would serve the product. Do not over-specify implementation — let the Generator figure out the path.</code></pre>
+                </div>
               </div>
             </li>
 
-            <li class="step" data-step="3">
+            <li class="step" data-row-hover data-step="3">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-3-body">
-                <span class="step__num">03</span>
+                <span class="step__num" data-row-accent>03</span>
                 <span class="step__main">
                   <span class="step__title">Create the Figma file</span>
                   <span class="step__summary">Four pages: Sandbox, Brand System, Components, Production.</span>
@@ -480,7 +563,6 @@
                   <span class="step__badge step__badge--you">You do</span>
                   <span class="step__tool">Figma</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-3-body" hidden>
                 <p>Figma MCP cannot create files. This step is always manual. I name the file, set up the four pages, and grab the file URL for the scaffold prompt.</p>
@@ -488,9 +570,9 @@
               </div>
             </li>
 
-            <li class="step" data-step="4">
+            <li class="step" data-row-hover data-step="4">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-4-body">
-                <span class="step__num">04</span>
+                <span class="step__num" data-row-accent>04</span>
                 <span class="step__main">
                   <span class="step__title">Scaffold the project</span>
                   <span class="step__summary">Workspace template, private GitHub repo, branch protection, Playwright preview script.</span>
@@ -499,17 +581,59 @@
                   <span class="step__badge step__badge--prompt">Prompt Claude</span>
                   <span class="step__tool">Claude Code</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-4-body" hidden>
                 <p>Claude Code clones the workspace template, creates a private GitHub repo under the studio org, populates <code>WORKSPACE.md</code> with project identity, wires in the Figma file URL, and confirms all four Figma pages exist via MCP.</p>
                 <p>It also adds a Playwright preview script that captures screenshots at 360, 768, 1024, and 1440 so every PR carries a snapshot record. Optional <code>/goal</code> drives this through to a green build without per-turn prompting.</p>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt · Claude Code</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-4-prompt">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-4-prompt">Scaffold a new Shokunin Crafthouse project called [project name].
+
+1. Clone the workspace template from
+   ~/Projects/shokunin-crafthouse/studio-memory/templates/project-template/
+   into a new folder called [repo-name]
+2. Create a new private GitHub repo called [repo-name] under
+   the shokunin-crafthouse org
+3. Populate WORKSPACE.md with:
+   - Project name: [project name]
+   - Purpose: [1 sentence]
+   - Client: [client name] or "Internal — Shokunin Crafthouse"
+   - Primary deliverable: [e.g. "Wedding website with RSVP"]
+   - Tech stack: [e.g. "Next.js, Tailwind, Hostinger shared hosting"]
+   - Key design constraints: [paste from your brief]
+   - Production domain: [domain or "TBD — previews disabled until set"]
+4. Add the Figma file URL to _config/design-system/figma-links.md:
+   [paste Figma URL from Step 3]
+5. Fetch Figma file metadata via MCP to confirm all four pages exist:
+   Sandbox, Brand System, Components, Production
+6. Create a PR build check workflow at .github/workflows/pr-check.yml
+   that runs `npm ci &amp;&amp; npm run build` on pull_request events targeting main.
+7. Add Playwright as a dev dependency and create scripts/preview.mjs that:
+   - Accepts a sprint name as its only argument
+   - Builds the project to its static output directory
+   - Serves the build on a local port
+   - Captures full-page screenshots at viewports 360, 768, 1024, and 1440
+   - Saves PNGs to /previews/[sprint-name]/ as 360.png, 768.png, etc.
+   - If dark mode is in scope, captures both modes (8 PNGs total)
+   - Tears the server down on completion or failure (use try/finally)
+   Add an npm script: "preview": "node scripts/preview.mjs"
+8. Track /previews/ in the repo (do NOT add it to .gitignore).
+9. Initialize git, commit everything, and push to main on GitHub.
+
+Report the GitHub URL when done.</code></pre>
+                </div>
               </div>
             </li>
 
-            <li class="step" data-step="5">
+            <li class="step" data-row-hover data-step="5">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-5-body">
-                <span class="step__num">05</span>
+                <span class="step__num" data-row-accent>05</span>
                 <span class="step__main">
                   <span class="step__title">Wire deploy and preview workflows</span>
                   <span class="step__summary">Three GitHub Actions: production deploy, PR preview, preview cleanup.</span>
@@ -518,17 +642,54 @@
                   <span class="step__badge step__badge--prompt">Prompt Claude</span>
                   <span class="step__tool">Claude Code</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-5-body" hidden>
                 <p>Push to main triggers an rsync to Hostinger production. Every PR opens triggers a preview build at <code>/_previews/[pr-number]/</code> with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down.</p>
                 <p>Claude Code prints the predicted preview URL directly in chat and runs <code>gh run watch</code> to confirm the deploy succeeded. No GitHub round-trip to find a URL.</p>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt · Claude Code</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-5-prompt">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-5-prompt">Create three GitHub Actions workflows for this project. The domain for this project is: [your domain]
+
+WORKFLOW 1 — Production deploy
+File: .github/workflows/deploy.yml
+- Trigger: push to main branch
+- Action: burnett01/rsync-deployments@7.0.1
+- Switches: -avzr --delete
+- remote_host: ${{ secrets.HOSTINGER_HOST }}
+- remote_port: 65002
+- remote_user: ${{ secrets.HOSTINGER_USER }}
+- remote_key: ${{ secrets.HOSTINGER_SSH_KEY }}
+- remote_path: ~/domains/[your domain]/public_html/
+
+WORKFLOW 2 — PR preview deploy
+File: .github/workflows/preview-deploy.yml
+- Trigger: pull_request, types [opened, synchronize, reopened], targeting main
+- Steps: checkout PR head; setup Node 20 + npm ci; build with BASE_PATH=/_previews/${{ github.event.pull_request.number }};
+  write robots.txt blocking indexing into the build output; rsync to ~/domains/[your domain]/public_html/_previews/${{ github.event.pull_request.number }}/;
+  post (or update) a sticky PR comment containing the preview URL with a 🔗 icon, bold "Preview ready", and a clickable link.
+
+WORKFLOW 3 — PR preview cleanup
+File: .github/workflows/preview-cleanup.yml
+- Trigger: pull_request, types [closed], targeting main
+- Steps: ssh in via appleboy/ssh-action@v1 and `rm -rf ~/domains/[your domain]/public_html/_previews/${{ github.event.pull_request.number }}/`; post a confirmation comment on the PR.
+
+For Next.js: also update next.config.js to read basePath and assetPrefix from process.env.BASE_PATH (defaulting to '').
+For HTML+CSS: ensure all asset paths are relative (./images/ not /images/).
+
+Commit all three workflow files plus any framework config changes to a new branch called add-deploy-and-preview-workflows, and push to GitHub.</code></pre>
+                </div>
               </div>
             </li>
 
-            <li class="step" data-step="6">
+            <li class="step" data-row-hover data-step="6">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-6-body">
-                <span class="step__num">06</span>
+                <span class="step__num" data-row-accent>06</span>
                 <span class="step__main">
                   <span class="step__title">Explore visual direction in Claude Design</span>
                   <span class="step__summary">Two opposing directions. A choice a principal designer would recognize as deliberate.</span>
@@ -537,17 +698,53 @@
                   <span class="step__badge step__badge--mixed">You + Claude</span>
                   <span class="step__tool">Claude Design</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-6-body" hidden>
                 <p>Claude Design runs on Opus 4.7 with its own independent weekly limit that does not touch the Max pool. I treat it as a free creative resource for exploration before committing anything to Figma.</p>
                 <p>The pattern is two opposing directions: my instinct, then its opposite. The contrast forces a decision about point of view. Output saves to <code>stages/02-design/claude-design/</code>.</p>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt 1 · Claude Design · Direction 1 (your instinct)</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-6-prompt-1">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-6-prompt-1">I'm designing [what the site is] for [who the visitor is].
+
+WHAT'S LOCKED
+[list anything already decided — colors, illustration style, etc. If nothing is locked, say "Nothing locked — full exploration."]
+
+WHAT NEEDS EXPLORING
+[list what's still open — typography, layout language, illustration style, graphic details, etc.]
+
+BRIEF
+[paste your 1–4 sentence brief]
+
+Apply Shokunin Crafthouse design principles from studio-memory.md: one clear point of view, restraint as a creative act, originality over safety, no template layouts.
+
+Generate Direction 1: your interpretation of this brief taken somewhere unexpected — a choice a principal designer would look at and see intent. Use real typography, real color. No generic gradients, no stock illustration style, no purple-on-white card layouts.</code></pre>
+                </div>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt 2 · Claude Design · Direction 2 (the opposite)</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-6-prompt-2">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-6-prompt-2">Generate Direction 2 for the same project.
+
+Direction 1 was [describe it in one sentence]. Direction 2 should be its opposite — if Direction 1 leaned warm and expressive, Direction 2 should be cool and architectural. If Direction 1 was organic, Direction 2 should be precise. Same brief, completely different point of view. Same locked constraints.
+
+Show the same type of layout. Real typography, real hierarchy. A choice a principal designer would recognize as deliberate.</code></pre>
+                </div>
               </div>
             </li>
 
-            <li class="step" data-step="7">
+            <li class="step" data-row-hover data-step="7">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-7-body">
-                <span class="step__num">07</span>
+                <span class="step__num" data-row-accent>07</span>
                 <span class="step__main">
                   <span class="step__title">Build the brand system in Figma</span>
                   <span class="step__summary">Tokens first, components second. Extract to token-map.md before any code.</span>
@@ -556,18 +753,64 @@
                   <span class="step__badge step__badge--mixed">You + Claude</span>
                   <span class="step__tool">Figma + MCP</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-7-body" hidden>
                 <p>I build color styles, the type scale, the spacing scale, and base components on the Sandbox page. Type is solved before anything else because changing typefaces later is a redesign.</p>
                 <p>Then Claude Code reads the Figma file via MCP and writes <code>_config/design-system/token-map.md</code>. That file becomes the source of truth — no color, font, or spacing value gets used in code unless it lives there.</p>
                 <p><strong>Approval gate two — Design.</strong> Token map approved before any sprint starts.</p>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt 1 · Claude.ai · Checklist + copy</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-7-prompt-1">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-7-prompt-1">Read the approved product spec. [paste spec or attach file]
+
+Before I open Figma, give me two things:
+
+1. BRAND SYSTEM CHECKLIST — what specifically do I need to define in Figma for this project? List:
+   - Color token names I should create (not hex values — I'll pick those)
+   - Type scale stops I'll need (display, heading sizes, body, labels, captions)
+   - Spacing scale stops
+   - Component list for this specific site
+   Be specific to this project, not a generic list.
+
+2. COPY FOR MOCKUPS — write production-intent copy for every text element on [primary page — e.g. homepage]:
+   - Headline, subheadline, all body copy sections
+   - All CTA button labels
+   - Navigation labels
+   - Footer copy
+   Write it as if it's shipping tomorrow. No lorem ipsum.
+   Tone: [describe or paste from _config/voice/]</code></pre>
+                </div>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt 2 · Claude Code · Extract tokens to token-map.md</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-7-prompt-2">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-7-prompt-2">The brand system on the Figma Sandbox page is approved.
+Read the Figma file using Figma MCP: [paste Figma file URL]
+
+Extract from the Sandbox page:
+1. All color styles and their hex values
+2. Typography styles and their full properties (family, size, weight, line height, letter spacing)
+3. Any component variants defined
+
+Save as token-map.md in _config/design-system/ in the current project folder.
+
+This file is the source of truth for all implementation. No color, font, or spacing value gets used in code unless it's in this file.</code></pre>
+                </div>
               </div>
             </li>
 
-            <li class="step" data-step="8">
+            <li class="step" data-row-hover data-step="8">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-8-body">
-                <span class="step__num">08</span>
+                <span class="step__num" data-row-accent>08</span>
                 <span class="step__main">
                   <span class="step__title">Design pages in the Figma Sandbox</span>
                   <span class="step__summary">One section at a time. Four breakpoints. Five interaction states.</span>
@@ -576,7 +819,6 @@
                   <span class="step__badge step__badge--you">You do</span>
                   <span class="step__tool">Figma</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-8-body" hidden>
                 <p>One section, designed completely, before the next one starts. Every breakpoint is drawn, never assumed. Every interactive element has all five states: default, hover, focus, active, disabled.</p>
@@ -584,9 +826,9 @@
               </div>
             </li>
 
-            <li class="step" data-step="9">
+            <li class="step" data-row-hover data-step="9">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-9-body">
-                <span class="step__num">09</span>
+                <span class="step__num" data-row-accent>09</span>
                 <span class="step__main">
                   <span class="step__title">Build the sprint</span>
                   <span class="step__summary">Contract first. Then implementation. PR opens with a live preview URL.</span>
@@ -595,18 +837,49 @@
                   <span class="step__badge step__badge--prompt">Prompt Claude</span>
                   <span class="step__tool">Claude Code</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-9-body" hidden>
                 <p>The Generator reads <code>WORKSPACE.md</code>, <code>studio-memory.md</code>, and <code>token-map.md</code>, pulls the Sandbox frames via Figma MCP, and proposes a sprint contract before writing a line of code. I approve the contract in writing first.</p>
                 <p>Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at <code>/_previews/[N]/</code>. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.</p>
                 <p>Dispatched via Agent View as a background session, so the build runs without my attention. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract is approved.</p>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt · Claude Code (Generator)</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-9-prompt">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-9-prompt">/caveman
+
+Read WORKSPACE.md, ~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md, and _config/design-system/token-map.md before anything else.
+
+Using Figma MCP, read the [section or page name] frames on the Sandbox page of this Figma file: [paste Figma URL]
+
+Before writing any code:
+1. Propose a sprint contract — exactly what you will build and the specific criteria I will use to verify it's complete
+2. Stop and wait for my approval of the contract
+3. Only begin implementation after I confirm
+
+Implementation requirements:
+- Framework: [Next.js / HTML+CSS / React — pick one]
+- All values must come from token-map.md — do not invent any color, font, or spacing not in that file
+- Mobile-first, all four breakpoints: 360, 768, 1024, 1440
+- Asset paths must work both at root (production) and at a subpath (PR previews). Use relative paths or read BASE_PATH from env. Do NOT hardcode absolute asset paths like /images/foo.png.
+
+When complete:
+- Run `npm run preview [section-name]` to generate snapshot screenshots at all four breakpoints into /previews/[section-name]/
+- Create a feature branch called feat/[section-name] and open a PR with: summary, "## Live Preview" placeholder, "## Snapshots" with 4 embedded images
+- Print the preview URL in chat as a raw cmd-clickable line: 📱 Preview URL: https://[domain]/_previews/[pr-number]/
+- Run `gh run watch --exit-status` on preview-deploy.yml and print ✅ on success / ❌ + failure logs on fail
+- Stop and wait — do not proceed to the next section without my approval</code></pre>
+                </div>
               </div>
             </li>
 
-            <li class="step" data-step="10">
+            <li class="step" data-row-hover data-step="10">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-10-body">
-                <span class="step__num">10</span>
+                <span class="step__num" data-row-accent>10</span>
                 <span class="step__main">
                   <span class="step__title">Evaluate the sprint</span>
                   <span class="step__summary">Fresh session. Single pass. Four criteria scored. PASS or FAIL.</span>
@@ -615,18 +888,54 @@
                   <span class="step__badge step__badge--prompt">Prompt Claude</span>
                   <span class="step__tool">Claude Code</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-10-body" hidden>
                 <p>A fresh Claude Code session, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
                 <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.</p>
                 <p><strong>Never put a <code>/goal</code> on this session.</strong> The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.</p>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt · Claude Code (Evaluator, fresh session)</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-10-prompt">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-10-prompt">/caveman
+
+You are the Evaluator for The Shokunin Crafthouse.
+Read WORKSPACE.md and ~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md first.
+
+The Generator just completed Sprint [N].
+
+Sprint contract was: [paste the exact contract Claude proposed in Step 9]
+Live preview URL: [paste the URL from the bot comment on the PR]
+
+Evaluation order:
+1. First, open /previews/[section-name]/ and grade design quality, craft, originality, and functionality from the snapshot images across breakpoints. These are the canonical visual surface — what a real visitor would experience.
+2. Second, fetch the live preview URL to confirm: the page returns 200, copy matches the snapshots, asset paths resolve, and there is no obvious structural breakage in the raw HTML. Note: WebFetch returns text only — do not use it to grade any visual criterion.
+3. Third, read the code to verify token discipline (every color, font, spacing value comes from token-map.md), accessibility patterns, and that asset paths work both at root and under /_previews/[N]/.
+
+Do NOT spin up a local dev server. The live preview URL is already running on Hostinger.
+
+Grade against our 4 criteria:
+1. Originality — deliberate creative decisions, no AI default patterns (score out of 10)
+2. Design Quality — coherent whole, distinct mood, not a template (score out of 10)
+3. Craft — typography, spacing, color harmony, contrast ratios (REQUIRED PASS — cannot ship with craft failures)
+4. Functionality — users can complete tasks without confusion (REQUIRED PASS — cannot ship with broken flows)
+
+Be skeptical. Uncertainty = fail. Do not praise mediocre work.
+
+Output:
+- Score and specific finding for each criterion
+- PASS (ready to merge) or FAIL (list exact fixes required before merging)</code></pre>
+                </div>
               </div>
             </li>
 
-            <li class="step" data-step="11">
+            <li class="step" data-row-hover data-step="11">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-11-body">
-                <span class="step__num">11</span>
+                <span class="step__num" data-row-accent>11</span>
                 <span class="step__main">
                   <span class="step__title">Merge and deploy</span>
                   <span class="step__summary">I am the only one who pushes to main. Production rsyncs in ~30 seconds.</span>
@@ -635,7 +944,6 @@
                   <span class="step__badge step__badge--you">You do</span>
                   <span class="step__tool">GitHub</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-11-body" hidden>
                 <p>Final desktop and phone review on the preview URL. Click Merge. The production deploy workflow rsyncs to Hostinger in seconds; the cleanup workflow tears down the preview directory in parallel.</p>
@@ -644,9 +952,9 @@
               </div>
             </li>
 
-            <li class="step" data-step="12">
+            <li class="step" data-row-hover data-step="12">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-12-body">
-                <span class="step__num">12</span>
+                <span class="step__num" data-row-accent>12</span>
                 <span class="step__main">
                   <span class="step__title">Repeat for each section</span>
                   <span class="step__summary">Design, build, evaluate, merge, promote. One section at a time.</span>
@@ -655,16 +963,15 @@
                   <span class="step__badge step__badge--you">You do</span>
                   <span class="step__tool">Workflow</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-12-body" hidden>
                 <p>One section at a time. I do not design everything before building anything. The loop produces fast feedback: each shipped section informs the next, and the studio memory grows project-by-project rather than at the end.</p>
               </div>
             </li>
 
-            <li class="step" data-step="13">
+            <li class="step" data-row-hover data-step="13">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-13-body">
-                <span class="step__num">13</span>
+                <span class="step__num" data-row-accent>13</span>
                 <span class="step__main">
                   <span class="step__title">Update the studio memory</span>
                   <span class="step__summary">Append learnings. Never rewrite. The system gets smarter every time.</span>
@@ -673,17 +980,36 @@
                   <span class="step__badge step__badge--prompt">Prompt Claude</span>
                   <span class="step__tool">Cowork</span>
                 </span>
-                <span class="step__chev" data-arrow aria-hidden="true">▾</span>
               </button>
               <div class="step__body" id="step-13-body" hidden>
                 <p>After delivery, Cowork appends to <code>studio-memory.md</code>: design approaches that worked, code patterns that became standing standards, mistakes to avoid next time, and any new aesthetic preferences that emerged.</p>
                 <p><strong>Approval gate four — Delivery.</strong> Memory updated, decisions logged, the project closes. The next project starts with that knowledge already loaded.</p>
+                <div class="step__prompt" data-prompt-block>
+                  <header class="step__prompt-head">
+                    <p class="step__prompt-eyebrow">Prompt · Claude Code · Cowork</p>
+                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-13-prompt">
+                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </header>
+                  <pre><code id="step-13-prompt">Update the studio memory file at:
+~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md
+
+Append to ACCUMULATED LEARNINGS:
+- Design approaches that worked well on this project
+- Code patterns we established
+- Mistakes to avoid next time
+- Any decisions that should become standing studio standards
+
+Append to CREATIVE PREFERENCES if anything new emerged about aesthetic direction.
+Append to TECHNOLOGY STACK if any new tool patterns were established.
+
+Do not rewrite or remove any existing content. Only append.
+Commit the updated file and push.</code></pre>
+                </div>
               </div>
             </li>
           </ol>
-
-          <!-- Forward link — no dead ends -->
-          <p class="section__next"><a href="#brain">Where the brain lives <span data-arrow aria-hidden="true">→</span></a></p>
 
           <!-- Approval gates table — standalone callout -->
           <aside class="gates" aria-labelledby="gates-title">
@@ -752,18 +1078,19 @@
           <p class="section__lede">These are the files Claude reads at the start of every session. The studio gets smarter with every project because this memory persists.</p>
         </header>
 
-        <div class="subsections">
-          <details class="subsection" open>
-            <summary class="subsection__head">
-              <span class="subsection__index">4A</span>
-              <span class="subsection__title">Studio memory</span>
-              <span class="subsection__chev" data-arrow aria-hidden="true">▾</span>
-            </summary>
-            <div class="subsection__body">
-              <p>One file, read at the start of every Claude Code session: <code>studio-memory.md</code>. It holds the studio identity, the seven design principles, the four design quality criteria, the technology stack, the code standards, the approval gates, the creative defaults, and a running log of accumulated learnings.</p>
+        <ol class="brain-list" data-brain-list>
+          <li class="brain-row" data-row-hover data-brain-row="memory">
+            <button class="brain-row__head" type="button" aria-expanded="true" aria-controls="brain-row-1-body">
+              <span class="brain-row__num" data-row-accent>01</span>
+              <span class="brain-row__main">
+                <span class="brain-row__title">Studio Memory</span>
+              </span>
+            </button>
+            <div class="brain-row__body" id="brain-row-1-body">
+              <p class="brain-row__lede">One file, read at the start of every Claude Code session: <code>studio-memory.md</code>. It holds the studio identity, the seven design principles, the four design quality criteria, the technology stack, the code standards, the approval gates, the creative defaults, and a running log of accumulated learnings.</p>
               <p>It is not a document for humans. It is dense, directive, and written as instructions Claude reads to do its job. The file is short on purpose. Length is friction.</p>
 
-              <p class="subsection__lead">Three real entries from <code>§8 Accumulated Learnings</code>:</p>
+              <p class="brain-row__eyebrow">Three real entries from <code>§8 Accumulated Learnings</code></p>
               <ul class="learnings">
                 <li class="learning">
                   <p class="learning__head"><strong>Next.js <code>trailingSlash: true</code> needs <code>skipTrailingSlashRedirect: true</code> for POST routes.</strong> <span class="learning__date">2026-05-09</span></p>
@@ -780,17 +1107,18 @@
               </ul>
               <p>Every shipped project adds entries here. The next project starts with these already loaded.</p>
             </div>
-          </details>
+          </li>
 
-          <details class="subsection">
-            <summary class="subsection__head">
-              <span class="subsection__index">4B</span>
-              <span class="subsection__title">Workspace architecture</span>
-              <span class="subsection__chev" data-arrow aria-hidden="true">▾</span>
-            </summary>
-            <div class="subsection__body">
-              <p>Every project clones from the same template. <code>WORKSPACE.md</code> defines the project. <code>WORKFLOW.md</code> defines the stages and approval gates. <code>token-map.md</code> is the design system source of truth. Stages live in numbered folders so the lifecycle is visible at a glance.</p>
-              <p class="subsection__lead">Open any folder below to see what's inside.</p>
+          <li class="brain-row" data-row-hover data-brain-row="workspace">
+            <button class="brain-row__head" type="button" aria-expanded="false" aria-controls="brain-row-2-body">
+              <span class="brain-row__num" data-row-accent>02</span>
+              <span class="brain-row__main">
+                <span class="brain-row__title">Workspace architecture</span>
+              </span>
+            </button>
+            <div class="brain-row__body" id="brain-row-2-body" hidden>
+              <p class="brain-row__lede">Every project clones from the same template. <code>WORKSPACE.md</code> defines the project. <code>WORKFLOW.md</code> defines the stages and approval gates. <code>token-map.md</code> is the design system source of truth. Stages live in numbered folders so the lifecycle is visible at a glance.</p>
+              <p class="brain-row__eyebrow">Open any folder below to see what's inside</p>
 
               <div class="tree">
                 <details class="tree__node" open>
@@ -845,18 +1173,19 @@
                 </details>
               </div>
             </div>
-          </details>
+          </li>
 
-          <details class="subsection">
-            <summary class="subsection__head">
-              <span class="subsection__index">4C</span>
-              <span class="subsection__title">Quality system</span>
-              <span class="subsection__chev" data-arrow aria-hidden="true">▾</span>
-            </summary>
-            <div class="subsection__body">
-              <p>Quality is systematic, not subjective. The Evaluator grades every sprint against four criteria. Two are required passes — sprints cannot ship with failures there. The four approval gates in <a href="#workflow">the workflow</a> protect the system from drift.</p>
+          <li class="brain-row" data-row-hover data-brain-row="quality">
+            <button class="brain-row__head" type="button" aria-expanded="false" aria-controls="brain-row-3-body">
+              <span class="brain-row__num" data-row-accent>03</span>
+              <span class="brain-row__main">
+                <span class="brain-row__title">Quality system</span>
+              </span>
+            </button>
+            <div class="brain-row__body" id="brain-row-3-body" hidden>
+              <p class="brain-row__lede">Quality is systematic, not subjective. The Evaluator grades every sprint against four criteria. Two are required passes — sprints cannot ship with failures there. The four approval gates in <a href="#workflow">the workflow</a> protect the system from drift.</p>
 
-              <p class="subsection__lead">The four criteria:</p>
+              <p class="brain-row__eyebrow">The four criteria</p>
               <ul class="criteria">
                 <li>
                   <p class="criteria__head"><strong>Originality</strong> <span class="criteria__weight">Highest weight</span></p>
@@ -876,16 +1205,17 @@
                 </li>
               </ul>
             </div>
-          </details>
+          </li>
 
-          <details class="subsection">
-            <summary class="subsection__head">
-              <span class="subsection__index">4D</span>
-              <span class="subsection__title">Creative defaults</span>
-              <span class="subsection__chev" data-arrow aria-hidden="true">▾</span>
-            </summary>
-            <div class="subsection__body">
-              <p>These are the defaults I've encoded so every session starts with a point of view, not a blank canvas. From <code>studio-memory.md §9</code>.</p>
+          <li class="brain-row" data-row-hover data-brain-row="defaults">
+            <button class="brain-row__head" type="button" aria-expanded="false" aria-controls="brain-row-4-body">
+              <span class="brain-row__num" data-row-accent>04</span>
+              <span class="brain-row__main">
+                <span class="brain-row__title">Creative defaults</span>
+              </span>
+            </button>
+            <div class="brain-row__body" id="brain-row-4-body" hidden>
+              <p class="brain-row__lede">These are the defaults I've encoded so every session starts with a point of view, not a blank canvas. From <code>studio-memory.md §9</code>.</p>
 
               <ul class="defaults">
                 <li>
@@ -918,18 +1248,16 @@
                 </li>
               </ul>
             </div>
-          </details>
-        </div>
+          </li>
+        </ol>
       </div>
     </section>
 
     <!-- ============================================================
-         SECTION 5 — Deep Dive: The Tools
+         SECTION 4 — Deep Dive: Tools (Figma 55:9840)
          Psychology: Authority Bias + Aesthetic-Usability Effect
-         3 quick-reference tables + Claude Design callout + Cowork callout.
+         Three accordion sub-rows, each carrying a quick-reference table.
          ============================================================ -->
-    <!-- Hidden on Load. Kept in DOM for Phase 2 expanded-state wiring.
-         Block/CostNote and Callout/Design components removed (not in On Load). -->
     <section class="section section--tools" data-section id="tools" hidden>
       <div class="container">
         <header class="section__header">
@@ -943,165 +1271,160 @@
             <a href="#tools" aria-current="page">Tools</a>
           </nav>
           <h2 class="t-display section__title">Right tool, right phase.</h2>
-          <p class="section__lede">Three tables. Designed to scan, not read.</p>
+          <p class="section__lede">Three tables. Designed to scan, not read. Claude Design and Cowork get their own callouts because they're often misunderstood.</p>
         </header>
 
-        <article class="tool-table">
-          <header class="tool-table__head">
-            <p class="tool-table__count">01</p>
-            <h3 class="tool-table__title">Studio setup</h3>
-            <p class="tool-table__source">Sourced from <code>Business Runbook</code> §1–9.</p>
-          </header>
-          <div class="tool-table__scroll">
-            <table>
-              <thead>
-                <tr><th scope="col">If I need to…</th><th scope="col">Use this</th><th scope="col">Why</th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td data-label="If I need to…">Persist studio identity across every session</td>
-                  <td data-label="Use this"><code>studio-memory.md</code> + Claude Project</td>
-                  <td data-label="Why">Read at the start of every Claude Code session. The studio compounds.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Build with the agent</td>
-                  <td data-label="Use this">Claude Code (terminal)</td>
-                  <td data-label="Why">All code work — scaffold, build, deploy. Background sessions in Agent View.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Protect main from accidents</td>
-                  <td data-label="Use this">GitHub branch ruleset</td>
-                  <td data-label="Why">PR required, force-pushes blocked, deletions restricted. I am the only approver.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Constrain Claude's reach</td>
-                  <td data-label="Use this"><code>~/.claude/settings.json</code></td>
-                  <td data-label="Why">Allowed paths only. SSH, keychains, personal docs blocked.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Keep budget low by default</td>
-                  <td data-label="Use this">Sonnet 4.6</td>
-                  <td data-label="Why">Default model. Opus only when the task explicitly demands it.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
-
-        <article class="tool-table">
-          <header class="tool-table__head">
-            <p class="tool-table__count">02</p>
-            <h3 class="tool-table__title">Project workflow</h3>
-            <p class="tool-table__source">Sourced from <code>New Project Setup Guide</code> v1.9.</p>
-          </header>
-          <div class="tool-table__scroll">
-            <table>
-              <thead>
-                <tr><th scope="col">If I need to…</th><th scope="col">Use this</th><th scope="col">Why</th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td data-label="If I need to…">Turn a brief into a spec</td>
-                  <td data-label="Use this">Claude.ai Planner</td>
-                  <td data-label="Why">Studio context already in project knowledge. One pass.</td>
-                </tr>
-                <tr class="tool-table__row--accent">
-                  <td data-label="If I need to…">Explore visual direction</td>
-                  <td data-label="Use this">Claude Design (Opus 4.7)</td>
-                  <td data-label="Why">Separate weekly limit. Does not draw from Max pool. Free creative resource within its own cap.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Translate Figma into code</td>
-                  <td data-label="Use this">Claude Code + Figma MCP</td>
-                  <td data-label="Why">Reads Sandbox, writes implementation. Never writes to Figma.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Get a live preview on every PR</td>
-                  <td data-label="Use this">GitHub Actions preview workflow</td>
-                  <td data-label="Why">Real URL per PR plus snapshot screenshots in the PR body.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Run unattended within a phase</td>
-                  <td data-label="Use this"><code>/goal</code> after contract approval</td>
-                  <td data-label="Why">Collapses per-turn prompting. Never bypasses a gate.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Monitor multiple sprints at once</td>
-                  <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
-                  <td data-label="Why">One screen, all background sessions, status indicators.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Grade a sprint</td>
-                  <td data-label="Use this">Evaluator — fresh Claude Code session</td>
-                  <td data-label="Why">Single-pass audit. Never put <code>/goal</code> on it.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
-
-        <article class="tool-table">
-          <header class="tool-table__head">
-            <p class="tool-table__count">03</p>
-            <h3 class="tool-table__title">Knowledge work</h3>
-            <p class="tool-table__source">Sourced from <code>Cowork Setup Guide</code> v1.1.</p>
-          </header>
-          <div class="tool-table__scroll">
-            <table>
-              <thead>
-                <tr><th scope="col">If I need to…</th><th scope="col">Use this</th><th scope="col">Why</th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td data-label="If I need to…">Sharpen a rough brief</td>
-                  <td data-label="Use this">Cowork</td>
-                  <td data-label="Why">File-based, multi-step. Reads <code>cowork-context.md</code> on every task.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Append to studio memory after ship</td>
-                  <td data-label="Use this">Cowork</td>
-                  <td data-label="Why">Appends, never rewrites. Saves directly to the file.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Organize deliverables before handoff</td>
-                  <td data-label="Use this">Cowork</td>
-                  <td data-label="Why">Renames, sorts, flags WIPs. Proposes the structure before changing anything.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Synthesize research into a design brief</td>
-                  <td data-label="Use this">Cowork + Claude for Chrome</td>
-                  <td data-label="Why">Full browser control. Fewer screen interactions, faster execution.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Dispatch a task from iPhone</td>
-                  <td data-label="Use this">Cowork remote dispatch</td>
-                  <td data-label="Why">iOS app → Mac runs the task. Mac stays awake.</td>
-                </tr>
-                <tr>
-                  <td data-label="If I need to…">Run a scheduled morning briefing</td>
-                  <td data-label="Use this">Cowork scheduled task</td>
-                  <td data-label="Why">Reads <code>WORKSPACE.md</code> across all active projects. Unattended.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
-
-        <div class="callouts">
-          <aside class="callout callout--cowork">
-            <header class="callout__head">
-              <p class="callout__eyebrow">Knowledge work surface</p>
-              <h3 class="callout__title">Cowork is the third tab. Not Code. Not Agent View.</h3>
-            </header>
-            <div class="callout__body">
-              <p>Cowork is the file-based knowledge-work tab in the Claude Desktop app — briefs, memory updates, deliverable organization, research synthesis. Anything Markdown-shaped that doesn't touch code.</p>
-              <p>Same Max token pool as Claude Code and chat. Same connectors as chat (Figma MCP included). iOS pairing enables remote dispatch from my phone while my Mac runs the task.</p>
-              <p><strong>Cowork is not Agent View.</strong> Agent View is the CLI multi-session control plane inside Claude Code. Cowork is the Desktop app's knowledge-work tab. They do not overlap.</p>
+        <ol class="tools-list" data-tools-list>
+          <li class="tools-row" data-row-hover data-tools-row="setup">
+            <button class="tools-row__head" type="button" aria-expanded="false" aria-controls="tools-row-1-body">
+              <span class="tools-row__num" data-row-accent>01</span>
+              <span class="tools-row__main">
+                <span class="tools-row__title">Studio Setup</span>
+              </span>
+            </button>
+            <div class="tools-row__body" id="tools-row-1-body" hidden>
+              <div class="tool-table__scroll">
+                <table>
+                  <thead>
+                    <tr><th scope="col">If I need to…</th><th scope="col">Use this</th><th scope="col">Why</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td data-label="If I need to…">Persist studio identity across every session</td>
+                      <td data-label="Use this"><code>studio-memory.md</code> + Claude Project</td>
+                      <td data-label="Why">Read at the start of every Claude Code session. The studio compounds.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Build with the agent</td>
+                      <td data-label="Use this">Claude Code (terminal)</td>
+                      <td data-label="Why">All code work — scaffold, build, deploy. Background sessions in Agent View.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Protect main from accidents</td>
+                      <td data-label="Use this">GitHub branch ruleset</td>
+                      <td data-label="Why">PR required, force-pushes blocked, deletions restricted. I am the only approver.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Constrain Claude's reach</td>
+                      <td data-label="Use this"><code>~/.claude/settings.json</code></td>
+                      <td data-label="Why">Allowed paths only. SSH, keychains, personal docs blocked.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Keep budget low by default</td>
+                      <td data-label="Use this">Sonnet 4.6</td>
+                      <td data-label="Why">Default model. Opus only when the task explicitly demands it.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </aside>
-        </div>
+          </li>
 
-        <p class="section__next"><a href="#hiring">How I'd apply this at your company <span data-arrow aria-hidden="true">→</span></a></p>
+          <li class="tools-row" data-row-hover data-tools-row="workflow">
+            <button class="tools-row__head" type="button" aria-expanded="true" aria-controls="tools-row-2-body">
+              <span class="tools-row__num" data-row-accent>02</span>
+              <span class="tools-row__main">
+                <span class="tools-row__title">Project Workflow</span>
+              </span>
+            </button>
+            <div class="tools-row__body" id="tools-row-2-body">
+              <div class="tool-table__scroll">
+                <table>
+                  <thead>
+                    <tr><th scope="col">If I need to…</th><th scope="col">Use this</th><th scope="col">Why</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td data-label="If I need to…">Turn a brief into a spec</td>
+                      <td data-label="Use this">Claude.ai Planner</td>
+                      <td data-label="Why">Studio context already in project knowledge. One pass.</td>
+                    </tr>
+                    <tr class="tool-table__row--accent">
+                      <td data-label="If I need to…">Explore visual direction</td>
+                      <td data-label="Use this">Claude Design (Opus 4.7)</td>
+                      <td data-label="Why">Separate weekly limit. Does not draw from Max pool. Free creative resource within its own cap.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Translate Figma into code</td>
+                      <td data-label="Use this">Claude Code + Figma MCP</td>
+                      <td data-label="Why">Reads Sandbox, writes implementation. Never writes to Figma.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Get a live preview on every PR</td>
+                      <td data-label="Use this">GitHub Actions preview workflow</td>
+                      <td data-label="Why">Real URL per PR plus snapshot screenshots in the PR body.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Run unattended within a phase</td>
+                      <td data-label="Use this"><code>/goal</code> after contract approval</td>
+                      <td data-label="Why">Collapses per-turn prompting. Never bypasses a gate.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Monitor multiple sprints at once</td>
+                      <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
+                      <td data-label="Why">One screen, all background sessions, status indicators.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Grade a sprint</td>
+                      <td data-label="Use this">Evaluator — fresh Claude Code session</td>
+                      <td data-label="Why">Single-pass audit. Never put <code>/goal</code> on it.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </li>
+
+          <li class="tools-row" data-row-hover data-tools-row="knowledge">
+            <button class="tools-row__head" type="button" aria-expanded="false" aria-controls="tools-row-3-body">
+              <span class="tools-row__num" data-row-accent>03</span>
+              <span class="tools-row__main">
+                <span class="tools-row__title">Knowledge work</span>
+              </span>
+            </button>
+            <div class="tools-row__body" id="tools-row-3-body" hidden>
+              <div class="tool-table__scroll">
+                <table>
+                  <thead>
+                    <tr><th scope="col">If I need to…</th><th scope="col">Use this</th><th scope="col">Why</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td data-label="If I need to…">Sharpen a rough brief</td>
+                      <td data-label="Use this">Cowork</td>
+                      <td data-label="Why">File-based, multi-step. Reads <code>cowork-context.md</code> on every task.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Append to studio memory after ship</td>
+                      <td data-label="Use this">Cowork</td>
+                      <td data-label="Why">Appends, never rewrites. Saves directly to the file.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Organize deliverables before handoff</td>
+                      <td data-label="Use this">Cowork</td>
+                      <td data-label="Why">Renames, sorts, flags WIPs. Proposes the structure before changing anything.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Synthesize research into a design brief</td>
+                      <td data-label="Use this">Cowork + Claude for Chrome</td>
+                      <td data-label="Why">Full browser control. Fewer screen interactions, faster execution.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Dispatch a task from iPhone</td>
+                      <td data-label="Use this">Cowork remote dispatch</td>
+                      <td data-label="Why">iOS app → Mac runs the task. Mac stays awake.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Run a scheduled morning briefing</td>
+                      <td data-label="Use this">Cowork scheduled task</td>
+                      <td data-label="Why">Reads <code>WORKSPACE.md</code> across all active projects. Unattended.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </li>
+        </ol>
       </div>
     </section>
 
@@ -1139,7 +1462,17 @@
 
           <div class="hiring__panels">
             <article class="hiring__panel" role="tabpanel" id="hire-startup" aria-labelledby="tab-startup" data-hiring-panel="startup" hidden>
+              <p class="hiring__eyebrow">It's <s>rocket</s> AI science</p>
               <p class="hiring__role">I am the design team.</p>
+              <div class="hiring__brain-card">
+                <span class="hiring__brain-icon" aria-hidden="true">
+                  <svg class="icon" viewBox="0 0 256 256"><use href="#ph-brain"/></svg>
+                </span>
+                <p class="hiring__brain-text">
+                  <strong class="hiring__brain-label">What I build first:</strong>
+                  A <code>WORKSPACE.md</code> for your product, a <code>studio-memory.md</code> for your design patterns, and a sprint workflow tuned to your ship cadence.
+                </p>
+              </div>
               <ul class="hiring__points">
                 <li>This system is how one designer ships at the pace of three.</li>
                 <li>Studio memory means day-one context on your product, users, and patterns. No ramp-up amnesia between sprints.</li>
@@ -1147,14 +1480,20 @@
                 <li>The Evaluator catches quality issues before they reach stakeholders. Design review without the headcount.</li>
                 <li>Tooling cost: ~$120/mo. The ROI is output velocity with zero quality compromise.</li>
               </ul>
-              <p class="hiring__build">
-                <span class="hiring__build-label">What I'd build first</span>
-                <span class="hiring__build-text">A <code>WORKSPACE.md</code> for your product, a <code>studio-memory.md</code> for your design patterns, and a sprint workflow tuned to your ship cadence.</span>
-              </p>
             </article>
 
             <article class="hiring__panel" role="tabpanel" id="hire-mid" aria-labelledby="tab-mid" data-hiring-panel="mid" hidden>
+              <p class="hiring__eyebrow">It's <s>rocket</s> AI science</p>
               <p class="hiring__role">I lead a design team.</p>
+              <div class="hiring__brain-card">
+                <span class="hiring__brain-icon" aria-hidden="true">
+                  <svg class="icon" viewBox="0 0 256 256"><use href="#ph-brain"/></svg>
+                </span>
+                <p class="hiring__brain-text">
+                  <strong class="hiring__brain-label">What I build first:</strong>
+                  A design quality framework, a team-wide memory system, and an AI-assisted sprint workflow that integrates with your existing engineering cadence.
+                </p>
+              </div>
               <ul class="hiring__points">
                 <li>This system is how I multiply their output without multiplying headcount.</li>
                 <li>Studio memory becomes the team's shared design intelligence. Onboarding accelerates, decisions compound, institutional knowledge survives turnover.</li>
@@ -1162,14 +1501,20 @@
                 <li>Sprint contracts and approval gates create the accountability structure design teams at this stage need, without adding process overhead.</li>
                 <li>The token strategy translates to a team budget: Sonnet for the volume work, Opus for the judgment work, Claude Design as a free creative resource on its own clock.</li>
               </ul>
-              <p class="hiring__build">
-                <span class="hiring__build-label">What I'd build first</span>
-                <span class="hiring__build-text">A design quality framework, a team-wide memory system, and an AI-assisted sprint workflow that integrates with your existing engineering cadence.</span>
-              </p>
             </article>
 
             <article class="hiring__panel" role="tabpanel" id="hire-enterprise" aria-labelledby="tab-enterprise" data-hiring-panel="enterprise" hidden>
+              <p class="hiring__eyebrow">It's <s>rocket</s> AI science</p>
               <p class="hiring__role">I lead a design function.</p>
+              <div class="hiring__brain-card">
+                <span class="hiring__brain-icon" aria-hidden="true">
+                  <svg class="icon" viewBox="0 0 256 256"><use href="#ph-brain"/></svg>
+                </span>
+                <p class="hiring__brain-text">
+                  <strong class="hiring__brain-label">What I build first:</strong>
+                  A pilot with one product team. Prove the model. Measure velocity, quality scores, and designer satisfaction. Then scale with a governance framework that gives teams autonomy within guardrails.
+                </p>
+              </div>
               <ul class="hiring__points">
                 <li>This system is the governance model that scales craft across business units without creating a bureaucracy.</li>
                 <li>Studio memory at this scale is a design knowledge graph. Principles, patterns, component decisions, and accumulated learnings any team in the org can query.</li>
@@ -1177,10 +1522,6 @@
                 <li>Approval gates align naturally with enterprise review cadences. Design review, accessibility audit, brand compliance, legal. No new sequential bottlenecks.</li>
                 <li>The token model translates directly to enterprise AI budgeting. Right-size the model to the task. Preserve capacity for high-judgment work.</li>
               </ul>
-              <p class="hiring__build">
-                <span class="hiring__build-label">What I'd build first</span>
-                <span class="hiring__build-text">A pilot with one product team. Prove the model. Measure velocity, quality scores, and designer satisfaction. Then scale with a governance framework that gives teams autonomy within guardrails.</span>
-              </p>
             </article>
           </div>
 
@@ -1214,7 +1555,7 @@
 
   <!-- Back to top — appears after scrolling past hero -->
   <button type="button" class="back-to-top" data-back-to-top aria-label="Back to top">
-    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3 7l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg class="icon" aria-hidden="true"><use href="#ph-arrow-up"/></svg>
   </button>
 
   <!-- Mobile bottom tab bar. Active state mirrors desktop nav via shared observer. -->
@@ -1229,5 +1570,6 @@
   </nav>
 
   <script src="./scripts/app.js" defer></script>
+  <script src="./scripts/hover.js" defer></script>
 </body>
 </html>
