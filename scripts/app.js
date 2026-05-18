@@ -39,12 +39,10 @@
       }
     }
 
-    // (2) First scroll triggers slide-in
-    const onFirstScroll = function () {
+    // (2) Slide in 1s after load (was: on first scroll).
+    window.setTimeout(function () {
       toggle.setAttribute("data-toggle-shown", "true");
-      window.removeEventListener("scroll", onFirstScroll);
-    };
-    window.addEventListener("scroll", onFirstScroll, { passive: true });
+    }, 1000);
 
     // (3) Past one viewport: collapse the "Dark Mode" label (pill slides over)
     let labelHidden = false;
@@ -105,21 +103,7 @@
     }
   }
 
-  /* ===== Sticky nav — show after scrolling past hero ===== */
-  const nav = document.querySelector("[data-nav]");
-  const hero = document.querySelector("[data-hero]");
-  if (nav && hero) {
-    const navObserver = new IntersectionObserver(function (entries) {
-      const heroEntry = entries[0];
-      // Show nav when hero is mostly out of view
-      if (heroEntry.intersectionRatio < 0.15) {
-        nav.classList.add("is-visible");
-      } else {
-        nav.classList.remove("is-visible");
-      }
-    }, { threshold: [0.15] });
-    navObserver.observe(hero);
-  }
+  /* ===== Sticky nav — visible on load (CSS handles fixed positioning). ===== */
 
   /* ===== Active section tracking — feeds both nav + tabbar ===== */
   const sections = Array.from(document.querySelectorAll("[data-section]"));
@@ -157,6 +141,9 @@
       }
     }, { rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] });
     sections.forEach(function (s) { sectionObserver.observe(s); });
+    // Expose so the structural fold-in (later in this IIFE) can re-observe the
+    // <li> nodes that inherited the folded sections' ids.
+    window.__sectionObserver = sectionObserver;
   }
 
   /* ===== Bottom tab bar — hide on scroll-down past 200, reveal on scroll-up ===== */
@@ -225,152 +212,198 @@
     el.addEventListener("pointerleave", onUp);
   }
 
-  /* ===== Drawer overlay (Section 2 cards) =====
-     One drawer at a time. Open via [data-card], close via Esc / scrim / close
-     button / swipe-down (mobile). Locks body scroll while open. */
-  const drawer = document.querySelector("[data-drawer]");
-  const scrim = document.querySelector("[data-drawer-scrim]");
-  const drawerHead = drawer && drawer.querySelector("[data-drawer-title]");
-  const drawerEyebrow = drawer && drawer.querySelector("[data-drawer-eyebrow]");
-  const drawerBody = drawer && drawer.querySelector("[data-drawer-body]");
-  const drawerMedia = drawer && drawer.querySelector("[data-drawer-media]");
-  const drawerHandle = drawer && drawer.querySelector("[data-drawer-handle]");
+  /* ===== Structural fold-in =====
+     Lift the workflow/brain/tools sections out of the page and into their
+     respective .overview row's expanded slot. This matches Figma 55:9949 / 55:9391 /
+     55:9840 where each section is a row in the same accordion. */
+  function foldSectionIntoRow(rowKey, sectionSelector, slotId) {
+    const rowBtn = document.querySelector('[data-overview-row="' + rowKey + '"]');
+    const section = document.querySelector(sectionSelector);
+    if (!rowBtn || !section) return;
+    const li = rowBtn.closest("li");
+    if (!li) return;
 
-  if (drawer && scrim) {
-    const CARD_TITLES = {
-      brain: { eyebrow: "01 :: Card", title: "The Brain" },
-      workflow: { eyebrow: "02 :: Card", title: "The Workflow" },
-      agents: { eyebrow: "03 :: Card", title: "The Agents" },
-      stack: { eyebrow: "04 :: Card", title: "The Tools" },
-    };
-    let activeCardEl = null;
-    let lastScrollY = 0;
+    let openDiv = li.querySelector(".overview-row__open");
+    if (!openDiv) {
+      openDiv = document.createElement("div");
+      openDiv.className = "overview-row__open";
+      openDiv.id = slotId;
+      li.appendChild(openDiv);
+    }
+    rowBtn.setAttribute("aria-controls", openDiv.id);
 
-    function openDrawer(name, fromEl) {
-      const tpl = document.querySelector('[data-drawer-tpl="' + name + '"]');
-      if (!tpl) return;
-      // Clone template into a fragment so we can split media from body
-      const frag = tpl.content.cloneNode(true);
-      const mediaWrap = frag.querySelector("[data-tpl-media]");
-      // Place media (or hide slot)
-      drawerMedia.innerHTML = "";
-      if (mediaWrap) {
-        // Move media's children into the slot, then remove the wrapper from body
-        while (mediaWrap.firstChild) drawerMedia.appendChild(mediaWrap.firstChild);
-        mediaWrap.parentNode.removeChild(mediaWrap);
+    const container = section.querySelector(".container") || section;
+
+    // section__header gets discarded: crumbs are hardcoded in the row button now,
+    // the h2 duplicates the row title, only the lede is worth keeping.
+    const sectionHeader = container.querySelector(".section__header");
+    if (sectionHeader) {
+      const lede = sectionHeader.querySelector(".section__lede");
+      if (lede) {
+        lede.classList.remove("section__lede");
+        lede.classList.add("overview-row__lede");
+        openDiv.appendChild(lede);
       }
-      // Place body
-      drawerBody.innerHTML = "";
-      drawerBody.appendChild(frag);
-      // Init brain interaction if present
-      const brain = drawerMedia.querySelector("[data-brain-3d]");
-      if (brain) initBrainInteraction(brain);
-      // Header
-      const meta = CARD_TITLES[name] || { eyebrow: "", title: "" };
-      drawerEyebrow.textContent = meta.eyebrow;
-      drawerHead.textContent = meta.title;
-      // Show
-      drawer.hidden = false;
-      scrim.hidden = false;
-      // Force reflow so transition runs
-      void drawer.offsetWidth;
-      drawer.setAttribute("data-shown", "true");
-      scrim.setAttribute("data-shown", "true");
-      // Lock scroll
-      lastScrollY = window.scrollY;
-      document.body.style.position = "fixed";
-      document.body.style.top = "-" + lastScrollY + "px";
-      document.body.style.left = "0";
-      document.body.style.right = "0";
-      // Aria
-      activeCardEl = fromEl;
-      if (fromEl) fromEl.setAttribute("aria-expanded", "true");
-      // Focus close button after transition starts
-      setTimeout(function () {
-        const closeBtn = drawer.querySelector("[data-drawer-close]");
-        if (closeBtn) closeBtn.focus();
-      }, 50);
+      sectionHeader.remove();
     }
 
-    function closeDrawer() {
-      if (drawer.hidden) return;
-      drawer.removeAttribute("data-shown");
-      scrim.removeAttribute("data-shown");
-      // Unlock scroll
-      const y = lastScrollY;
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.left = "";
-      document.body.style.right = "";
-      window.scrollTo(0, y);
-      // Aria + focus return
-      if (activeCardEl) {
-        activeCardEl.setAttribute("aria-expanded", "false");
-        activeCardEl.focus();
-        activeCardEl = null;
+    // Move the remaining .container in as a single block to preserve max-width.
+    // If there was no .container (defensive), move the loose children instead.
+    if (container !== section && container.parentNode) {
+      openDiv.appendChild(container);
+    } else {
+      while (container.firstChild) {
+        openDiv.appendChild(container.firstChild);
       }
-      // Hide after transition completes
-      setTimeout(function () {
-        if (!drawer.hasAttribute("data-shown")) {
-          drawer.hidden = true;
-          scrim.hidden = true;
+    }
+
+    // Carry over the section's id (e.g. #workflow) to the li so nav anchors still work
+    if (section.id) {
+      const oldId = section.id;
+      section.removeAttribute("id");
+      if (!li.id) li.id = oldId;
+    }
+    // Mark the li as a tracked section so scroll-spy continues to work
+    li.setAttribute("data-section", "");
+    if (window.__sectionObserver) {
+      window.__sectionObserver.observe(li);
+    }
+    section.remove();
+
+    // Enable + collapse the row (row 01 stays expanded; folded rows ship collapsed)
+    rowBtn.removeAttribute("disabled");
+    if (!rowBtn.hasAttribute("aria-expanded")) {
+      rowBtn.setAttribute("aria-expanded", "false");
+    } else if (rowBtn.getAttribute("aria-expanded") !== "true") {
+      rowBtn.setAttribute("aria-expanded", "false");
+    }
+  }
+
+  foldSectionIntoRow("workflow", ".section--workflow", "overview-row-2-body");
+  foldSectionIntoRow("brain",    ".section--brain",    "overview-row-3-body");
+  foldSectionIntoRow("tools",    ".section--tools",    "overview-row-4-body");
+
+  /* ===== Section 1 — Overview row toggle =====
+     Click .overview-row → toggle aria-expanded (CSS hides/shows .overview-row__open).
+     Row 01 ships open (aria-expanded="true" in HTML); others ship collapsed. */
+  document.querySelectorAll(".overview-row").forEach(function (btn) {
+    if (btn.hasAttribute("disabled")) return;
+    btn.addEventListener("click", function () {
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+    });
+  });
+
+  /* Sticky-nav anchor links auto-expand the matching row */
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      const href = a.getAttribute("href");
+      if (!href || href === "#") return;
+      const id = href.slice(1);
+      const target = document.getElementById(id);
+      if (!target) return;
+      const rowBtn = target.querySelector(".overview-row");
+      if (rowBtn && rowBtn.getAttribute("aria-expanded") === "false") {
+        rowBtn.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
+
+  /* ===== Section 1 — Card click → inline panel swap (Figma 57:10767) =====
+     Click a card → clone its template into [data-card-panel], swap active state,
+     hide panel if same card is clicked again. */
+  const cardPanel = document.querySelector("[data-card-panel]");
+  if (cardPanel) {
+    const CARD_TITLES = {
+      brain: "The Brain",
+      workflow: "The Workflow",
+      agents: "The Agents",
+      stack: "The Tools",
+    };
+    let activeCard = null;
+
+    function closeCard() {
+      if (activeCard) activeCard.setAttribute("aria-expanded", "false");
+      activeCard = null;
+      cardPanel.hidden = true;
+      cardPanel.innerHTML = "";
+    }
+
+    function openCard(name, btn) {
+      const tpl = document.querySelector('[data-drawer-tpl="' + name + '"]');
+      if (!tpl) return;
+      // Clear prior state on all cards
+      document.querySelectorAll("[data-card]").forEach(function (c) {
+        c.setAttribute("aria-expanded", "false");
+      });
+      // Mount new content. Strip media wrapper — Figma frame 57:10767 shows no media slot.
+      const frag = tpl.content.cloneNode(true);
+      const mediaWrap = frag.querySelector("[data-tpl-media]");
+      if (mediaWrap) mediaWrap.parentNode.removeChild(mediaWrap);
+      // Wrap content with title + structured layout
+      cardPanel.innerHTML = "";
+      const wrap = document.createElement("div");
+      wrap.className = "overview-row__panel-inner";
+      const title = document.createElement("h3");
+      title.className = "overview-row__panel-title";
+      title.textContent = CARD_TITLES[name] || "";
+      wrap.appendChild(title);
+      const body = document.createElement("div");
+      body.className = "overview-row__panel-body";
+      body.appendChild(frag);
+      // Promote .drawer__stats to .overview-row__panel-stats
+      const stats = body.querySelector(".drawer__stats");
+      if (stats) {
+        stats.classList.add("overview-row__panel-stats");
+        stats.classList.remove("drawer__stats");
+        stats.querySelectorAll(".drawer__stat-num").forEach(function (n) {
+          n.classList.remove("drawer__stat-num");
+          n.classList.add("overview-row__panel-stat-num");
+        });
+        stats.querySelectorAll(".drawer__stat-label").forEach(function (l) {
+          l.classList.remove("drawer__stat-label");
+          l.classList.add("overview-row__panel-stat-label");
+        });
+        body.parentNode.appendChild(stats);
+      }
+      // Promote .drawer__link to .overview-row__panel-link
+      const linkWrap = body.querySelector(".drawer__link");
+      if (linkWrap) {
+        const link = linkWrap.querySelector("a");
+        if (link) {
+          link.classList.add("overview-row__panel-link");
+          // Swap text arrow span for Phosphor SVG
+          const oldArrow = link.querySelector("[data-arrow]");
+          if (oldArrow) {
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("class", "icon icon--md");
+            svg.setAttribute("data-arrow", "");
+            const use = document.createElementNS(svgNS, "use");
+            use.setAttribute("href", "#ph-arrow-right");
+            svg.appendChild(use);
+            oldArrow.parentNode.replaceChild(svg, oldArrow);
+          }
+          body.parentNode.appendChild(link);
         }
-      }, 320);
+        linkWrap.parentNode.removeChild(linkWrap);
+      }
+      wrap.appendChild(body);
+      cardPanel.appendChild(wrap);
+
+      // Show panel
+      cardPanel.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      activeCard = btn;
     }
 
     document.querySelectorAll("[data-card]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        openDrawer(btn.getAttribute("data-card"), btn);
+        const name = btn.getAttribute("data-card");
+        if (activeCard === btn) closeCard();
+        else openCard(name, btn);
       });
     });
-    scrim.addEventListener("click", closeDrawer);
-    drawer.querySelector("[data-drawer-close]").addEventListener("click", closeDrawer);
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && !drawer.hidden && drawer.hasAttribute("data-shown")) closeDrawer();
-    });
-    // Drawer-internal anchor links should close drawer then jump
-    drawer.addEventListener("click", function (e) {
-      const a = e.target.closest("[data-drawer-jump]");
-      if (!a) return;
-      e.preventDefault();
-      const href = a.getAttribute("href");
-      closeDrawer();
-      setTimeout(function () {
-        const id = href.replace(/^#/, "");
-        const target = document.getElementById(id);
-        if (target) {
-          const navH = window.matchMedia("(min-width: 768px)").matches ? 64 : 0;
-          const top = target.getBoundingClientRect().top + window.scrollY - navH - 12;
-          window.scrollTo({ top: top, behavior: "smooth" });
-          history.pushState(null, "", href);
-        }
-      }, 320);
-    });
-
-    // Mobile: swipe down on handle to close
-    if (drawerHandle) {
-      let startY = null;
-      let dy = 0;
-      drawerHandle.addEventListener("touchstart", function (e) {
-        startY = e.touches[0].clientY;
-        dy = 0;
-      }, { passive: true });
-      drawerHandle.addEventListener("touchmove", function (e) {
-        if (startY === null) return;
-        dy = e.touches[0].clientY - startY;
-        if (dy > 0) {
-          drawer.style.transform = "translateY(" + dy + "px)";
-          drawer.style.transition = "none";
-        }
-      }, { passive: true });
-      drawerHandle.addEventListener("touchend", function () {
-        drawer.style.transition = "";
-        drawer.style.transform = "";
-        if (dy > 80) closeDrawer();
-        startY = null;
-        dy = 0;
-      });
-    }
   }
 
   /* ===== Section 3 — Timeline / steps =====
@@ -444,6 +477,42 @@
       });
     }
   }
+
+  /* ===== Section 3 — Studio Brain row accordion =====
+     Delegated click on .brain-row__head toggles aria-expanded + body[hidden].
+     Section 3 folds into the overview accordion via foldSectionIntoRow, so this
+     handler scans the whole document (the [data-brain-list] node has moved). */
+  document.addEventListener("click", function (e) {
+    const head = e.target.closest(".brain-row__head");
+    if (!head) return;
+    const row = head.closest(".brain-row");
+    if (!row) return;
+    const body = row.querySelector(".brain-row__body");
+    if (!body) return;
+    const isOpen = head.getAttribute("aria-expanded") === "true";
+    head.setAttribute("aria-expanded", isOpen ? "false" : "true");
+    body.hidden = isOpen;
+  });
+
+  /* ===== Section 4 — Tools row accordion =====
+     Same shape as brain rows, but single-open: opening one closes the others.
+     Clicking the already-open row closes it (no row stays forced-open). */
+  document.addEventListener("click", function (e) {
+    const head = e.target.closest(".tools-row__head");
+    if (!head) return;
+    const row = head.closest(".tools-row");
+    const list = row && row.closest("[data-tools-list]");
+    if (!row || !list) return;
+    const isOpen = head.getAttribute("aria-expanded") === "true";
+    list.querySelectorAll(".tools-row").forEach(function (sibling) {
+      const sibHead = sibling.querySelector(".tools-row__head");
+      const sibBody = sibling.querySelector(".tools-row__body");
+      if (!sibHead || !sibBody) return;
+      const shouldOpen = sibling === row && !isOpen;
+      sibHead.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+      sibBody.hidden = !shouldOpen;
+    });
+  });
 
   /* ===== Section 6 — Hiring tabs =====
      On Load: no tab selected, all panels hidden, CTA hidden.
@@ -523,6 +592,47 @@
     window.scrollTo({ top: top, behavior: "smooth" });
     // Update hash without jumping
     history.pushState(null, "", "#" + id);
+  });
+
+  /* ===== Copy-to-clipboard for [data-copy] buttons.
+     Reads the textContent of #[data-copy-target] and writes it to the clipboard.
+     Swaps the icon + label to a "Copied" affordance for 1.6s. */
+  const copyButtons = document.querySelectorAll("[data-copy]");
+  copyButtons.forEach(function (btn) {
+    const targetId = btn.getAttribute("data-copy-target");
+    const labelEl = btn.querySelector("[data-copy-label]");
+    const iconUse = btn.querySelector(".icon use");
+    let resetTimer = null;
+
+    btn.addEventListener("click", async function () {
+      const target = document.getElementById(targetId);
+      if (!target) return;
+      const text = target.textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        // Fallback for non-secure contexts
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "absolute";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch (_) {}
+        document.body.removeChild(ta);
+      }
+      btn.setAttribute("data-copy-state", "copied");
+      if (labelEl) labelEl.textContent = "Copied";
+      if (iconUse) iconUse.setAttribute("href", "#ph-check");
+      if (resetTimer) clearTimeout(resetTimer);
+      resetTimer = setTimeout(function () {
+        btn.removeAttribute("data-copy-state");
+        if (labelEl) labelEl.textContent = "Copy";
+        if (iconUse) iconUse.setAttribute("href", "#ph-copy");
+        resetTimer = null;
+      }, 1600);
+    });
   });
 
 })();

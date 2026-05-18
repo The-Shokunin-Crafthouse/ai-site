@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <!--
+    Phosphor Icons — Regular weight. Self-hosted subset.
+    Source: https://phosphoricons.com (MIT). 24x24 viewbox, currentColor strokes.
+    Only the icons used on this page are included to keep weight under spec.
+  -->
+  <symbol id="ph-arrow-right" viewBox="0 0 256 256">
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="M40 128h176m-72-72 72 72-72 72"/>
+  </symbol>
+  <symbol id="ph-arrow-up" viewBox="0 0 256 256">
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="M128 216V40m-72 72 72-72 72 72"/>
+  </symbol>
+  <symbol id="ph-caret-down" viewBox="0 0 256 256">
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="m208 96-80 80-80-80"/>
+  </symbol>
+  <symbol id="ph-x" viewBox="0 0 256 256">
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="M200 56 56 200M200 200 56 56"/>
+  </symbol>
+  <symbol id="ph-copy" viewBox="0 0 256 256">
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="M168 168h40V40H80v40m-40 0v136h128V80Z"/>
+  </symbol>
+  <symbol id="ph-check" viewBox="0 0 256 256">
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="m224 72-128 128-56-56"/>
+  </symbol>
+  <symbol id="ph-brain" viewBox="0 0 256 256">
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="14" d="M128 56v160M88 56a32 32 0 0 0-32 32v0a24 24 0 0 0-16 41.6A28 28 0 0 0 56 184v0a28 28 0 0 0 0 32 32 32 0 0 0 60 0V56a32 32 0 0 0-28-32Zm80 0a32 32 0 0 1 32 32v0a24 24 0 0 1 16 41.6A28 28 0 0 1 200 184v0a28 28 0 0 1 0 32 32 32 0 0 1-60 0V56a32 32 0 0 1 28-32Z"/>
+  </symbol>
+  <symbol id="ph-dot" viewBox="0 0 8 8">
+    <circle cx="4" cy="4" r="3" fill="currentColor"/>
+  </symbol>
+  <symbol id="ph-arrow-line-right" viewBox="0 0 256 256">
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M40 128h168m-56-56 56 56-56 56"/>
+  </symbol>
+</svg>
