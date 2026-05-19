@@ -1653,7 +1653,8 @@ html, body { overflow-x: clip; }
 .section--hiring {
   color: var(--fg-primary);
   margin-top: 0;
-  padding-top: var(--space-16);
+  padding-top: var(--space-12);
+  border-top: 1px solid var(--border-subtle);
 }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
 /* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero. */
@@ -1698,7 +1699,6 @@ html, body { overflow-x: clip; }
   background: transparent;
 }
 .hiring__tab[aria-selected="true"] .hiring__tab-label { color: var(--accent-primary); }
-.hiring__tab[aria-selected="true"] .hiring__tab-size { opacity: 0.5; color: var(--accent-primary); }
 .hiring__tab:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 4px;
@@ -1713,6 +1713,7 @@ html, body { overflow-x: clip; }
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
   color: var(--fg-secondary);
+  transition: color var(--dur-standard) var(--ease-out-strong);
 }
 
 .hiring__panels { position: relative; }
@@ -1752,18 +1753,19 @@ html, body { overflow-x: clip; }
 }
 
 /* Brain callout — inset card with 48px Phosphor icon + label + body copy.
-   In dark mode the card sinks darker than bg-base (#080707 per Figma);
-   in light mode it floats lighter via bg-subtle. */
+   Uses --bg-callout (Figma 57:11619 dark composite #121110) so the card
+   reads as a distinct surface from --bg-recessed. 16px corner radius
+   matches the Figma spec for this card specifically. */
 .hiring__brain-card {
   display: flex;
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-6);
-  background: var(--bg-subtle);
+  background: var(--bg-callout);
+  border-radius: var(--radius-lg);
   color: var(--fg-secondary);
   margin-bottom: var(--space-8);
 }
-.dark .hiring__brain-card { background: transparent; }
 .hiring__brain-icon {
   flex: 0 0 48px;
   width: 48px;
@@ -1771,7 +1773,7 @@ html, body { overflow-x: clip; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--fg-primary);
+  color: var(--fg-brain-icon);
 }
 .hiring__brain-icon .icon { width: 48px; height: 48px; }
 .hiring__brain-text {
@@ -1798,7 +1800,8 @@ html, body { overflow-x: clip; }
 .hiring__points {
   display: flex;
   flex-direction: column;
-  margin-bottom: var(--space-8);
+  /* 48px gap between the last bullet row and the CTA row. */
+  margin-bottom: var(--space-12);
   padding-inline: var(--space-6);
 }
 .hiring__points li {
@@ -1827,9 +1830,10 @@ html, body { overflow-x: clip; }
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  margin-top: var(--space-12);
-  padding-top: var(--space-8);
-  border-top: 1px solid var(--border-subtle);
+  /* Previously: margin-top 24px + padding-top 32px + 1px divider = 57px gap.
+     Per fix: divider removed, row flush against the points list (0px gap). */
+  margin-top: 0;
+  padding-top: 0;
 }
 .hiring__cta[hidden] { display: none; }
 @media (min-width: 768px) {
@@ -1843,21 +1847,29 @@ html, body { overflow-x: clip; }
 .hiring__cta-link {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-6);
-  background: var(--accent-primary);
-  color: var(--fg-on-accent);
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: transparent;
+  color: var(--fg-primary);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-full);
-  font-size: var(--text-body-lg-size);
+  font-size: var(--text-link-sm-size);
+  line-height: var(--text-link-sm-line);
   font-weight: var(--font-medium);
-  transition: transform var(--dur-fast) var(--ease-out-strong),
-              background-color var(--dur-fast) var(--ease-out-strong);
   align-self: flex-start;
+  /* Press scale + transform/color/border-color transitions are supplied
+     by .btn-press + .btn-trace shared rules. Arrow translate on hot state
+     comes from .btn-trace[data-btn-state="hot"] [data-btn-arrow]. */
 }
-.hiring__cta-link:active { transform: scale(0.98); }
+/* Hover state — mirrors the hero button's orbit comet + arrow translate,
+   plus a yellow text/icon fade (user-spec extension over hero's
+   "no color shift" hover). currentColor inheritance flips the arrow with
+   the text in one step. */
+.hiring__cta-link[data-btn-state="hot"] {
+  color: var(--accent-primary);
+}
 .hiring__cta-arrow {
   display: inline-block;
-  transition: transform var(--dur-fast) var(--ease-out-strong);
 }
 /* ===== Back to top ===== */
 .back-to-top {
@@ -2035,12 +2047,15 @@ html, body { overflow-x: clip; }
   .drawer__link a:hover [data-arrow] { transform: translateX(4px); }
   .hiring__cta-link:hover .hiring__cta-arrow { transform: translateX(4px); }
   .section__next a:hover [data-arrow] { transform: translateX(6px); }
-  /* Hiring tab hover: border + label shift to accent. Number stays muted. */
-  .hiring__tab:hover {
+  /* Hiring tab hover — full active-state mirror.
+     Both border-color and label color fade to accent over --dur-fast/--dur-standard.
+     Selected state still wins via [aria-selected="true"] rules earlier. */
+  .hiring__tab:not([aria-selected="true"]):hover {
     border-color: var(--accent-primary);
+  }
+  .hiring__tab:not([aria-selected="true"]):hover .hiring__tab-label {
     color: var(--accent-primary);
   }
-  .hiring__tab:hover .hiring__tab-label { color: var(--accent-primary); }
 }
 
 /* ===== Hero — single-column when the visual is hidden (On Load layout) ===== */
