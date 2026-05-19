@@ -1479,9 +1479,6 @@ html, body { overflow-x: clip; }
   list-style: none;
   border-top: 1px solid var(--border-subtle);
 }
-@media (min-width: 1440px) {
-  .tools-list { padding-inline: var(--space-16); }
-}
 .tools-row {
   position: relative;
   border-bottom: 1px solid var(--border-subtle);
@@ -1492,6 +1489,7 @@ html, body { overflow-x: clip; }
   align-items: center;
   column-gap: var(--space-4);
   width: 100%;
+  min-height: 64px;
   padding: var(--space-5) 0;
   text-align: left;
   background: transparent;
@@ -1504,7 +1502,8 @@ html, body { overflow-x: clip; }
   .tools-row__head {
     grid-template-columns: 56px 1fr;
     column-gap: var(--space-6);
-    padding: var(--space-8) 0;
+    min-height: 80px;
+    padding: 0;
   }
 }
 .tools-row__head:focus-visible {
@@ -1512,11 +1511,13 @@ html, body { overflow-x: clip; }
   outline-offset: -2px;
 }
 .tools-row__num {
-  font-size: var(--text-body-sm-size);
-  font-feature-settings: "tnum";
+  font-family: var(--font-body);
+  font-weight: var(--font-regular);
+  font-size: 12px;
+  line-height: 19.5px;
   letter-spacing: 0.05em;
   color: var(--fg-tertiary);
-  padding-top: 2px;
+  font-feature-settings: "tnum";
 }
 .tools-row__main { min-width: 0; }
 .tools-row__title {
@@ -1535,16 +1536,39 @@ html, body { overflow-x: clip; }
 }
 .tools-row__body {
   padding: 0 0 var(--space-8) 0;
-  animation: step-body-in var(--dur-expand) var(--ease-out-strong);
 }
-@media (min-width: 768px) {
-  .tools-row__body { padding-left: var(--space-12); padding-right: var(--space-12); }
+@media (min-width: 1024px) {
+  .tools-row__body { padding-inline: var(--space-12); }
 }
+@media (min-width: 1440px) {
+  .tools-row__body { padding-inline: var(--space-20); }
+}
+/* Body children cascade in on expand — matches step-row-in stagger from the
+   workflow timeline. Thead leads, tbody rows follow at 60ms intervals so the
+   table reads as a sequence rather than a slab. */
+.tools-row__head[aria-expanded="true"] + .tools-row__body thead,
+.tools-row__head[aria-expanded="true"] + .tools-row__body tbody tr {
+  animation: step-row-in 520ms var(--ease-out-strong) both;
+}
+.tools-row__head[aria-expanded="true"] + .tools-row__body thead { animation-delay: 0ms; }
+.tools-row__head[aria-expanded="true"] + .tools-row__body tbody tr:nth-child(1) { animation-delay: 60ms; }
+.tools-row__head[aria-expanded="true"] + .tools-row__body tbody tr:nth-child(2) { animation-delay: 120ms; }
+.tools-row__head[aria-expanded="true"] + .tools-row__body tbody tr:nth-child(3) { animation-delay: 180ms; }
+.tools-row__head[aria-expanded="true"] + .tools-row__body tbody tr:nth-child(4) { animation-delay: 240ms; }
+.tools-row__head[aria-expanded="true"] + .tools-row__body tbody tr:nth-child(5) { animation-delay: 300ms; }
+.tools-row__head[aria-expanded="true"] + .tools-row__body tbody tr:nth-child(6) { animation-delay: 360ms; }
+.tools-row__head[aria-expanded="true"] + .tools-row__body tbody tr:nth-child(7) { animation-delay: 420ms; }
 @media (prefers-reduced-motion: reduce) {
-  .tools-row__body { animation: none; }
+  .tools-row__head[aria-expanded="true"] + .tools-row__body thead,
+  .tools-row__head[aria-expanded="true"] + .tools-row__body tbody tr {
+    animation: none;
+  }
 }
 
-/* Tool table styling (rendered inside each tools-row__body). */
+/* Tool table styling (rendered inside each tools-row__body).
+   Figma 55:10432 — col widths 315 / 275 / 1fr at desktop, gap-16 via cell
+   padding-right, body rows 14px with border-b only; header row 12px medium
+   uppercase tracking 0.06em, 40px height. */
 .tool-table__scroll { width: 100%; }
 .tool-table__scroll table { width: 100%; border-collapse: collapse; }
 .tool-table__scroll table code {
@@ -1555,19 +1579,26 @@ html, body { overflow-x: clip; }
   background: var(--bg-subtle);
   color: var(--fg-primary);
 }
+.tool-table__star { color: var(--accent-primary); }
 .tool-table__scroll thead { display: none; }
 @media (min-width: 768px) {
   .tool-table__scroll thead { display: table-header-group; }
   .tool-table__scroll thead th {
     text-align: left;
-    font-size: var(--text-body-sm-size);
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: 19.5px;
     color: var(--fg-tertiary);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     font-weight: var(--font-medium);
-    padding: 0 var(--space-4) var(--space-3);
+    padding: 0 var(--space-4) var(--space-3) 0;
     border-bottom: 1px solid var(--border-subtle);
+    height: 40px;
+    vertical-align: bottom;
   }
+  .tool-table__scroll thead th:first-child { width: 315px; }
+  .tool-table__scroll thead th:nth-child(2) { width: 275px; }
 }
 @media (max-width: 767px) {
   .tool-table__scroll tbody tr {
@@ -1592,24 +1623,27 @@ html, body { overflow-x: clip; }
 }
 @media (min-width: 768px) {
   .tool-table__scroll tbody td {
-    padding: var(--space-4);
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
     vertical-align: top;
     border-bottom: 1px solid var(--border-subtle);
-    color: var(--fg-secondary);
-    font-size: var(--text-body-base-size);
-    line-height: var(--text-body-base-line);
+    font-size: 14px;
+    line-height: 21px;
   }
-  .tool-table__scroll tbody td:first-child { font-weight: var(--font-medium); color: var(--fg-primary); width: 32%; }
-  .tool-table__scroll tbody td:nth-child(2) { width: 28%; color: var(--fg-primary); }
-  .tool-table__scroll tbody tr:last-child td { border-bottom: 0; }
-}
-.tool-table__row--accent td:first-child::after {
-  content: " ★";
-  color: var(--accent-primary);
-}
-.tool-table__row--accent td:nth-child(2) {
-  color: var(--fg-primary);
-  font-weight: var(--font-medium);
+  .tool-table__scroll tbody td:first-child {
+    width: 315px;
+    color: var(--fg-primary);
+    font-weight: var(--font-medium);
+  }
+  .tool-table__scroll tbody td:nth-child(2) {
+    width: 275px;
+    color: var(--fg-primary);
+    font-weight: var(--font-medium);
+  }
+  .tool-table__scroll tbody td:nth-child(3) {
+    color: var(--fg-secondary);
+    font-weight: var(--font-regular);
+    padding-right: 0;
+  }
 }
 
 /* ===== Section 6 — For Hiring Managers =====
@@ -2521,6 +2555,22 @@ html, body { overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) {
   .overview-row[aria-expanded="true"] + .overview-row__open > .container,
   .overview-row[aria-expanded="true"] + .overview-row__open > .overview-row__panel {
+    animation: overview-eyebrow-in 200ms ease both;
+  }
+}
+
+/* Tools — divider above row 01 joins the lede's earlier wave so it isn't the
+   last element to settle. Container fades only (no translate), bringing the
+   .tools-list border-top in at lede timing. Row contents (.tools-row) then
+   stagger in just after with the original slide. */
+li#tools .overview-row[aria-expanded="true"] + .overview-row__open > .container {
+  animation: overview-eyebrow-in 480ms var(--ease-out-strong) 160ms both;
+}
+li#tools .overview-row[aria-expanded="true"] + .overview-row__open .tools-row {
+  animation: overview-content-slide 600ms var(--ease-out-strong) 380ms both;
+}
+@media (prefers-reduced-motion: reduce) {
+  li#tools .overview-row[aria-expanded="true"] + .overview-row__open .tools-row {
     animation: overview-eyebrow-in 200ms ease both;
   }
 }
