@@ -199,7 +199,7 @@
            numbered rows replace the prior 4-tile card grid + section header. -->
       <ul class="overview" data-overview>
         <li id="overview" data-hover="divider" data-row-hover>
-          <button type="button" class="overview-row" data-overview-row="hero" aria-expanded="true" aria-controls="overview-row-1-body">
+          <button type="button" class="overview-row" data-overview-row="hero" aria-expanded="false" aria-controls="overview-row-1-body">
             <span class="overview-row__index" data-row-accent aria-hidden="true">01</span>
             <span class="overview-row__main">
               <span class="overview-row__crumbs" aria-hidden="true">
@@ -494,16 +494,14 @@
                 </span>
               </button>
               <div class="step__body" id="step-1-body" hidden>
-                <p>The brief is direction, not detail. The Planner expands it into a full product spec in the next step. I keep this short on purpose because length here makes the spec rigid downstream.</p>
-                <p><strong>What I write:</strong> what the site is for, who the visitor is, what they need to do or understand, what makes it different from every other site in the category.</p>
+                <div class="step__body-text">
+                  <p>The brief is direction, not detail. The Planner expands it into a full product spec in the next step. I keep this short on purpose because length here makes the spec rigid downstream.</p>
+                  <p><strong>What I write:</strong> what the site is for, who the visitor is, what they need to do or understand, what makes it different from every other site in the category.</p>
+                </div>
                 <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Optional · paste in Claude.ai</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-1-prompt">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-1-prompt" aria-label="Copy prompt">
+                    <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                  </button>
                   <pre><code id="step-1-prompt">I'm starting a new project and need help sharpening my brief to 1–4 sentences.
 
 Here are my rough notes: [paste your notes]
@@ -526,17 +524,15 @@ Apply the Shokunin Crafthouse lens — the brief should define who the visitor i
                 </span>
               </button>
               <div class="step__body" id="step-2-body" hidden>
-                <p>The Planner runs in the Shokunin Crafthouse project on Claude.ai. <code>studio-memory.md</code> is already in the project knowledge, so it reads our identity and design principles before expanding the brief.</p>
-                <p><strong>What it returns:</strong> project overview, complete deliverables list, design direction tied to the seven Shokunin principles, technical stack, three to six sprints, and specific success criteria per sprint.</p>
-                <p><strong>Approval gate one — Concept.</strong> I read the spec carefully and edit anything I disagree with before moving on.</p>
+                <div class="step__body-text">
+                  <p>The Planner runs in the Shokunin Crafthouse project on Claude.ai. <code>studio-memory.md</code> is already in the project knowledge, so it reads our identity and design principles before expanding the brief.</p>
+                  <p><strong>What it returns:</strong> project overview, complete deliverables list, design direction tied to the seven Shokunin principles, technical stack, three to six sprints, and specific success criteria per sprint.</p>
+                  <p><strong>Approval gate one — Concept.</strong> I read the spec carefully and edit anything I disagree with before moving on.</p>
+                </div>
                 <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt · Claude.ai project chat</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-2-prompt">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-2-prompt" aria-label="Copy prompt">
+                    <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                  </button>
                   <pre><code id="step-2-prompt">You are the Planner agent for The Shokunin Crafthouse.
 Read studio-memory.md from project knowledge.
 
@@ -568,12 +564,15 @@ Be ambitious. Look for opportunities where AI-native features would serve the pr
                 </span>
               </button>
               <div class="step__body" id="step-3-body" hidden>
-                <p>Figma MCP cannot create files. This step is always manual. I name the file, set up the four pages, and grab the file URL for the scaffold prompt.</p>
-                <p><strong>The Sandbox rule:</strong> Sandbox is creative workspace, Production is canonical. Promotion is always manual. Claude reads from both but writes to neither.</p>
+                <div class="step__body-text">
+                  <p>Figma MCP cannot create files. This step is always manual. I name the file, set up the four pages, and grab the file URL for the scaffold prompt.</p>
+                  <p><strong>The Sandbox rule:</strong> Sandbox is creative workspace, Production is canonical. Promotion is always manual. Claude reads from both but writes to neither.</p>
+                </div>
+                <div class="step__prompt step__prompt--empty" aria-hidden="true"></div>
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="4">
+            <li class="step" data-row-hover data-step="4" data-step-hidden style="--reveal-i: 1">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-4-body">
                 <span class="step__num" data-row-accent>04</span>
                 <span class="step__main">
@@ -586,16 +585,14 @@ Be ambitious. Look for opportunities where AI-native features would serve the pr
                 </span>
               </button>
               <div class="step__body" id="step-4-body" hidden>
-                <p>Claude Code clones the workspace template, creates a private GitHub repo under the studio org, populates <code>WORKSPACE.md</code> with project identity, wires in the Figma file URL, and confirms all four Figma pages exist via MCP.</p>
-                <p>It also adds a Playwright preview script that captures screenshots at 360, 768, 1024, and 1440 so every PR carries a snapshot record. Optional <code>/goal</code> drives this through to a green build without per-turn prompting.</p>
+                <div class="step__body-text">
+                  <p>Claude Code clones the workspace template, creates a private GitHub repo under the studio org, populates <code>WORKSPACE.md</code> with project identity, wires in the Figma file URL, and confirms all four Figma pages exist via MCP.</p>
+                  <p>It also adds a Playwright preview script that captures screenshots at 360, 768, 1024, and 1440 so every PR carries a snapshot record. Optional <code>/goal</code> drives this through to a green build without per-turn prompting.</p>
+                </div>
                 <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt · Claude Code</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-4-prompt">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-4-prompt" aria-label="Copy prompt">
+                    <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                  </button>
                   <pre><code id="step-4-prompt">Scaffold a new Shokunin Crafthouse project called [project name].
 
 1. Clone the workspace template from
@@ -634,7 +631,7 @@ Report the GitHub URL when done.</code></pre>
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="5">
+            <li class="step" data-row-hover data-step="5" data-step-hidden style="--reveal-i: 2">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-5-body">
                 <span class="step__num" data-row-accent>05</span>
                 <span class="step__main">
@@ -647,16 +644,14 @@ Report the GitHub URL when done.</code></pre>
                 </span>
               </button>
               <div class="step__body" id="step-5-body" hidden>
-                <p>Push to main triggers an rsync to Hostinger production. Every PR opens triggers a preview build at <code>/_previews/[pr-number]/</code> with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down.</p>
-                <p>Claude Code prints the predicted preview URL directly in chat and runs <code>gh run watch</code> to confirm the deploy succeeded. No GitHub round-trip to find a URL.</p>
+                <div class="step__body-text">
+                  <p>Push to main triggers an rsync to Hostinger production. Every PR opens triggers a preview build at <code>/_previews/[pr-number]/</code> with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down.</p>
+                  <p>Claude Code prints the predicted preview URL directly in chat and runs <code>gh run watch</code> to confirm the deploy succeeded. No GitHub round-trip to find a URL.</p>
+                </div>
                 <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt · Claude Code</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-5-prompt">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-5-prompt" aria-label="Copy prompt">
+                    <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                  </button>
                   <pre><code id="step-5-prompt">Create three GitHub Actions workflows for this project. The domain for this project is: [your domain]
 
 WORKFLOW 1 — Production deploy
@@ -690,7 +685,7 @@ Commit all three workflow files plus any framework config changes to a new branc
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="6">
+            <li class="step" data-row-hover data-step="6" data-step-hidden style="--reveal-i: 3">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-6-body">
                 <span class="step__num" data-row-accent>06</span>
                 <span class="step__main">
@@ -703,17 +698,17 @@ Commit all three workflow files plus any framework config changes to a new branc
                 </span>
               </button>
               <div class="step__body" id="step-6-body" hidden>
-                <p>Claude Design runs on Opus 4.7 with its own independent weekly limit that does not touch the Max pool. I treat it as a free creative resource for exploration before committing anything to Figma.</p>
-                <p>The pattern is two opposing directions: my instinct, then its opposite. The contrast forces a decision about point of view. Output saves to <code>stages/02-design/claude-design/</code>.</p>
+                <div class="step__body-text">
+                  <p>Claude Design runs on Opus 4.7 with its own independent weekly limit that does not touch the Max pool. I treat it as a free creative resource for exploration before committing anything to Figma.</p>
+                  <p>The pattern is two opposing directions: my instinct, then its opposite. The contrast forces a decision about point of view. Output saves to <code>stages/02-design/claude-design/</code>.</p>
+                </div>
                 <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt 1 · Claude Design · Direction 1 (your instinct)</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-6-prompt-1">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
-                  <pre><code id="step-6-prompt-1">I'm designing [what the site is] for [who the visitor is].
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-6-prompt" aria-label="Copy both prompts">
+                    <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                  </button>
+                  <pre><code id="step-6-prompt"># Prompt 1 — Direction 1 (your instinct)
+
+I'm designing [what the site is] for [who the visitor is].
 
 WHAT'S LOCKED
 [list anything already decided — colors, illustration style, etc. If nothing is locked, say "Nothing locked — full exploration."]
@@ -726,17 +721,12 @@ BRIEF
 
 Apply Shokunin Crafthouse design principles from studio-memory.md: one clear point of view, restraint as a creative act, originality over safety, no template layouts.
 
-Generate Direction 1: your interpretation of this brief taken somewhere unexpected — a choice a principal designer would look at and see intent. Use real typography, real color. No generic gradients, no stock illustration style, no purple-on-white card layouts.</code></pre>
-                </div>
-                <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt 2 · Claude Design · Direction 2 (the opposite)</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-6-prompt-2">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
-                  <pre><code id="step-6-prompt-2">Generate Direction 2 for the same project.
+Generate Direction 1: your interpretation of this brief taken somewhere unexpected — a choice a principal designer would look at and see intent. Use real typography, real color. No generic gradients, no stock illustration style, no purple-on-white card layouts.
+
+
+# Prompt 2 — Direction 2 (the opposite)
+
+Generate Direction 2 for the same project.
 
 Direction 1 was [describe it in one sentence]. Direction 2 should be its opposite — if Direction 1 leaned warm and expressive, Direction 2 should be cool and architectural. If Direction 1 was organic, Direction 2 should be precise. Same brief, completely different point of view. Same locked constraints.
 
@@ -745,7 +735,7 @@ Show the same type of layout. Real typography, real hierarchy. A choice a princi
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="7">
+            <li class="step" data-row-hover data-step="7" data-step-hidden style="--reveal-i: 4">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-7-body">
                 <span class="step__num" data-row-accent>07</span>
                 <span class="step__main">
@@ -758,18 +748,18 @@ Show the same type of layout. Real typography, real hierarchy. A choice a princi
                 </span>
               </button>
               <div class="step__body" id="step-7-body" hidden>
-                <p>I build color styles, the type scale, the spacing scale, and base components on the Sandbox page. Type is solved before anything else because changing typefaces later is a redesign.</p>
-                <p>Then Claude Code reads the Figma file via MCP and writes <code>_config/design-system/token-map.md</code>. That file becomes the source of truth — no color, font, or spacing value gets used in code unless it lives there.</p>
-                <p><strong>Approval gate two — Design.</strong> Token map approved before any sprint starts.</p>
+                <div class="step__body-text">
+                  <p>I build color styles, the type scale, the spacing scale, and base components on the Sandbox page. Type is solved before anything else because changing typefaces later is a redesign.</p>
+                  <p>Then Claude Code reads the Figma file via MCP and writes <code>_config/design-system/token-map.md</code>. That file becomes the source of truth — no color, font, or spacing value gets used in code unless it lives there.</p>
+                  <p><strong>Approval gate two — Design.</strong> Token map approved before any sprint starts.</p>
+                </div>
                 <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt 1 · Claude.ai · Checklist + copy</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-7-prompt-1">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
-                  <pre><code id="step-7-prompt-1">Read the approved product spec. [paste spec or attach file]
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-7-prompt" aria-label="Copy both prompts">
+                    <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                  </button>
+                  <pre><code id="step-7-prompt"># Prompt 1 — Claude.ai · Checklist + copy
+
+Read the approved product spec. [paste spec or attach file]
 
 Before I open Figma, give me two things:
 
@@ -786,17 +776,12 @@ Before I open Figma, give me two things:
    - Navigation labels
    - Footer copy
    Write it as if it's shipping tomorrow. No lorem ipsum.
-   Tone: [describe or paste from _config/voice/]</code></pre>
-                </div>
-                <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt 2 · Claude Code · Extract tokens to token-map.md</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-7-prompt-2">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
-                  <pre><code id="step-7-prompt-2">The brand system on the Figma Sandbox page is approved.
+   Tone: [describe or paste from _config/voice/]
+
+
+# Prompt 2 — Claude Code · Extract tokens to token-map.md
+
+The brand system on the Figma Sandbox page is approved.
 Read the Figma file using Figma MCP: [paste Figma file URL]
 
 Extract from the Sandbox page:
@@ -811,7 +796,7 @@ This file is the source of truth for all implementation. No color, font, or spac
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="8">
+            <li class="step" data-row-hover data-step="8" data-step-hidden style="--reveal-i: 5">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-8-body">
                 <span class="step__num" data-row-accent>08</span>
                 <span class="step__main">
@@ -824,12 +809,15 @@ This file is the source of truth for all implementation. No color, font, or spac
                 </span>
               </button>
               <div class="step__body" id="step-8-body" hidden>
-                <p>One section, designed completely, before the next one starts. Every breakpoint is drawn, never assumed. Every interactive element has all five states: default, hover, focus, active, disabled.</p>
-                <p>Motion decisions are written into <code>decisions/decisions.md</code>, not just prototyped. Dark mode is either fully designed or formally deferred — the decision is logged.</p>
+                <div class="step__body-text">
+                  <p>One section, designed completely, before the next one starts. Every breakpoint is drawn, never assumed. Every interactive element has all five states: default, hover, focus, active, disabled.</p>
+                  <p>Motion decisions are written into <code>decisions/decisions.md</code>, not just prototyped. Dark mode is either fully designed or formally deferred — the decision is logged.</p>
+                </div>
+                <div class="step__prompt step__prompt--empty" aria-hidden="true"></div>
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="9">
+            <li class="step" data-row-hover data-step="9" data-step-hidden style="--reveal-i: 6">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-9-body">
                 <span class="step__num" data-row-accent>09</span>
                 <span class="step__main">
@@ -842,17 +830,15 @@ This file is the source of truth for all implementation. No color, font, or spac
                 </span>
               </button>
               <div class="step__body" id="step-9-body" hidden>
-                <p>The Generator reads <code>WORKSPACE.md</code>, <code>studio-memory.md</code>, and <code>token-map.md</code>, pulls the Sandbox frames via Figma MCP, and proposes a sprint contract before writing a line of code. I approve the contract in writing first.</p>
-                <p>Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at <code>/_previews/[N]/</code>. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.</p>
-                <p>Dispatched via Agent View as a background session, so the build runs without my attention. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract is approved.</p>
+                <div class="step__body-text">
+                  <p>The Generator reads <code>WORKSPACE.md</code>, <code>studio-memory.md</code>, and <code>token-map.md</code>, pulls the Sandbox frames via Figma MCP, and proposes a sprint contract before writing a line of code. I approve the contract in writing first.</p>
+                  <p>Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at <code>/_previews/[N]/</code>. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.</p>
+                  <p>Dispatched via Agent View as a background session, so the build runs without my attention. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract is approved.</p>
+                </div>
                 <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt · Claude Code (Generator)</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-9-prompt">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-9-prompt" aria-label="Copy prompt">
+                    <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                  </button>
                   <pre><code id="step-9-prompt">/caveman
 
 Read WORKSPACE.md, ~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md, and _config/design-system/token-map.md before anything else.
@@ -880,7 +866,7 @@ When complete:
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="10">
+            <li class="step" data-row-hover data-step="10" data-step-hidden style="--reveal-i: 7">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-10-body">
                 <span class="step__num" data-row-accent>10</span>
                 <span class="step__main">
@@ -893,17 +879,15 @@ When complete:
                 </span>
               </button>
               <div class="step__body" id="step-10-body" hidden>
-                <p>A fresh Claude Code session, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
-                <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.</p>
-                <p><strong>Never put a <code>/goal</code> on this session.</strong> The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.</p>
+                <div class="step__body-text">
+                  <p>A fresh Claude Code session, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
+                  <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.</p>
+                  <p><strong>Never put a <code>/goal</code> on this session.</strong> The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.</p>
+                </div>
                 <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt · Claude Code (Evaluator, fresh session)</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-10-prompt">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-10-prompt" aria-label="Copy prompt">
+                    <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                  </button>
                   <pre><code id="step-10-prompt">/caveman
 
 You are the Evaluator for The Shokunin Crafthouse.
@@ -936,7 +920,7 @@ Output:
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="11">
+            <li class="step" data-row-hover data-step="11" data-step-hidden style="--reveal-i: 8">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-11-body">
                 <span class="step__num" data-row-accent>11</span>
                 <span class="step__main">
@@ -949,13 +933,16 @@ Output:
                 </span>
               </button>
               <div class="step__body" id="step-11-body" hidden>
-                <p>Final desktop and phone review on the preview URL. Click Merge. The production deploy workflow rsyncs to Hostinger in seconds; the cleanup workflow tears down the preview directory in parallel.</p>
-                <p>Then I promote the approved frames from the Figma Sandbox page to the Production page. Always manual. Always me.</p>
-                <p><strong>Approval gate three — Development.</strong> Sprint passes only after preview review, evaluator PASS, and final visual check.</p>
+                <div class="step__body-text">
+                  <p>Final desktop and phone review on the preview URL. Click Merge. The production deploy workflow rsyncs to Hostinger in seconds; the cleanup workflow tears down the preview directory in parallel.</p>
+                  <p>Then I promote the approved frames from the Figma Sandbox page to the Production page. Always manual. Always me.</p>
+                  <p><strong>Approval gate three — Development.</strong> Sprint passes only after preview review, evaluator PASS, and final visual check.</p>
+                </div>
+                <div class="step__prompt step__prompt--empty" aria-hidden="true"></div>
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="12">
+            <li class="step" data-row-hover data-step="12" data-step-hidden style="--reveal-i: 9">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-12-body">
                 <span class="step__num" data-row-accent>12</span>
                 <span class="step__main">
@@ -968,11 +955,14 @@ Output:
                 </span>
               </button>
               <div class="step__body" id="step-12-body" hidden>
-                <p>One section at a time. I do not design everything before building anything. The loop produces fast feedback: each shipped section informs the next, and the studio memory grows project-by-project rather than at the end.</p>
+                <div class="step__body-text">
+                  <p>One section at a time. I do not design everything before building anything. The loop produces fast feedback: each shipped section informs the next, and the studio memory grows project-by-project rather than at the end.</p>
+                </div>
+                <div class="step__prompt step__prompt--empty" aria-hidden="true"></div>
               </div>
             </li>
 
-            <li class="step" data-row-hover data-step="13">
+            <li class="step" data-row-hover data-step="13" data-step-hidden style="--reveal-i: 10">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-13-body">
                 <span class="step__num" data-row-accent>13</span>
                 <span class="step__main">
@@ -985,16 +975,14 @@ Output:
                 </span>
               </button>
               <div class="step__body" id="step-13-body" hidden>
-                <p>After delivery, Cowork appends to <code>studio-memory.md</code>: design approaches that worked, code patterns that became standing standards, mistakes to avoid next time, and any new aesthetic preferences that emerged.</p>
-                <p><strong>Approval gate four — Delivery.</strong> Memory updated, decisions logged, the project closes. The next project starts with that knowledge already loaded.</p>
+                <div class="step__body-text">
+                  <p>After delivery, Cowork appends to <code>studio-memory.md</code>: design approaches that worked, code patterns that became standing standards, mistakes to avoid next time, and any new aesthetic preferences that emerged.</p>
+                  <p><strong>Approval gate four — Delivery.</strong> Memory updated, decisions logged, the project closes. The next project starts with that knowledge already loaded.</p>
+                </div>
                 <div class="step__prompt" data-prompt-block>
-                  <header class="step__prompt-head">
-                    <p class="step__prompt-eyebrow">Prompt · Claude Code · Cowork</p>
-                    <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-13-prompt">
-                      <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
-                      <span data-copy-label>Copy</span>
-                    </button>
-                  </header>
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-13-prompt" aria-label="Copy prompt">
+                    <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
+                  </button>
                   <pre><code id="step-13-prompt">Update the studio memory file at:
 ~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md
 
@@ -1013,6 +1001,12 @@ Commit the updated file and push.</code></pre>
               </div>
             </li>
           </ol>
+
+          <div class="timeline__show-all-wrap">
+            <button type="button" class="timeline__show-all btn-press" data-show-all aria-expanded="false" aria-controls="step-rows-hidden">
+              <span data-show-all-label>Show all 13</span>
+            </button>
+          </div>
 
           <!-- Approval gates table — standalone callout -->
           <aside class="gates" aria-labelledby="gates-title">

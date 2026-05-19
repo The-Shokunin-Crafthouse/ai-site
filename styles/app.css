@@ -855,9 +855,9 @@ html, body { overflow-x: clip; }
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  margin-bottom: var(--space-8);
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-4);
+  padding-bottom: 0;
+  /* Single divider on .steps top-border handles the visual rule. */
 }
 @media (min-width: 768px) {
   .timeline__toolbar {
@@ -867,16 +867,29 @@ html, body { overflow-x: clip; }
   }
 }
 .timeline__actions { display: flex; gap: var(--space-3); }
-.timeline__btn {
+.timeline__btn,
+.timeline__show-all {
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
   color: var(--fg-secondary);
+  background: transparent;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
+  cursor: pointer;
   transition: color var(--dur-fast) var(--ease-out-strong),
               border-color var(--dur-fast) var(--ease-out-strong),
-              background-color var(--dur-fast) var(--ease-out-strong);
+              transform 160ms var(--ease-out-strong);
+}
+@media (hover: hover) and (pointer: fine) {
+  .timeline__btn:hover,
+  .timeline__show-all:hover {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+  }
+}
+.timeline__show-all-wrap {
+  padding-top: var(--space-4);
 }
 .timeline__progress {
   display: flex;
@@ -976,9 +989,10 @@ html, body { overflow-x: clip; }
   color: var(--fg-secondary);
   white-space: nowrap;
 }
-.step__badge--you { color: var(--fg-secondary); }
-.step__badge--prompt { color: var(--fg-secondary); }
-.step__badge--mixed { color: var(--fg-secondary); }
+/* Badge tints per Figma 54:7438. Borders track text color for hairline reads. */
+.step__badge--you { color: var(--badge-you); border-color: var(--badge-you); }
+.step__badge--prompt { color: var(--badge-prompt); border-color: var(--badge-prompt); }
+.step__badge--mixed { color: var(--badge-mixed); border-color: var(--badge-mixed); }
 .step__tool {
   font-size: var(--text-body-sm-size);
   color: var(--fg-tertiary);
@@ -995,33 +1009,51 @@ html, body { overflow-x: clip; }
   transform: rotate(180deg);
   color: var(--fg-primary);
 }
-.step__head[aria-expanded="true"] .step__title { color: var(--fg-primary); }
+/* Open row: number + title hold accent (matches Figma 54:7438 step 09 open). */
+.step__head[aria-expanded="true"] .step__num,
+.step__head[aria-expanded="true"] .step__title { color: var(--accent-primary); }
 
 .step__body {
-  padding: 0 0 var(--space-6) calc(56px + var(--space-4));
+  /* Symmetric top padding; +8px on bottom so the open row breathes into the divider. */
+  padding: var(--space-6) 0 var(--space-8) 0;
   font-size: var(--text-body-base-size);
   line-height: var(--text-body-base-line);
   color: var(--fg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
   animation: step-body-in var(--dur-expand) var(--ease-out-strong);
 }
-.step__body > p { max-width: 56ch; }
-.step__body > .step__prompt { max-width: 720px; }
+.step__body[hidden] { display: none; }
 @media (min-width: 768px) {
-  .step__body { padding-left: calc(56px + var(--space-6)); }
+  .step__body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-6);
+    padding-left: calc(56px + var(--space-6));
+    padding-right: var(--space-4);
+    align-items: start;
+  }
 }
 @media (max-width: 767px) {
   .step__body { padding-left: 0; padding-right: 0; }
 }
-.step__body p + p { margin-top: var(--space-3); }
-.step__body code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+.step__body-text {
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--fg-secondary);
+}
+.step__body-text p + p { margin-top: var(--space-3); }
+/* Inline .md filenames carry the body color, only the bg distinguishes them. */
+.step__body-text code {
+  font-family: var(--font-mono);
   font-size: 0.92em;
   padding: 1px 6px;
   border-radius: var(--radius-sm);
-  background: var(--bg-subtle);
-  color: var(--fg-primary);
+  background: var(--bg-surface-2);
+  color: var(--fg-secondary);
 }
-.step__body strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
+.step__body-text strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
 
 @keyframes step-body-in {
   from { opacity: 0; transform: translateY(-4px); }
@@ -1032,9 +1064,30 @@ html, body { overflow-x: clip; }
   .step__chev { transition: none; }
 }
 
+/* Hidden rows 4–13 collapse out of layout until [data-show-all="true"] flips
+   on the timeline. When revealed they cascade in via --reveal-i index. */
+.step[data-step-hidden] { display: none; }
+.timeline[data-show-all="true"] .step[data-step-hidden] {
+  display: list-item;
+  animation: step-row-in 520ms var(--ease-out-strong) both;
+  animation-delay: calc(var(--reveal-i, 0) * 60ms);
+}
+@keyframes step-row-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .timeline[data-show-all="true"] .step[data-step-hidden] {
+    animation: none;
+  }
+}
+
 /* ===== Approval gates table ===== */
 .gates {
-  margin-top: var(--space-16);
+  /* 32px above (gap from Show all 13 button). 16px below stacks with the
+     open container's 48px padding-bottom to land 64px after the gates. */
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
   padding: var(--space-8) var(--space-6);
   background: var(--bg-subtle);
   border: 1px solid var(--border-subtle);
@@ -1924,6 +1977,9 @@ html, body { overflow-x: clip; }
   cursor: pointer;
 }
 .overview-row[disabled] { cursor: default; opacity: 1; }
+/* Bottom padding on the expanded row sets the gap between the lede text
+   and the open drawer content. */
+.overview-row[aria-expanded="true"] { padding-bottom: var(--space-8); }
 
 /* Dividers between rows are drawn as full-viewport-width pseudo-elements on each li
    so the line extends beyond the .overview ul's 1440px max-width. We use ::after on
@@ -2149,6 +2205,15 @@ html, body { overflow-x: clip; }
 [data-row-hover][data-row-state="hot"] > button [data-row-accent] {
   color: var(--accent-primary);
 }
+/* Workflow step rows: title joins the accent fade alongside the number.
+   Open row keeps the accent state regardless of hover (handled by the
+   .step__head[aria-expanded="true"] rule earlier in the file). */
+.step[data-row-hover] > .step__head .step__title {
+  transition: color var(--dur-standard) var(--ease-out-strong);
+}
+.step[data-row-hover][data-row-state="hot"] > .step__head .step__title {
+  color: var(--accent-primary);
+}
 
 /* Button: ONLY the arrow translates on hover. No text color shift, no border change. */
 .btn-trace {
@@ -2225,71 +2290,65 @@ html, body { overflow-x: clip; }
 .icon--xl { width: 24px; height: 24px; }
 
 /* ============================================================
-   Step prompt block — Section 2 workflow, Figma 54:7438 step 06 open state
-   Cascadia Mono prompt + copy-to-clipboard button.
+   Step prompt panel — Figma 54:7438 step 09 open state.
+   Dark slab, mono code, copy icon top-right. Height capped to the
+   left description column via JS (--prompt-max-h). Hugs content
+   when shorter. Empty variant for steps with no prompt — invisible
+   placeholder that preserves the 2-column rhythm so the description
+   keeps a comfortable measure.
    ============================================================ */
 .step__prompt {
-  margin-top: var(--space-4);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--bg-base) 60%, transparent);
-  overflow: hidden;
-}
-.dark .step__prompt {
-  background: var(--bg-surface-2);
-}
-.step__prompt-head {
+  position: relative;
+  background: #080707;
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-4) var(--space-6);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--border-subtle);
+  flex-direction: column;
+  min-width: 0;
+  overflow: clip;
+  max-height: var(--prompt-max-h, none);
 }
-.step__prompt-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: var(--font-medium);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  margin: 0;
-}
-.copy-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-3);
-  font-family: var(--font-body);
-  font-size: var(--text-body-sm-size);
-  font-weight: var(--font-medium);
-  color: var(--fg-secondary);
+.step__prompt--empty {
   background: transparent;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
+  padding: 0;
 }
-.copy-btn[data-copy-state="copied"] {
-  color: var(--accent-primary);
-  border-color: var(--accent-primary);
-}
-.copy-btn .icon { width: 14px; height: 14px; }
-
 .step__prompt pre {
   margin: 0;
-  padding: var(--space-4);
   font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 20px;
-  color: var(--fg-primary);
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--prompt-code-fg);
   background: transparent;
   white-space: pre-wrap;
   word-break: break-word;
-  overflow-x: auto;
+  overflow: hidden;
+  flex: 1 1 auto;
+  padding-right: var(--space-4);
   tab-size: 2;
   -moz-tab-size: 2;
 }
-
-.step__prompt + p { margin-top: var(--space-4); }
+.copy-btn {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--fg-tertiary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  z-index: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .copy-btn:hover { color: var(--accent-primary); }
+}
+.copy-btn[data-copy-state="copied"] { color: var(--accent-primary); }
+.copy-btn .icon { width: 16px; height: 16px; }
 
 /* Inline code inside body — switch from generic monospace to Cascadia Mono */
 .step__body code,
@@ -2309,15 +2368,18 @@ html, body { overflow-x: clip; }
 .overview-row__open {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-6);
   padding: 0;
   max-height: 0;
   overflow: hidden;
-  transition: max-height 360ms var(--ease-out-strong),
-              padding 360ms var(--ease-out-strong);
+  transition: max-height 520ms var(--ease-collapse),
+              padding 520ms var(--ease-collapse);
 }
 .overview-row[aria-expanded="true"] + .overview-row__open {
-  max-height: 2000px;
+  /* Large cap so the workflow row can fully expand all 13 steps + gates table
+     without clipping. Animation completes well before reaching the cap because
+     content stops growing at its natural height. */
+  max-height: 20000px;
   padding: 0 0 var(--space-12);
   transition: max-height 760ms cubic-bezier(0.32, 0.72, 0, 1),
               padding 760ms cubic-bezier(0.32, 0.72, 0, 1);
@@ -2326,11 +2388,13 @@ html, body { overflow-x: clip; }
 .overview-row__open > .overview-row__panel {
   padding-inline: var(--pad-h);
 }
-/* First card left edge aligns with eyebrow/title/lede (title column starts at
-   pad-h + index col + col-gap = 128 + 44 + 24 = 196). Right padding stays at
-   192 — keeps row width on the 8pt grid. */
+/* Folded section content (workflow timeline + gates, brain rows, tools rows)
+   needs its inner container indented so toolbar/steps/gates left-align with
+   the lede + title text rather than the index column. Cards + panel get the
+   same treatment. */
 @media (min-width: 1440px) {
-  .overview-row__open > .cards {
+  .overview-row__open > .cards,
+  .overview-row__open > .container {
     padding-left: calc(var(--pad-h) + 44px + var(--space-6));
     padding-right: 192px;
   }
@@ -2343,7 +2407,7 @@ html, body { overflow-x: clip; }
   display: none;
   font-size: var(--text-body-lg-size);
   line-height: var(--text-body-lg-line);
-  color: var(--fg-primary);
+  color: var(--fg-secondary);
   max-width: 60ch;
 }
 .overview-row[aria-expanded="true"] .overview-row__lede {
@@ -2364,19 +2428,40 @@ html, body { overflow-x: clip; }
 .overview-row[aria-expanded="true"] .overview-row__lede {
   animation: overview-lede-slide 720ms var(--ease-out-strong) 160ms both;
 }
+/* Content beneath the lede (cards grid, panel, folded section content like
+   the workflow timeline + gates) fades in and slides down after the lede
+   has begun resolving. 320ms delay = lede animation has cleared its first
+   third before content starts arriving. */
+.overview-row[aria-expanded="true"] + .overview-row__open > .container,
+.overview-row[aria-expanded="true"] + .overview-row__open > .overview-row__panel {
+  animation: overview-content-slide 720ms var(--ease-out-strong) 320ms both;
+}
+@keyframes overview-content-slide {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .overview-row[aria-expanded="true"] + .overview-row__open > .container,
+  .overview-row[aria-expanded="true"] + .overview-row__open > .overview-row__panel {
+    animation: overview-eyebrow-in 200ms ease both;
+  }
+}
 /* Single-phase close. Every transition fires on click — no delay. Opacity,
    max-height, main gap, and drawer max-height all start collapsing at t=0
    and finish at ~360ms. Title moves UP naturally via flex layout as
    crumbs/lede max-height + gap collapse. When .is-closing is removed,
    layout is already at collapsed values — no jump. */
+/* All four properties run on the same 520ms ease-collapse curve so the
+   crumbs, lede, main-gap, cards-fade, and open-container max-height resolve
+   together as one motion. Mismatched durations read as a hiccup. */
 .overview > li.is-closing .overview-row__crumbs {
   display: inline-flex;
   animation: none;
   opacity: 0;
   max-height: 0;
   overflow: hidden;
-  transition: opacity 240ms var(--ease-out-strong),
-              max-height 360ms var(--ease-out-strong);
+  transition: opacity 520ms var(--ease-collapse),
+              max-height 520ms var(--ease-collapse);
 }
 .overview > li.is-closing .overview-row__lede {
   display: block;
@@ -2384,12 +2469,12 @@ html, body { overflow-x: clip; }
   opacity: 0;
   max-height: 0;
   overflow: hidden;
-  transition: opacity 240ms var(--ease-out-strong),
-              max-height 360ms var(--ease-out-strong);
+  transition: opacity 520ms var(--ease-collapse),
+              max-height 520ms var(--ease-collapse);
 }
 .overview > li.is-closing .overview-row__main {
   gap: 0;
-  transition: gap 360ms var(--ease-out-strong);
+  transition: gap 520ms var(--ease-collapse);
 }
 .overview > li.is-closing .overview-row__title {
   animation: none;
@@ -2424,7 +2509,7 @@ html, body { overflow-x: clip; }
    class is added, all 4 cards start fading concurrently, no stagger. */
 .overview > li.is-closing .overview-row[aria-expanded="true"] + .overview-row__open .cards > li {
   opacity: 0;
-  transition: opacity 240ms var(--ease-out-strong);
+  transition: opacity 520ms var(--ease-collapse);
   transition-delay: 0ms;
 }
 

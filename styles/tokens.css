@@ -64,6 +64,16 @@
   --fg-footer: #62615a;
   --fg-link: #0071ec;
   --fg-tag: #c1b29c;
+
+  /* Workflow step badge colors — Figma 54:7438 step meta pills, mapped to
+     semantic/text/* variables (dark composite is canonical).
+     "You do" → body · "Prompt Claude" → link · "You + Claude" → accent. */
+  --badge-you: #595959;     /* light: text/body */
+  --badge-prompt: #8e7d65;  /* light: text/link */
+  --badge-mixed: #c8893f;   /* light: text/accent */
+
+  /* Prompt code body color — Figma 54:7438 / 55:9113 (CC Prompt). */
+  --prompt-code-fg: #5b5b5a;
   --fg-on-accent: #21201c;
   --border-subtle: #c9c8c0;
   --border-strong: #0d0c0a;
@@ -139,6 +149,9 @@
   --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-figma-gentle: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-standard: var(--ease-out-strong);
+  /* Softer ease-out for collapse — long glide into the resting state so
+     section close animations don't slam shut at the end. */
+  --ease-collapse: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* ===== On-load entrance cascade =====
      Sequence: nav → hero (existing reveal) → overview rows → hiring section
@@ -214,6 +227,11 @@
   --fg-footer: #98938d;
   --fg-link: #5aa3ff;
   --fg-tag: #8e7d65;
+  /* Per Figma 54:7438 semantic/text/* variables (dark composite). */
+  --badge-you: #98938d;     /* text/body */
+  --badge-prompt: #c1b29c;  /* text/link */
+  --badge-mixed: #8e7d65;   /* text/accent */
+  --prompt-code-fg: #5b5b5a;
   --fg-on-accent: #0d0c0b;
   --border-subtle: #1c1a18;
   --border-strong: #d0ceca;
