@@ -1174,7 +1174,6 @@ html, body { overflow-x: clip; }
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--border-subtle);
 }
 /* Figma "Brain/PanelStack" uses px-[192px] vs the section's pad-h of 128px at 1440.
    Add the 64px delta as an inner indent at desktop so the brain rows visually nest
@@ -1186,6 +1185,21 @@ html, body { overflow-x: clip; }
   position: relative;
   border-bottom: 1px solid var(--border-subtle);
 }
+/* Top divider sits on the first row so it left-aligns with the row dividers
+   below (inside .brain-list's padding-inline, not at the outer container edge). */
+.brain-row:first-child { border-top: 1px solid var(--border-subtle); }
+
+/* Cascade brain rows in on parent open. Same spec as .overview > li:
+   translateX(-32) + opacity, --load-row-dur (700ms), ease-out, 120ms stagger.
+   Animation property only applies once the parent overview row is expanded,
+   so it triggers each time the row opens, not on initial page load. */
+.overview-row[aria-expanded="true"] + .overview-row__open [data-brain-list] > .brain-row {
+  animation: load-row var(--load-row-dur) ease-out both;
+}
+.overview-row[aria-expanded="true"] + .overview-row__open [data-brain-list] > .brain-row:nth-child(1) { animation-delay: 0ms; }
+.overview-row[aria-expanded="true"] + .overview-row__open [data-brain-list] > .brain-row:nth-child(2) { animation-delay: var(--load-row-stagger); }
+.overview-row[aria-expanded="true"] + .overview-row__open [data-brain-list] > .brain-row:nth-child(3) { animation-delay: calc(var(--load-row-stagger) * 2); }
+.overview-row[aria-expanded="true"] + .overview-row__open [data-brain-list] > .brain-row:nth-child(4) { animation-delay: calc(var(--load-row-stagger) * 3); }
 .brain-row__head {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -1234,22 +1248,46 @@ html, body { overflow-x: clip; }
 .brain-row__head[aria-expanded="true"] .brain-row__title {
   color: var(--accent-primary);
 }
+/* Open: tighten head's bottom padding so the gap from title to expanded body
+   (head padding-bottom + body padding-top 0) lands at 16px. */
+@media (min-width: 768px) {
+  .brain-row__head[aria-expanded="true"] { padding-bottom: var(--space-4); }
+}
+/* Open body: Figma 55:9702 "Open" — two columns (Description + CC Prompt).
+   Left: pl 80, body-sm copy. Right: dark prompt surface holds the per-row
+   rich content (learnings, tree, criteria, defaults). Stacks on mobile. */
 .brain-row__body {
   padding: 0 0 var(--space-8) 0;
   color: var(--fg-secondary);
-  font-size: var(--text-body-base-size);
-  line-height: var(--text-body-base-line);
+  font-size: var(--text-description-size);
+  line-height: var(--text-description-line);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
   animation: step-body-in var(--dur-expand) var(--ease-out-strong);
 }
+.brain-row__body[hidden] { display: none; }
 @media (min-width: 768px) {
-  .brain-row__body { padding-left: calc(56px + var(--space-6)); }
+  .brain-row__body { flex-direction: row; align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) {
   .brain-row__body { animation: none; }
 }
-.brain-row__body > p { max-width: 70ch; }
-.brain-row__body p + p { margin-top: var(--space-4); }
-.brain-row__body code {
+.brain-row__desc {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  color: var(--fg-secondary);
+}
+/* Align desc's first text line to prompt's first content line (prompt has
+   padding-top 24, so desc carries the same to keep first baselines flush). */
+@media (min-width: 768px) {
+  .brain-row__desc {
+    padding-left: var(--space-20);
+    padding-top: var(--space-6);
+  }
+}
+.brain-row__desc code {
   font-family: var(--font-mono);
   font-size: 0.92em;
   padding: 1px 6px;
@@ -1257,22 +1295,52 @@ html, body { overflow-x: clip; }
   background: var(--bg-subtle);
   color: var(--fg-primary);
 }
-.brain-row__body strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
-.brain-row__body a {
+.brain-row__desc strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
+.brain-row__desc a {
   color: var(--fg-link);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.brain-row__lede {
-  font-size: var(--text-body-lg-size);
-  line-height: var(--text-body-lg-line);
+
+/* Prompt surface (Figma 55:9705) — always-dark, holds per-row content stack.
+   Token shadows below give every descendant the dark-theme palette regardless
+   of page mode, so the existing list components read correctly on dark. */
+.brain-row__prompt {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 104px;
+  padding: var(--space-6);
+  background: var(--bg-prompt);
+  border-radius: var(--radius-prompt);
+  --fg-primary: #d0ceca;
+  --fg-secondary: #98938d;
+  --fg-tertiary: #545352;
+  --fg-quiet: #545352;
+  --fg-muted: #545352;
+  --border-subtle: #1c1a18;
+  --bg-subtle: #1c1a18;
   color: var(--fg-secondary);
-  margin-bottom: var(--space-4);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-sm-line);
 }
-.brain-row__lede + p { margin-top: var(--space-3); }
+.brain-row__prompt > :first-child { margin-top: 0; }
+.brain-row__prompt > :last-child { margin-bottom: 0; }
+.brain-row__prompt code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  color: var(--fg-primary);
+}
+.brain-row__prompt strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
+.brain-row__prompt a {
+  color: var(--fg-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .brain-row__eyebrow {
-  margin-top: var(--space-6);
-  margin-bottom: var(--space-3);
+  margin: 0 0 var(--space-3);
   color: var(--fg-tertiary);
   font-family: var(--font-body);
   font-size: var(--text-body-sm-size);
@@ -1304,7 +1372,9 @@ html, body { overflow-x: clip; }
   white-space: nowrap;
 }
 
-/* Criteria + defaults shared list style */
+/* Criteria + defaults shared list style. Cards sit on the page background with
+   a hairline border (matches section dividers); weight chip uses the workflow
+   step__badge pill style. */
 .criteria, .defaults {
   display: flex;
   flex-direction: column;
@@ -1312,31 +1382,35 @@ html, body { overflow-x: clip; }
 }
 .criteria > li, .defaults > li {
   padding: var(--space-4) var(--space-5);
-  border-left: 2px solid var(--border-subtle);
-  background: color-mix(in srgb, var(--bg-subtle) 50%, transparent);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
 }
 .criteria__head, .defaults__head {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
   margin-bottom: var(--space-2);
   flex-wrap: wrap;
 }
 .criteria__head strong, .defaults__head strong { color: var(--fg-primary); font-size: var(--text-body-lg-size); }
 .criteria__weight {
+  display: inline-flex;
+  align-items: center;
   font-size: 11px;
+  font-weight: var(--font-semibold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--fg-tertiary);
-  padding: 2px 8px;
+  color: var(--fg-secondary);
+  padding: 4px 12px;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
 }
 .criteria__weight--required {
   color: var(--fg-accent);
   border-color: currentColor;
-  background: color-mix(in srgb, var(--fg-accent) 8%, transparent);
 }
 
 /* Folder tree (nested <details>) */
@@ -2199,10 +2273,14 @@ html, body { overflow-x: clip; }
    Generic via [data-row-accent] so any row pattern (overview, step, brain) opts in.
    Scoped to `> button [data-row-accent]` so a hot outer row doesn't bleed accent
    into nested rows (e.g. brain rows inside the open overview row 03). */
-[data-row-hover] > button [data-row-accent] {
+[data-row-hover] > button [data-row-accent],
+[data-row-hover] > button .overview-row__title,
+[data-row-hover] > button .brain-row__title {
   transition: color var(--dur-standard) var(--ease-out-strong);
 }
-[data-row-hover][data-row-state="hot"] > button [data-row-accent] {
+[data-row-hover][data-row-state="hot"] > button [data-row-accent],
+[data-row-hover][data-row-state="hot"] > button .overview-row__title,
+[data-row-hover][data-row-state="hot"] > button .brain-row__title {
   color: var(--accent-primary);
 }
 /* Workflow step rows: title joins the accent fade alongside the number.

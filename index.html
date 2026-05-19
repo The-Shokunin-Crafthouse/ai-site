@@ -1009,7 +1009,7 @@ Commit the updated file and push.</code></pre>
           </div>
 
           <!-- Approval gates table — standalone callout -->
-          <aside class="gates" aria-labelledby="gates-title">
+          <aside id="gates" class="gates" aria-labelledby="gates-title">
             <header class="gates__head">
               <p class="gates__eyebrow">Four approval gates</p>
               <h3 id="gates-title" class="gates__title">Every gate is human. AI waits at each one.</h3>
@@ -1077,32 +1077,31 @@ Commit the updated file and push.</code></pre>
 
         <ol class="brain-list" data-brain-list>
           <li class="brain-row" data-row-hover data-brain-row="memory">
-            <button class="brain-row__head" type="button" aria-expanded="true" aria-controls="brain-row-1-body">
+            <button class="brain-row__head" type="button" aria-expanded="false" aria-controls="brain-row-1-body">
               <span class="brain-row__num" data-row-accent>01</span>
               <span class="brain-row__main">
                 <span class="brain-row__title">Studio Memory</span>
               </span>
             </button>
-            <div class="brain-row__body" id="brain-row-1-body">
-              <p class="brain-row__lede">One file, read at the start of every Claude Code session: <code>studio-memory.md</code>. It holds the studio identity, the seven design principles, the four design quality criteria, the technology stack, the code standards, the approval gates, the creative defaults, and a running log of accumulated learnings.</p>
-              <p>It is not a document for humans. It is dense, directive, and written as instructions Claude reads to do its job. The file is short on purpose. Length is friction.</p>
-
-              <p class="brain-row__eyebrow">Three real entries from <code>§8 Accumulated Learnings</code></p>
-              <ul class="learnings">
-                <li class="learning">
-                  <p class="learning__head"><strong>Next.js <code>trailingSlash: true</code> needs <code>skipTrailingSlashRedirect: true</code> for POST routes.</strong> <span class="learning__date">2026-05-09</span></p>
-                  <p>POST requests get 308-redirected and never reach the handler. Stripe webhooks fail silently. Always pair the two settings, or the URL convention quietly breaks server integrations.</p>
-                </li>
-                <li class="learning">
-                  <p class="learning__head"><strong>Supabase service role needs explicit <code>GRANT</code> even with RLS disabled.</strong> <span class="learning__date">2026-05-09</span></p>
-                  <p>Disabling row-level security does not grant table access. Backend writes fail with permission errors until <code>grant all on table … to service_role;</code> is added in every table-creation migration.</p>
-                </li>
-                <li class="learning">
-                  <p class="learning__head"><strong>Container queries for proportional SVG lockups.</strong> <span class="learning__date">2026-04-26</span></p>
-                  <p>SVG headline lockups that scale with their column (not the viewport) want <code>container-type: inline-size</code> on the parent + <code>cqi</code> sizing on the SVG. Viewport units break at intermediate widths when the column is narrower than the viewport.</p>
-                </li>
-              </ul>
-              <p>Every shipped project adds entries here. The next project starts with these already loaded.</p>
+            <div class="brain-row__body" id="brain-row-1-body" hidden>
+              <p class="brain-row__desc">One file, read at the start of every Claude Code session: <code>studio-memory.md</code>. It holds the studio identity, design principles, quality criteria, code standards, approval gates, creative defaults, and a running log of accumulated learnings. The next project starts with these already loaded.</p>
+              <div class="brain-row__prompt">
+                <p class="brain-row__eyebrow">Three real entries from <code>§8 Accumulated Learnings</code></p>
+                <ul class="learnings">
+                  <li class="learning">
+                    <p class="learning__head"><strong>Next.js <code>trailingSlash: true</code> needs <code>skipTrailingSlashRedirect: true</code> for POST routes.</strong> <span class="learning__date">2026-05-09</span></p>
+                    <p>POST requests get 308-redirected and never reach the handler. Stripe webhooks fail silently. Always pair the two settings, or the URL convention quietly breaks server integrations.</p>
+                  </li>
+                  <li class="learning">
+                    <p class="learning__head"><strong>Supabase service role needs explicit <code>GRANT</code> even with RLS disabled.</strong> <span class="learning__date">2026-05-09</span></p>
+                    <p>Disabling row-level security does not grant table access. Backend writes fail with permission errors until <code>grant all on table … to service_role;</code> is added in every table-creation migration.</p>
+                  </li>
+                  <li class="learning">
+                    <p class="learning__head"><strong>Container queries for proportional SVG lockups.</strong> <span class="learning__date">2026-04-26</span></p>
+                    <p>SVG headline lockups that scale with their column (not the viewport) want <code>container-type: inline-size</code> on the parent + <code>cqi</code> sizing on the SVG. Viewport units break at intermediate widths when the column is narrower than the viewport.</p>
+                  </li>
+                </ul>
+              </div>
             </div>
           </li>
 
@@ -1114,10 +1113,11 @@ Commit the updated file and push.</code></pre>
               </span>
             </button>
             <div class="brain-row__body" id="brain-row-2-body" hidden>
-              <p class="brain-row__lede">Every project clones from the same template. <code>WORKSPACE.md</code> defines the project. <code>WORKFLOW.md</code> defines the stages and approval gates. <code>token-map.md</code> is the design system source of truth. Stages live in numbered folders so the lifecycle is visible at a glance.</p>
-              <p class="brain-row__eyebrow">Open any folder below to see what's inside</p>
+              <p class="brain-row__desc">Every project clones from the same template. <code>WORKSPACE.md</code> defines the project. <code>WORKFLOW.md</code> defines the stages and approval gates. <code>token-map.md</code> is the design system source of truth. Stages live in numbered folders so the lifecycle is visible at a glance.</p>
+              <div class="brain-row__prompt">
+                <p class="brain-row__eyebrow">Open any folder below to see what's inside</p>
 
-              <div class="tree">
+                <div class="tree">
                 <details class="tree__node" open>
                   <summary><span class="tree__icon" aria-hidden="true">▾</span><span class="tree__name">[project-name]/</span><span class="tree__note">project root</span></summary>
                   <div class="tree__children">
@@ -1168,6 +1168,7 @@ Commit the updated file and push.</code></pre>
                     </details>
                   </div>
                 </details>
+                </div>
               </div>
             </div>
           </li>
@@ -1180,27 +1181,28 @@ Commit the updated file and push.</code></pre>
               </span>
             </button>
             <div class="brain-row__body" id="brain-row-3-body" hidden>
-              <p class="brain-row__lede">Quality is systematic, not subjective. The Evaluator grades every sprint against four criteria. Two are required passes — sprints cannot ship with failures there. The four approval gates in <a href="#workflow">the workflow</a> protect the system from drift.</p>
-
-              <p class="brain-row__eyebrow">The four criteria</p>
-              <ul class="criteria">
-                <li>
-                  <p class="criteria__head"><strong>Originality</strong> <span class="criteria__weight">Highest weight</span></p>
-                  <p>Evidence of deliberate creative decisions. No AI-default patterns. A human designer should see intent.</p>
-                </li>
-                <li>
-                  <p class="criteria__head"><strong>Design quality</strong> <span class="criteria__weight">Highest weight</span></p>
-                  <p>Coherent whole. Color, type, layout, imagery, and interaction combine into a distinct mood, not a collection of parts.</p>
-                </li>
-                <li>
-                  <p class="criteria__head"><strong>Craft</strong> <span class="criteria__weight criteria__weight--required">Required pass</span></p>
-                  <p>Typography hierarchy, spacing consistency, color harmony, contrast ratios. The competence floor. Failures here are disqualifying.</p>
-                </li>
-                <li>
-                  <p class="criteria__head"><strong>Functionality</strong> <span class="criteria__weight criteria__weight--required">Required pass</span></p>
-                  <p>Users understand what the interface does, find primary actions, and complete tasks without guessing.</p>
-                </li>
-              </ul>
+              <p class="brain-row__desc">Quality is systematic, not subjective. The Evaluator grades every sprint against four criteria. Two are required passes — sprints cannot ship with failures there. The <a href="#gates">four approval gates</a> protect the system from drift.</p>
+              <div class="brain-row__prompt">
+                <p class="brain-row__eyebrow">The four criteria</p>
+                <ul class="criteria">
+                  <li>
+                    <p class="criteria__head"><strong>Originality</strong> <span class="criteria__weight">Highest weight</span></p>
+                    <p>Evidence of deliberate creative decisions. No AI-default patterns. A human designer should see intent.</p>
+                  </li>
+                  <li>
+                    <p class="criteria__head"><strong>Design quality</strong> <span class="criteria__weight">Highest weight</span></p>
+                    <p>Coherent whole. Color, type, layout, imagery, and interaction combine into a distinct mood, not a collection of parts.</p>
+                  </li>
+                  <li>
+                    <p class="criteria__head"><strong>Craft</strong> <span class="criteria__weight criteria__weight--required">Required pass</span></p>
+                    <p>Typography hierarchy, spacing consistency, color harmony, contrast ratios. The competence floor. Failures here are disqualifying.</p>
+                  </li>
+                  <li>
+                    <p class="criteria__head"><strong>Functionality</strong> <span class="criteria__weight criteria__weight--required">Required pass</span></p>
+                    <p>Users understand what the interface does, find primary actions, and complete tasks without guessing.</p>
+                  </li>
+                </ul>
+              </div>
             </div>
           </li>
 
@@ -1212,38 +1214,39 @@ Commit the updated file and push.</code></pre>
               </span>
             </button>
             <div class="brain-row__body" id="brain-row-4-body" hidden>
-              <p class="brain-row__lede">These are the defaults I've encoded so every session starts with a point of view, not a blank canvas. From <code>studio-memory.md §9</code>.</p>
-
-              <ul class="defaults">
-                <li>
-                  <p class="defaults__head"><strong>Start monochromatic.</strong></p>
-                  <p>One accent, introduced late, with purpose. Three colors is usually one too many.</p>
-                </li>
-                <li>
-                  <p class="defaults__head"><strong>Springs over curves.</strong></p>
-                  <p>Springs feel physical; cubic-beziers feel digital. Use springs unless the motion is choreographed on a timeline.</p>
-                </li>
-                <li>
-                  <p class="defaults__head"><strong>One typeface family, full range.</strong></p>
-                  <p>Two families only if they refuse to compete. Display vs. body, sharp hierarchy, no overlap.</p>
-                </li>
-                <li>
-                  <p class="defaults__head"><strong>Grid as premise, not prison.</strong></p>
-                  <p>Break the grid rarely and with force. The break works only because the grid exists.</p>
-                </li>
-                <li>
-                  <p class="defaults__head"><strong>Know the register.</strong></p>
-                  <p>Dense UIs read as capable. Sparse UIs read as premium. Pick deliberately. Do not default to sparse because it is easier.</p>
-                </li>
-                <li>
-                  <p class="defaults__head"><strong>Detail is the craft, not the polish.</strong></p>
-                  <p>Scrollbar, favicon, empty state, 404, loading skeleton, form-error copy. These are the work, not the finishing touches.</p>
-                </li>
-                <li>
-                  <p class="defaults__head"><strong>Copy ships, never lorem.</strong></p>
-                  <p>Button labels, error copy, placeholders, onboarding. All design decisions. Production text is written, never filler.</p>
-                </li>
-              </ul>
+              <p class="brain-row__desc">These are the defaults I've encoded so every session starts with a point of view, not a blank canvas. From <code>studio-memory.md §9</code>. Override with intent and reason, never by accident.</p>
+              <div class="brain-row__prompt">
+                <ul class="defaults">
+                  <li>
+                    <p class="defaults__head"><strong>Start monochromatic.</strong></p>
+                    <p>One accent, introduced late, with purpose. Three colors is usually one too many.</p>
+                  </li>
+                  <li>
+                    <p class="defaults__head"><strong>Springs over curves.</strong></p>
+                    <p>Springs feel physical; cubic-beziers feel digital. Use springs unless the motion is choreographed on a timeline.</p>
+                  </li>
+                  <li>
+                    <p class="defaults__head"><strong>One typeface family, full range.</strong></p>
+                    <p>Two families only if they refuse to compete. Display vs. body, sharp hierarchy, no overlap.</p>
+                  </li>
+                  <li>
+                    <p class="defaults__head"><strong>Grid as premise, not prison.</strong></p>
+                    <p>Break the grid rarely and with force. The break works only because the grid exists.</p>
+                  </li>
+                  <li>
+                    <p class="defaults__head"><strong>Know the register.</strong></p>
+                    <p>Dense UIs read as capable. Sparse UIs read as premium. Pick deliberately. Do not default to sparse because it is easier.</p>
+                  </li>
+                  <li>
+                    <p class="defaults__head"><strong>Detail is the craft, not the polish.</strong></p>
+                    <p>Scrollbar, favicon, empty state, 404, loading skeleton, form-error copy. These are the work, not the finishing touches.</p>
+                  </li>
+                  <li>
+                    <p class="defaults__head"><strong>Copy ships, never lorem.</strong></p>
+                    <p>Button labels, error copy, placeholders, onboarding. All design decisions. Production text is written, never filler.</p>
+                  </li>
+                </ul>
+              </div>
             </div>
           </li>
         </ol>
