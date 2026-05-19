@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#fdfdfc" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#0d0c0b" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#0e0c0b" media="(prefers-color-scheme: dark)" />
   <title>How I use AI as a design leader — Levi Bahn</title>
   <meta name="description" content="The studio operating system I built around AI. Studio memory, agent handoffs, approval gates. The working system, not a concept deck." />
 
@@ -56,6 +56,9 @@
     <symbol id="ph-check" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20" d="m224 72-128 128-56-56"/></symbol>
     <symbol id="ph-brain" viewBox="0 0 256 256"><path fill="currentColor" d="M248,124a56.11,56.11,0,0,0-32-50.61V72a48,48,0,0,0-88-26.49A48,48,0,0,0,40,72v1.39a56,56,0,0,0,0,101.2V176a48,48,0,0,0,88,26.49A48,48,0,0,0,216,176v-1.41A56.09,56.09,0,0,0,248,124ZM88,208a32,32,0,0,1-31.81-28.56A55.87,55.87,0,0,0,64,180h8a8,8,0,0,0,0-16H64A40,40,0,0,1,50.67,86.27,8,8,0,0,0,56,78.73V72a32,32,0,0,1,64,0v68.26A47.8,47.8,0,0,0,88,128a8,8,0,0,0,0,16,32,32,0,0,1,0,64Zm104-44h-8a8,8,0,0,0,0,16h8a55.87,55.87,0,0,0,7.81-.56A32,32,0,1,1,168,144a8,8,0,0,0,0-16,47.8,47.8,0,0,0-32,12.26V72a32,32,0,0,1,64,0v6.73a8,8,0,0,0,5.33,7.54A40,40,0,0,1,192,164Zm16-52a8,8,0,0,1-8,8h-4a36,36,0,0,1-36-36V80a8,8,0,0,1,16,0v4a20,20,0,0,0,20,20h4A8,8,0,0,1,208,112ZM60,120H56a8,8,0,0,1,0-16h4A20,20,0,0,0,80,84V80a8,8,0,0,1,16,0v4A36,36,0,0,1,60,120Z"/></symbol>
     <symbol id="ph-dot" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></symbol>
+    <symbol id="ph-kanban" viewBox="0 0 256 256"><path fill="currentColor" d="M160,56v96a8,8,0,0,1-8,8H112a8,8,0,0,1-8-8V56a8,8,0,0,1,8-8h40A8,8,0,0,1,160,56Zm64-8H184a8,8,0,0,0-8,8v52a4,4,0,0,0,4,4h48a4,4,0,0,0,4-4V56A8,8,0,0,0,224,48Zm4,80H180a4,4,0,0,0-4,4v44a16,16,0,0,0,16,16h24a16,16,0,0,0,16-16V132A4,4,0,0,0,228,128ZM80,48H40a8,8,0,0,0-8,8v52a4,4,0,0,0,4,4H84a4,4,0,0,0,4-4V56A8,8,0,0,0,80,48Zm4,80H36a4,4,0,0,0-4,4v76a16,16,0,0,0,16,16H72a16,16,0,0,0,16-16V132A4,4,0,0,0,84,128Z"/></symbol>
+    <symbol id="ph-briefcase" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M216 72H40a8 8 0 0 0-8 8v120a8 8 0 0 0 8 8h176a8 8 0 0 0 8-8V80a8 8 0 0 0-8-8ZM168 72V56a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v16M32 144h192"/></symbol>
+    <symbol id="ph-claudecode" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949zM6 10.949h1.488V8.102H6v2.847zm10.51 0H18V8.102h-1.49v2.847z"/></symbol>
   </svg>
 
   <a class="skip-link" href="#hiring">Skip to: How I'd apply this at your company</a>
@@ -1100,15 +1103,18 @@ Commit the updated file and push.</code></pre>
                 <p class="brain-row__eyebrow">Three real entries from <code>§8 Accumulated Learnings</code></p>
                 <ul class="learnings">
                   <li class="learning">
-                    <p class="learning__head"><strong>Next.js <code>trailingSlash: true</code> needs <code>skipTrailingSlashRedirect: true</code> for POST routes.</strong> <span class="learning__date">2026-05-09</span></p>
+                    <p class="learning__date">2026-05-09</p>
+                    <p class="learning__head"><strong>Next.js <code>trailingSlash: true</code> needs <code>skipTrailingSlashRedirect: true</code> for POST routes.</strong></p>
                     <p>POST requests get 308-redirected and never reach the handler. Stripe webhooks fail silently. Always pair the two settings, or the URL convention quietly breaks server integrations.</p>
                   </li>
                   <li class="learning">
-                    <p class="learning__head"><strong>Supabase service role needs explicit <code>GRANT</code> even with RLS disabled.</strong> <span class="learning__date">2026-05-09</span></p>
+                    <p class="learning__date">2026-05-09</p>
+                    <p class="learning__head"><strong>Supabase service role needs explicit <code>GRANT</code> even with RLS disabled.</strong></p>
                     <p>Disabling row-level security does not grant table access. Backend writes fail with permission errors until <code>grant all on table … to service_role;</code> is added in every table-creation migration.</p>
                   </li>
                   <li class="learning">
-                    <p class="learning__head"><strong>Container queries for proportional SVG lockups.</strong> <span class="learning__date">2026-04-26</span></p>
+                    <p class="learning__date">2026-04-26</p>
+                    <p class="learning__head"><strong>Container queries for proportional SVG lockups.</strong></p>
                     <p>SVG headline lockups that scale with their column (not the viewport) want <code>container-type: inline-size</code> on the parent + <code>cqi</code> sizing on the SVG. Viewport units break at intermediate widths when the column is narrower than the viewport.</p>
                   </li>
                 </ul>

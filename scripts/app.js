@@ -116,10 +116,8 @@
   const tabLinks = Array.from(document.querySelectorAll("[data-tab-link]"));
 
   function clearActive() {
-    navLinks.forEach(function (link) {
-      link.classList.remove("is-active");
-      link.removeAttribute("aria-current");
-    });
+    // Nav links are no longer auto-highlighted on scroll. Hover is the only
+    // way they turn yellow. Mobile tab bar still tracks active section.
     tabLinks.forEach(function (link) {
       link.classList.remove("is-active");
       link.removeAttribute("aria-current");
@@ -127,18 +125,10 @@
   }
 
   function setActive(id) {
-    // Figma "Dark/Full Page Composite — On Load" shows no nav highlight at top
-    // of page. Only highlight once the user has scrolled away from the top.
     if (window.scrollY === 0) {
       clearActive();
       return;
     }
-    navLinks.forEach(function (link) {
-      const match = link.getAttribute("href") === "#" + id;
-      link.classList.toggle("is-active", match);
-      if (match) link.setAttribute("aria-current", "true");
-      else link.removeAttribute("aria-current");
-    });
     tabLinks.forEach(function (link) {
       const match = link.getAttribute("href") === "#" + id;
       link.classList.toggle("is-active", match);
@@ -417,6 +407,12 @@
       agents: "The Agents",
       stack: "The Tools",
     };
+    const CARD_ICONS = {
+      brain: "ph-brain",
+      workflow: "ph-kanban",
+      agents: "ph-claudecode",
+      stack: "ph-briefcase",
+    };
     let activeCard = null;
 
     function closeCard() {
@@ -439,18 +435,56 @@
       if (mediaWrap) mediaWrap.parentNode.removeChild(mediaWrap);
       // Wrap content with title + structured layout
       cardPanel.innerHTML = "";
+      const svgNS = "http://www.w3.org/2000/svg";
       const wrap = document.createElement("div");
       wrap.className = "overview-row__panel-inner";
+
+      // Header: icon + title (Figma 57:10767 nodes 57:10923–10926).
+      const header = document.createElement("div");
+      header.className = "overview-row__panel-header";
+      const iconId = CARD_ICONS[name];
+      if (iconId) {
+        const icon = document.createElementNS(svgNS, "svg");
+        icon.setAttribute("class", "overview-row__panel-icon");
+        icon.setAttribute("aria-hidden", "true");
+        const use = document.createElementNS(svgNS, "use");
+        use.setAttribute("href", "#" + iconId);
+        icon.appendChild(use);
+        header.appendChild(icon);
+      }
       const title = document.createElement("h3");
       title.className = "overview-row__panel-title";
       title.textContent = CARD_TITLES[name] || "";
-      wrap.appendChild(title);
+      header.appendChild(title);
+      wrap.appendChild(header);
+
+      // Divider below header (Figma node 57:10927).
+      const divTop = document.createElement("div");
+      divTop.className = "overview-row__panel-divider";
+      wrap.appendChild(divTop);
+
+      // Two-column grid: body (left) + side stats (right).
+      const grid = document.createElement("div");
+      grid.className = "overview-row__panel-grid";
+
       const body = document.createElement("div");
       body.className = "overview-row__panel-body";
       body.appendChild(frag);
-      // Promote .drawer__stats to .overview-row__panel-stats
+
+      // Drop the .drawer__link bottom CTA — per spec, no link in expanded card.
+      const linkWrap = body.querySelector(".drawer__link");
+      if (linkWrap) linkWrap.parentNode.removeChild(linkWrap);
+
+      grid.appendChild(body);
+
+      // Side column: top divider + stats + bottom divider (Figma 57:10929–10950).
+      const side = document.createElement("div");
+      side.className = "overview-row__panel-side";
       const stats = body.querySelector(".drawer__stats");
       if (stats) {
+        const sideTop = document.createElement("div");
+        sideTop.className = "overview-row__panel-divider";
+        side.appendChild(sideTop);
         stats.classList.add("overview-row__panel-stats");
         stats.classList.remove("drawer__stats");
         stats.querySelectorAll(".drawer__stat-num").forEach(function (n) {
@@ -461,31 +495,14 @@
           l.classList.remove("drawer__stat-label");
           l.classList.add("overview-row__panel-stat-label");
         });
-        body.parentNode.appendChild(stats);
+        side.appendChild(stats);
+        const sideBot = document.createElement("div");
+        sideBot.className = "overview-row__panel-divider";
+        side.appendChild(sideBot);
       }
-      // Promote .drawer__link to .overview-row__panel-link
-      const linkWrap = body.querySelector(".drawer__link");
-      if (linkWrap) {
-        const link = linkWrap.querySelector("a");
-        if (link) {
-          link.classList.add("overview-row__panel-link");
-          // Swap text arrow span for Phosphor SVG
-          const oldArrow = link.querySelector("[data-arrow]");
-          if (oldArrow) {
-            const svgNS = "http://www.w3.org/2000/svg";
-            const svg = document.createElementNS(svgNS, "svg");
-            svg.setAttribute("class", "icon icon--md");
-            svg.setAttribute("data-arrow", "");
-            const use = document.createElementNS(svgNS, "use");
-            use.setAttribute("href", "#ph-arrow-right");
-            svg.appendChild(use);
-            oldArrow.parentNode.replaceChild(svg, oldArrow);
-          }
-          body.parentNode.appendChild(link);
-        }
-        linkWrap.parentNode.removeChild(linkWrap);
-      }
-      wrap.appendChild(body);
+      grid.appendChild(side);
+
+      wrap.appendChild(grid);
       cardPanel.appendChild(wrap);
 
       // Show panel
@@ -587,11 +604,11 @@
       }
     }
 
-    // Restore from sessionStorage
-    timeline.querySelectorAll("[data-step]").forEach(function (stepEl) {
-      const id = stepEl.getAttribute("data-step");
-      if (expanded.has(id)) setStep(stepEl, true, false);
-    });
+    // All steps start closed on every load. Persistence still tracks the
+    // explored set so the progress counter survives refresh, but no step body
+    // is restored to open — visitors land on a fresh, collapsed timeline.
+    expanded.clear();
+    writeSet(STEPS_KEY, expanded);
     updateProgress();
 
     // Click delegate

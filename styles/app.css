@@ -429,7 +429,7 @@ html, body { overflow-x: clip; }
   font-size: var(--text-subline-size);
   line-height: var(--text-subline-line);
   color: var(--fg-secondary);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 .hero__actions {
   display: flex;
@@ -443,7 +443,7 @@ html, body { overflow-x: clip; }
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
   transition: border-color var(--dur-fast) var(--ease-standard),
@@ -567,7 +567,6 @@ html, body { overflow-x: clip; }
               transform var(--dur-fast) var(--ease-out-strong);
 }
 @media (max-width: 1023px) { .card { min-height: 220px; } }
-@media (min-width: 1024px) { .card { height: 200px; } }
 .card:focus-visible {
   outline: 2px solid var(--fg-primary);
   outline-offset: 4px;
@@ -584,8 +583,22 @@ html, body { overflow-x: clip; }
   line-height: var(--text-body-sm-line);
   letter-spacing: 0.08em;
   color: var(--fg-tertiary);
+  font-weight: var(--font-regular);
   font-feature-settings: "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
   transition: color var(--dur-fast) var(--ease-out-strong);
+}
+/* Lock weight across all states. The accent-yellow color perceptually reads
+   thicker on dark bg than the muted gray default; explicit weight on every
+   state prevents any synthesized weight change. */
+.card:hover .card__index,
+.card[aria-expanded="true"] .card__index,
+.card:focus-visible .card__index,
+.card:active .card__index {
+  font-weight: var(--font-regular);
+  -webkit-text-stroke: 0;
 }
 .card__title {
   font-size: 18px;
@@ -609,7 +622,7 @@ html, body { overflow-x: clip; }
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
   color: var(--fg-secondary);
-  margin-top: var(--space-2);
+  margin-top: var(--space-4);
   transition: color var(--dur-fast) var(--ease-out-strong);
 }
 .card__arrow {
@@ -796,12 +809,12 @@ html, body { overflow-x: clip; }
 }
 .drawer__body p + p { margin-top: var(--space-4); }
 .drawer__body code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.92em;
   padding: 1px 6px;
   border-radius: var(--radius-sm);
   background: var(--bg-subtle);
-  color: var(--fg-primary);
+  color: inherit;
 }
 .drawer__body strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
 .drawer__stats {
@@ -875,7 +888,7 @@ html, body { overflow-x: clip; }
   color: var(--fg-secondary);
   background: transparent;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   cursor: pointer;
   transition: color var(--dur-fast) var(--ease-out-strong),
               border-color var(--dur-fast) var(--ease-out-strong),
@@ -1014,8 +1027,8 @@ html, body { overflow-x: clip; }
 .step__head[aria-expanded="true"] .step__title { color: var(--accent-primary); }
 
 .step__body {
-  /* Symmetric top padding; +8px on bottom so the open row breathes into the divider. */
-  padding: var(--space-6) 0 var(--space-8) 0;
+  /* Top padding removed per spec — body sits flush under the step head. */
+  padding: 0 0 var(--space-8) 0;
   font-size: var(--text-body-base-size);
   line-height: var(--text-body-base-line);
   color: var(--fg-secondary);
@@ -1064,12 +1077,14 @@ html, body { overflow-x: clip; }
   .step__chev { transition: none; }
 }
 
-/* Hidden rows 4–13 collapse out of layout until [data-show-all="true"] flips
-   on the timeline. When revealed they cascade in via --reveal-i index. */
+/* Rows 4–13 collapse out of layout until [data-show-all="true"] flips on the
+   timeline. When revealed they cascade in with the same load-row animation
+   used by the initial 3 rows. --reveal-i (0..9) on each hidden row drives a
+   60ms stagger. */
 .step[data-step-hidden] { display: none; }
 .timeline[data-show-all="true"] .step[data-step-hidden] {
   display: list-item;
-  animation: step-row-in 520ms var(--ease-out-strong) both;
+  animation: load-row var(--load-row-dur) ease-out both;
   animation-delay: calc(var(--reveal-i, 0) * 60ms);
 }
 @keyframes step-row-in {
@@ -1121,12 +1136,12 @@ html, body { overflow-x: clip; }
   font-size: var(--text-body-base-size);
 }
 .gates__lede code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.92em;
   padding: 1px 6px;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--fg-primary);
+  color: inherit;
 }
 .gates__scroll { width: 100%; overflow-x: auto; }
 .gates__table {
@@ -1175,12 +1190,8 @@ html, body { overflow-x: clip; }
   padding: 0;
   list-style: none;
 }
-/* Figma "Brain/PanelStack" uses px-[192px] vs the section's pad-h of 128px at 1440.
-   Add the 64px delta as an inner indent at desktop so the brain rows visually nest
-   inside the outer section padding, matching the Figma frame. */
-@media (min-width: 1440px) {
-  .brain-list { padding-inline: var(--space-16); }
-}
+/* Brain list spans the full container width (no inner indent) so the expanded
+   body left-aligns with the section header copy, matching Section 4 tools-list. */
 .brain-row {
   position: relative;
   border-bottom: 1px solid var(--border-subtle);
@@ -1200,6 +1211,22 @@ html, body { overflow-x: clip; }
 .overview-row[aria-expanded="true"] + .overview-row__open [data-brain-list] > .brain-row:nth-child(2) { animation-delay: var(--load-row-stagger); }
 .overview-row[aria-expanded="true"] + .overview-row__open [data-brain-list] > .brain-row:nth-child(3) { animation-delay: calc(var(--load-row-stagger) * 2); }
 .overview-row[aria-expanded="true"] + .overview-row__open [data-brain-list] > .brain-row:nth-child(4) { animation-delay: calc(var(--load-row-stagger) * 3); }
+
+/* Section 2 — workflow timeline initial cascade (first 3 visible rows only).
+   Rows 4–13 stay [data-step-hidden] until "Show all 13" or "Expand all"
+   flips data-show-all="true", which triggers a second cascade in the rule
+   defined further down (.timeline[data-show-all="true"] .step[data-step-hidden]). */
+.overview-row[aria-expanded="true"] + .overview-row__open [data-timeline] .steps > .step:not([data-step-hidden]) {
+  animation: load-row var(--load-row-dur) ease-out both;
+}
+.overview-row[aria-expanded="true"] + .overview-row__open [data-timeline] .steps > .step:not([data-step-hidden]):nth-child(1) { animation-delay: 0ms; }
+.overview-row[aria-expanded="true"] + .overview-row__open [data-timeline] .steps > .step:not([data-step-hidden]):nth-child(2) { animation-delay: 60ms; }
+.overview-row[aria-expanded="true"] + .overview-row__open [data-timeline] .steps > .step:not([data-step-hidden]):nth-child(3) { animation-delay: 120ms; }
+@media (prefers-reduced-motion: reduce) {
+  .overview-row[aria-expanded="true"] + .overview-row__open [data-timeline] .steps > .step:not([data-step-hidden]) {
+    animation: none;
+  }
+}
 .brain-row__head {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -1268,7 +1295,14 @@ html, body { overflow-x: clip; }
 }
 .brain-row__body[hidden] { display: none; }
 @media (min-width: 768px) {
-  .brain-row__body { flex-direction: row; align-items: flex-start; }
+  .brain-row__body {
+    flex-direction: row;
+    align-items: flex-start;
+    /* Left-align the expanded body with the row title (which sits after the
+       56px number column + 24px gap). Matches section 4 tools-row__body
+       which uses the same 80px padding-inline. */
+    padding-left: calc(56px + var(--space-6));
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .brain-row__body { animation: none; }
@@ -1280,10 +1314,11 @@ html, body { overflow-x: clip; }
   color: var(--fg-secondary);
 }
 /* Align desc's first text line to prompt's first content line (prompt has
-   padding-top 24, so desc carries the same to keep first baselines flush). */
+   padding-top 24, so desc carries the same to keep first baselines flush).
+   No left padding here — the body wrapper handles indent so desc left-aligns
+   with the row title. */
 @media (min-width: 768px) {
   .brain-row__desc {
-    padding-left: var(--space-20);
     padding-top: var(--space-6);
   }
 }
@@ -1293,7 +1328,7 @@ html, body { overflow-x: clip; }
   padding: 1px 6px;
   border-radius: var(--radius-sm);
   background: var(--bg-subtle);
-  color: var(--fg-primary);
+  color: inherit;
 }
 .brain-row__desc strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
 .brain-row__desc a {
@@ -1320,6 +1355,7 @@ html, body { overflow-x: clip; }
   --border-subtle: #1c1a18;
   --bg-subtle: #1c1a18;
   color: var(--fg-secondary);
+  font-family: var(--font-mono);
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
 }
@@ -1331,7 +1367,7 @@ html, body { overflow-x: clip; }
   padding: 1px 6px;
   border-radius: var(--radius-sm);
   background: var(--bg-subtle);
-  color: var(--fg-primary);
+  color: inherit;
 }
 .brain-row__prompt strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
 .brain-row__prompt a {
@@ -1357,6 +1393,7 @@ html, body { overflow-x: clip; }
   background: transparent;
 }
 .learning__head {
+  font-family: var(--font-body);
   font-size: var(--text-body-base-size);
   color: var(--fg-primary);
   margin-bottom: var(--space-2);
@@ -1366,10 +1403,15 @@ html, body { overflow-x: clip; }
   flex-wrap: wrap;
 }
 .learning__date {
-  font-size: var(--text-body-sm-size);
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--fg-tertiary);
   font-feature-settings: "tnum";
   white-space: nowrap;
+  margin: 0 0 var(--space-1) 0;
 }
 
 /* Criteria + defaults shared list style. Cards sit on the page background with
@@ -1393,11 +1435,13 @@ html, body { overflow-x: clip; }
   gap: var(--space-3);
   margin-bottom: var(--space-2);
   flex-wrap: wrap;
+  font-family: var(--font-body);
 }
 .criteria__head strong, .defaults__head strong { color: var(--fg-primary); font-size: var(--text-body-lg-size); }
 .criteria__weight {
   display: inline-flex;
   align-items: center;
+  font-family: var(--font-body);
   font-size: 11px;
   font-weight: var(--font-semibold);
   letter-spacing: 0.06em;
@@ -1416,7 +1460,7 @@ html, body { overflow-x: clip; }
 /* Folder tree (nested <details>) */
 .tree {
   margin-top: var(--space-4);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: var(--text-body-sm-size);
   line-height: 1.6;
   color: var(--fg-secondary);
@@ -1536,6 +1580,11 @@ html, body { overflow-x: clip; }
 }
 .tools-row__body {
   padding: 0 0 var(--space-8) 0;
+  animation: step-body-in var(--dur-expand) var(--ease-out-strong);
+}
+.tools-row__body[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .tools-row__body { animation: none; }
 }
 @media (min-width: 1024px) {
   .tools-row__body { padding-inline: var(--space-12); }
@@ -1577,7 +1626,7 @@ html, body { overflow-x: clip; }
   padding: 1px 6px;
   border-radius: var(--radius-sm);
   background: var(--bg-subtle);
-  color: var(--fg-primary);
+  color: inherit;
 }
 .tool-table__star { color: var(--accent-primary); }
 .tool-table__scroll thead { display: none; }
@@ -1654,7 +1703,10 @@ html, body { overflow-x: clip; }
   color: var(--fg-primary);
   margin-top: 0;
   padding-top: var(--space-12);
-  border-top: 1px solid var(--border-subtle);
+  /* Divider above hiring section is rendered by .overview > li#tools::after
+     (the overview list's bottom edge). Keeping a border-top here would stack
+     two 1px lines and prevent the li::after cascade animation from being
+     visible (the static line would dominate). */
 }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
 /* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero. */
@@ -1792,7 +1844,7 @@ html, body { overflow-x: clip; }
   padding: 1px 6px;
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.06);
-  color: var(--fg-primary);
+  color: inherit;
 }
 .section--hiring:not(.dark *) .hiring__brain-text code { background: rgba(0, 0, 0, 0.04); }
 
@@ -2521,7 +2573,8 @@ html, body { overflow-x: clip; }
    same treatment. */
 @media (min-width: 1440px) {
   .overview-row__open > .cards,
-  .overview-row__open > .container {
+  .overview-row__open > .container,
+  .overview-row__open > .overview-row__panel {
     padding-left: calc(var(--pad-h) + 44px + var(--space-6));
     padding-right: 192px;
   }
@@ -2581,11 +2634,32 @@ html, body { overflow-x: clip; }
 li#tools .overview-row[aria-expanded="true"] + .overview-row__open > .container {
   animation: overview-eyebrow-in 480ms var(--ease-out-strong) 160ms both;
 }
-li#tools .overview-row[aria-expanded="true"] + .overview-row__open .tools-row {
-  animation: overview-content-slide 600ms var(--ease-out-strong) 380ms both;
+/* Tools rows cascade in like brain-rows: translateX(-32) + opacity, load-row
+   keyframes, 120ms stagger between rows. Base delay 380ms keeps the wave
+   trailing the lede + container divider that fire earlier. */
+li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-list] > .tools-row {
+  animation: load-row var(--load-row-dur) ease-out both;
+}
+li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-list] > .tools-row:nth-child(1) { animation-delay: 380ms; }
+li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-list] > .tools-row:nth-child(2) { animation-delay: calc(380ms + var(--load-row-stagger)); }
+li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-list] > .tools-row:nth-child(3) { animation-delay: calc(380ms + var(--load-row-stagger) * 2); }
+@media (prefers-reduced-motion: reduce) {
+  li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-list] > .tools-row {
+    animation: overview-eyebrow-in 200ms ease both;
+  }
+}
+/* Bottom divider under section 4 (the .overview > li#tools::after at the li's
+   bottom edge) joins the row cascade. Currently it sits static while the rest
+   of the panel slides in. Animate opacity + translateY so it slides in as the
+   trailing element of the wave, just after the last tools-row.
+   When collapsed: divider stays visible at default state.
+   When expanded: animation backwards fill makes it start at opacity 0 / -12,
+   then slide in to opacity 1 / 0. */
+.overview > li#tools:has(> .overview-row[aria-expanded="true"])::after {
+  animation: overview-content-slide 600ms var(--ease-out-strong) 440ms both;
 }
 @media (prefers-reduced-motion: reduce) {
-  li#tools .overview-row[aria-expanded="true"] + .overview-row__open .tools-row {
+  .overview > li#tools:has(> .overview-row[aria-expanded="true"])::after {
     animation: overview-eyebrow-in 200ms ease both;
   }
 }
@@ -2703,21 +2777,70 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open .tools-row {
 /* ===== Inline panel for the open card =====
    Sits below the 4-card grid. Click another card → swap content. */
 .overview-row__panel {
-  border-top: 1px solid var(--border-subtle);
-  padding: var(--space-12) 0 0;
+  padding: var(--space-8) 0 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  max-width: var(--container-feature);
 }
 .overview-row__panel[hidden] { display: none; }
+.overview-row__panel-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+/* Cascade panel contents in when card is clicked. Each child slides + fades in
+   with a 80ms stagger. Uses step-row-in keyframe (opacity 0/translateY -8 → 1/0). */
+.overview-row__panel:not([hidden]) > .overview-row__panel-inner > * {
+  animation: step-row-in 600ms var(--ease-out-strong) both;
+}
+.overview-row__panel:not([hidden]) > .overview-row__panel-inner > *:nth-child(1) { animation-delay: 80ms; }
+.overview-row__panel:not([hidden]) > .overview-row__panel-inner > *:nth-child(2) { animation-delay: 160ms; }
+.overview-row__panel:not([hidden]) > .overview-row__panel-inner > *:nth-child(3) { animation-delay: 240ms; }
+@media (prefers-reduced-motion: reduce) {
+  .overview-row__panel:not([hidden]) > .overview-row__panel-inner > * {
+    animation: none;
+  }
+}
+.overview-row__panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.overview-row__panel-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--fg-icon-primary);
+  flex-shrink: 0;
+}
 .overview-row__panel-title {
   font-family: var(--font-display);
-  font-weight: var(--font-light);
+  font-weight: 200;
   font-size: var(--text-display-size);
   line-height: var(--text-display-line);
   color: var(--fg-primary);
   letter-spacing: -0.01em;
+}
+.overview-row__panel-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  width: 100%;
+}
+.overview-row__panel-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .overview-row__panel-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+}
+.overview-row__panel-side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 .overview-row__panel-body {
   display: flex;
@@ -2734,31 +2857,32 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open .tools-row {
 
 .overview-row__panel-stats {
   display: flex;
-  gap: var(--space-12);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border-subtle);
+  gap: var(--space-2);
+  padding: var(--space-2) 0 var(--space-1) var(--space-4);
   list-style: none;
   margin: 0;
-  padding-inline-start: 0;
+  padding-inline-start: var(--space-4);
 }
 .overview-row__panel-stats li {
+  flex: 1 0 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 .overview-row__panel-stat-num {
-  font-family: var(--font-display);
-  font-weight: var(--font-light);
-  font-size: 56px;
-  line-height: 1;
+  font-family: var(--font-body);
+  font-weight: 100;
+  font-size: 34px;
+  line-height: 1.1;
   color: var(--fg-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 .overview-row__panel-stat-label {
   font-family: var(--font-body);
-  font-size: var(--text-body-sm-size);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
   color: var(--fg-tertiary);
 }
 

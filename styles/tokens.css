@@ -4,7 +4,7 @@
   /* Typography. Inter for body/display, Cascadia Mono for code/prompts. */
   --font-body: "Inter", system-ui, sans-serif;
   --font-display: var(--font-body);
-  --font-mono: "Cascadia Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-mono: "Cascadia Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
 
   /* Typography — weights */
   --font-light: 100;
@@ -88,9 +88,13 @@
      override) and matches the callout's dark surface contrast intent. */
   --fg-brain-icon: #2b2722;
 
+  /* Card-panel icon stamp — Figma 57:10923. Matches the primary text color
+     (#21201C in light). Override in .dark for visibility. */
+  --fg-icon-primary: #21201c;
+
   /* Inset callout surface — used by the "What I build first" card in
      Section 06. Sinks deeper than --bg-recessed in dark so the card
-     reads as a separate plane against bg-base #0d0c0b. */
+     reads as a separate plane against bg-base #0e0c0b. */
   --bg-callout: #f7f5f3;
   --fg-on-accent: #21201c;
   --border-subtle: #c9c8c0;
@@ -137,7 +141,7 @@
 
   /* Semantic surface — Studio Brain prompt panel (Figma 55:9705 "CC Prompt").
      Always-dark code/prompt surface inside the open brain row.
-     Light: --border-strong (#0d0c0a) ≈ Figma #0d0c0b.
+     Light: --border-strong (#0d0c0a) ≈ Figma #0e0c0b.
      Radius snapped from Figma 16px to --radius-md (8px). */
   --bg-prompt: var(--border-strong);
   --radius-prompt: var(--radius-md);
@@ -235,17 +239,17 @@
 }
 
 /* Color — dark. 1:1 with Figma "Dark/Full Page Composite" variables.
-   bg/base, bg/nav: #0d0c0b · semantic/divider: #1c1a18
+   bg/base, bg/nav: #0e0c0b · semantic/divider: #1c1a18
    text/heading: #d0ceca · text/body: #98938d · text/quiet, text/muted: #545352
    action/primary: #daff60 */
 .dark {
-  --bg-base: #0d0c0b;
-  --bg-nav: #0d0c0b;
-  --bg-subtle: #0d0c0b;
+  --bg-base: #0e0c0b;
+  --bg-nav: #0e0c0b;
+  --bg-subtle: #0e0c0b;
   --bg-recessed: #080707;
   --bg-callout: #121110;
-  --bg-surface-2: #0d0c0b;
-  --bg-surface-3: #0d0c0b;
+  --bg-surface-2: #0e0c0b;
+  --bg-surface-3: #0e0c0b;
   --bg-inverse: #fdfdfc;
   --fg-primary: #d0ceca;
   --fg-secondary: #98938d;
@@ -260,7 +264,7 @@
   --badge-prompt: #c1b29c;  /* text/link */
   --badge-mixed: #8e7d65;   /* text/accent */
   --prompt-code-fg: #5b5b5a;
-  --fg-on-accent: #0d0c0b;
+  --fg-on-accent: #0e0c0b;
   --border-subtle: #1c1a18;
   --border-strong: #d0ceca;
   --accent-primary: #daff60;
@@ -269,11 +273,11 @@
   --hover-row: #2a2522;
   --fg-accent: #ca4541;
   --bg-tooltip: #d0ceca;
-  --fg-tooltip: #0d0c0b;
+  --fg-tooltip: #0e0c0b;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.35);
   --shadow-elevated: 0 16px 32px rgba(0, 0, 0, 0.45);
   --decoration-fg-primary: rgba(208, 206, 202, 0.4);
 
-  /* Dark-mode prompt surface = --bg-base (#0d0c0b, exact Figma match). */
+  /* Dark-mode prompt surface = --bg-base (#0e0c0b, exact Figma match). */
   --bg-prompt: var(--bg-base);
 }
