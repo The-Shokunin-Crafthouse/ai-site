@@ -698,7 +698,6 @@
     const tabs = Array.from(hiring.querySelectorAll("[data-hiring-tab]"));
     const panels = Array.from(hiring.querySelectorAll("[data-hiring-panel]"));
     const cta = hiring.querySelector("[data-hiring-cta]");
-    const lede = hiring.parentElement && hiring.parentElement.querySelector(".section__lede");
 
     function selectTab(name, focusTab) {
       tabs.forEach(function (t) {
@@ -712,7 +711,6 @@
         p.hidden = !match;
       });
       if (cta) cta.hidden = false;
-      if (lede) lede.hidden = false;
       hiring.setAttribute("data-hiring-state", "expanded");
     }
 
@@ -735,6 +733,21 @@
       else if (e.key === "End") next = tabs.length - 1;
       selectTab(tabs[next].getAttribute("data-hiring-tab"), true);
     });
+
+    // Preserve the current light/dark mode when crossing to levibahn.com.
+    // Appends ?mode=light|dark to the link href just before navigation, so
+    // levibahn.com can read the param on load and match the visitor's state.
+    const ctaLink = hiring.querySelector("[data-hiring-cta-link]");
+    if (ctaLink) {
+      ctaLink.addEventListener("click", function () {
+        try {
+          const url = new URL(ctaLink.href);
+          const mode = document.documentElement.classList.contains("dark") ? "dark" : "light";
+          url.searchParams.set("mode", mode);
+          ctaLink.href = url.toString();
+        } catch (_) { /* malformed href — let the browser navigate as-is */ }
+      });
+    }
   }
 
   /* ===== Back to top ===== */

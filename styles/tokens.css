@@ -53,6 +53,7 @@
   --bg-base: #fdfdfc;
   --bg-nav: #fdfdfc;
   --bg-subtle: #f7f5f3;
+  --bg-recessed: #f7f5f3;
   --bg-surface-2: #edebe8;
   --bg-surface-3: #e4e1dd;
   --bg-inverse: #21201c;
@@ -74,6 +75,16 @@
 
   /* Prompt code body color — Figma 54:7438 / 55:9113 (CC Prompt). */
   --prompt-code-fg: #5b5b5a;
+
+  /* Hiring brain icon — Figma 57:11619 dark composite. Kept as its own
+     semantic token so the icon color stays fixed across modes (no .dark
+     override) and matches the callout's dark surface contrast intent. */
+  --fg-brain-icon: #2b2722;
+
+  /* Inset callout surface — used by the "What I build first" card in
+     Section 06. Sinks deeper than --bg-recessed in dark so the card
+     reads as a separate plane against bg-base #0d0c0b. */
+  --bg-callout: #f7f5f3;
   --fg-on-accent: #21201c;
   --border-subtle: #c9c8c0;
   --border-strong: #0d0c0a;
@@ -114,6 +125,7 @@
   --radius-xs: 1px;
   --radius-sm: 3px;
   --radius-md: 8px;
+  --radius-lg: 16px;
   --radius-full: 9999px;
 
   /* Shadow */
@@ -216,6 +228,8 @@
   --bg-base: #0d0c0b;
   --bg-nav: #0d0c0b;
   --bg-subtle: #0d0c0b;
+  --bg-recessed: #080707;
+  --bg-callout: #121110;
   --bg-surface-2: #0d0c0b;
   --bg-surface-3: #0d0c0b;
   --bg-inverse: #fdfdfc;
