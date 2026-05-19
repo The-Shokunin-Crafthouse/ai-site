@@ -39,6 +39,12 @@
   --text-overview-num-size: 34px;
   --text-overview-num-line: 1.1;
 
+  /* Typography — Studio Brain description (Figma 55:9704 "Step/Summary" 14/21).
+     Snapped to nearest existing tokens: size = --text-link-sm-size (14px),
+     line = --text-body-sm-line (19.5px, vs Figma 21px). */
+  --text-description-size: var(--text-link-sm-size);
+  --text-description-line: var(--text-body-sm-line);
+
   /* Tracking — sourced from Figma vars (type/body/sm letterSpacing 0.5,
      hero eyebrow 0.48, hiring eyebrow 0.96) and the On Load frame nodes.
      px instead of em so the token transfers cleanly across font-sizes. */
@@ -62,7 +68,8 @@
   --fg-quiet: #9c9997;
   --fg-muted: #9b9997;
   --fg-footer: #62615a;
-  --fg-link: #0071ec;
+  /* Inline body-copy link color = the studio accent, not the platform blue. */
+  --fg-link: var(--accent-primary);
   --fg-tag: #c1b29c;
 
   /* Workflow step badge colors — Figma 54:7438 step meta pills, mapped to
@@ -115,6 +122,13 @@
   --radius-sm: 3px;
   --radius-md: 8px;
   --radius-full: 9999px;
+
+  /* Semantic surface — Studio Brain prompt panel (Figma 55:9705 "CC Prompt").
+     Always-dark code/prompt surface inside the open brain row.
+     Light: --border-strong (#0d0c0a) ≈ Figma #0d0c0b.
+     Radius snapped from Figma 16px to --radius-md (8px). */
+  --bg-prompt: var(--border-strong);
+  --radius-prompt: var(--radius-md);
 
   /* Shadow */
   --shadow-elevated: 0 8px 4px rgba(0, 0, 0, 0.07);
@@ -225,7 +239,7 @@
   --fg-quiet: #545352;
   --fg-muted: #545352;
   --fg-footer: #98938d;
-  --fg-link: #5aa3ff;
+  --fg-link: var(--accent-primary);
   --fg-tag: #8e7d65;
   /* Per Figma 54:7438 semantic/text/* variables (dark composite). */
   --badge-you: #98938d;     /* text/body */
@@ -245,4 +259,7 @@
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.35);
   --shadow-elevated: 0 16px 32px rgba(0, 0, 0, 0.45);
   --decoration-fg-primary: rgba(208, 206, 202, 0.4);
+
+  /* Dark-mode prompt surface = --bg-base (#0d0c0b, exact Figma match). */
+  --bg-prompt: var(--bg-base);
 }

@@ -384,7 +384,10 @@
     });
   });
 
-  /* Sticky-nav anchor links auto-expand the matching row */
+  /* Sticky-nav anchor links auto-expand the matching row. Targets can be either
+     the overview LI itself (e.g. #workflow) or a deep element inside a folded
+     section (e.g. #gates inside the workflow row body) — walk up to the LI in
+     either case. */
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     a.addEventListener("click", function (e) {
       const href = a.getAttribute("href");
@@ -392,7 +395,11 @@
       const id = href.slice(1);
       const target = document.getElementById(id);
       if (!target) return;
-      const rowBtn = target.querySelector(".overview-row");
+      let rowBtn = target.querySelector(":scope > .overview-row");
+      if (!rowBtn) {
+        const rowLi = target.closest(".overview > li");
+        rowBtn = rowLi && rowLi.querySelector(":scope > .overview-row");
+      }
       if (rowBtn && rowBtn.getAttribute("aria-expanded") === "false") {
         rowBtn.setAttribute("aria-expanded", "true");
       }
