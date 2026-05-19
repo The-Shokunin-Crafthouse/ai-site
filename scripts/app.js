@@ -671,23 +671,18 @@
   });
 
   /* ===== Section 4 — Tools row accordion =====
-     Same shape as brain rows, but single-open: opening one closes the others.
-     Clicking the already-open row closes it (no row stays forced-open). */
+     Multi-open: each row toggles independently. Opening one leaves others
+     untouched. Clicking the open row closes it. */
   document.addEventListener("click", function (e) {
     const head = e.target.closest(".tools-row__head");
     if (!head) return;
     const row = head.closest(".tools-row");
-    const list = row && row.closest("[data-tools-list]");
-    if (!row || !list) return;
+    if (!row || !row.closest("[data-tools-list]")) return;
+    const body = row.querySelector(".tools-row__body");
+    if (!body) return;
     const isOpen = head.getAttribute("aria-expanded") === "true";
-    list.querySelectorAll(".tools-row").forEach(function (sibling) {
-      const sibHead = sibling.querySelector(".tools-row__head");
-      const sibBody = sibling.querySelector(".tools-row__body");
-      if (!sibHead || !sibBody) return;
-      const shouldOpen = sibling === row && !isOpen;
-      sibHead.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
-      sibBody.hidden = !shouldOpen;
-    });
+    head.setAttribute("aria-expanded", isOpen ? "false" : "true");
+    body.hidden = isOpen;
   });
 
   /* ===== Section 6 — Hiring tabs =====
