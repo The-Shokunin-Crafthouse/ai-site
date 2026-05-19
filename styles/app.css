@@ -2374,23 +2374,10 @@ html, body { overflow-x: clip; }
    Generic via [data-row-accent] so any row pattern (overview, step, brain) opts in.
    Scoped to `> button [data-row-accent]` so a hot outer row doesn't bleed accent
    into nested rows (e.g. brain rows inside the open overview row 03). */
-[data-row-hover] > button [data-row-accent],
-[data-row-hover] > button .overview-row__title,
-[data-row-hover] > button .brain-row__title {
+[data-row-hover] > button [data-row-accent] {
   transition: color var(--dur-standard) var(--ease-out-strong);
 }
-[data-row-hover][data-row-state="hot"] > button [data-row-accent],
-[data-row-hover][data-row-state="hot"] > button .overview-row__title,
-[data-row-hover][data-row-state="hot"] > button .brain-row__title {
-  color: var(--accent-primary);
-}
-/* Workflow step rows: title joins the accent fade alongside the number.
-   Open row keeps the accent state regardless of hover (handled by the
-   .step__head[aria-expanded="true"] rule earlier in the file). */
-.step[data-row-hover] > .step__head .step__title {
-  transition: color var(--dur-standard) var(--ease-out-strong);
-}
-.step[data-row-hover][data-row-state="hot"] > .step__head .step__title {
+[data-row-hover][data-row-state="hot"] > button [data-row-accent] {
   color: var(--accent-primary);
 }
 
@@ -2408,7 +2395,6 @@ html, body { overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) {
   .hover-trace { display: none !important; }
   [data-row-hover] .overview-row__index,
-  [data-row-hover] .overview-row__title,
   .btn-trace,
   .btn-trace [data-btn-arrow] {
     transition: color var(--dur-fast) var(--ease-out-strong) !important;
