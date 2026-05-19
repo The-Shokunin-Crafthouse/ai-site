@@ -320,26 +320,64 @@
      no sequencing. .is-closing keeps crumbs/lede in layout (display still
      set) so they can animate height alongside the drawer rather than
      snapping to display:none. CLOSE_MS covers the longest transition. */
-  const CLOSE_MS = 360;
+  const CLOSE_MS = 520; // matches the global --ease-collapse close duration in CSS
+  const OPEN_MS = 760;
+  /* Match the CSS --ease-collapse token. Softer ease-out than --ease-out-strong
+     so the visible collapse decelerates into rest instead of snapping. */
+  const CLOSE_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+  /* Freeze scrollY for the duration of the toggle. The rAF anchor was
+     causing micro-stutter when paired with the close transition (browser
+     auto-correct + rAF re-correct fight each other every frame). A flat
+     scrollY freeze is sticky and silent — content can grow above without
+     shoving the row, and the doc shrinking on close can't yank scrollY up. */
+  function lockRowToViewport(btn, durationMs) {
+    const startY = window.scrollY;
+    function holdOnScroll() {
+      if (window.scrollY !== startY) window.scrollTo(0, startY);
+    }
+    window.addEventListener("scroll", holdOnScroll, { passive: true });
+    setTimeout(function () {
+      window.removeEventListener("scroll", holdOnScroll);
+    }, durationMs);
+  }
+
   document.querySelectorAll(".overview-row").forEach(function (btn) {
     if (btn.hasAttribute("disabled")) return;
     btn.addEventListener("click", function () {
       const isOpen = btn.getAttribute("aria-expanded") === "true";
       const li = btn.closest("li");
+      const openEl = li && li.querySelector(".overview-row__open");
       if (isOpen) {
-        const lockedY = window.scrollY;
-        function holdScroll() {
-          if (window.scrollY !== lockedY) window.scrollTo(0, lockedY);
+        /* Anchor the close transition to the actual content height so the
+           ease-out curve plays across visible pixels (not the empty buffer
+           up to the 20000px max-height cap). Step 1: freeze the current
+           height with transitions disabled. Step 2: switch aria off and
+           kick a new transition down to 0 with an explicit ease-out curve. */
+        if (openEl) {
+          const h = openEl.scrollHeight;
+          openEl.style.transition = "none";
+          openEl.style.maxHeight = h + "px";
+          void openEl.offsetHeight;
+          // Restore transition explicitly so the next style write animates.
+          openEl.style.transition =
+            "max-height " + CLOSE_MS + "ms " + CLOSE_EASE + ", " +
+            "padding " + CLOSE_MS + "ms " + CLOSE_EASE;
+          void openEl.offsetHeight;
         }
-        window.addEventListener("scroll", holdScroll, { passive: false });
-
+        lockRowToViewport(btn, CLOSE_MS);
         if (li) li.classList.add("is-closing");
         btn.setAttribute("aria-expanded", "false");
+        if (openEl) openEl.style.maxHeight = "0px";
         setTimeout(function () {
           if (li) li.classList.remove("is-closing");
-          window.removeEventListener("scroll", holdScroll);
+          if (openEl) {
+            openEl.style.maxHeight = "";
+            openEl.style.transition = "";
+          }
         }, CLOSE_MS);
       } else {
+        if (openEl) openEl.style.maxHeight = ""; // clear any leftover from a previous close
+        lockRowToViewport(btn, OPEN_MS);
         if (li) li.classList.remove("is-closing");
         btn.setAttribute("aria-expanded", "true");
       }
@@ -464,25 +502,58 @@
   const timeline = document.querySelector("[data-timeline]");
   if (timeline) {
     const STEPS_KEY = "ai-steps-expanded";
+    const EXPLORED_KEY = "ai-steps-explored";
     const totalSteps = timeline.querySelectorAll("[data-step]").length;
     const countEl = timeline.querySelector("[data-progress-count]");
     const fillEl = timeline.querySelector("[data-progress-fill]");
 
-    function readSet() {
+    function readSet(key) {
       try {
-        const raw = sessionStorage.getItem(STEPS_KEY);
+        const raw = sessionStorage.getItem(key);
         if (!raw) return new Set();
         return new Set(JSON.parse(raw));
       } catch (e) { return new Set(); }
     }
-    function writeSet(s) {
-      try { sessionStorage.setItem(STEPS_KEY, JSON.stringify(Array.from(s))); } catch (e) {}
+    function writeSet(key, s) {
+      try { sessionStorage.setItem(key, JSON.stringify(Array.from(s))); } catch (e) {}
     }
 
-    let expanded = readSet();
+    /* Two sets, two semantics:
+       - `expanded` reflects which step bodies are currently open (drives DOM).
+       - `explored` is a monotonic union of every step id ever opened. Counter
+         reads from `explored`; closing or re-opening never moves the number. */
+    let expanded = readSet(STEPS_KEY);
+    let explored = readSet(EXPLORED_KEY);
     function updateProgress() {
-      if (countEl) countEl.textContent = String(expanded.size);
-      if (fillEl) fillEl.style.width = (expanded.size / totalSteps * 100) + "%";
+      if (countEl) countEl.textContent = String(explored.size);
+      if (fillEl) fillEl.style.width = (explored.size / totalSteps * 100) + "%";
+    }
+
+    /* Match prompt panel height to the left description column at 768+.
+       Driven by a ResizeObserver on every step__body-text so the panel updates
+       on initial open, window resize, and font-load reflows. The observer
+       attaches once per step on init; the observer callback no-ops on
+       sub-768px viewports (mobile stacks the two columns). */
+    function syncPromptHeight(text) {
+      const step = text.closest("[data-step]");
+      if (!step) return;
+      const prompt = step.querySelector(".step__prompt:not(.step__prompt--empty)");
+      if (!prompt) return;
+      if (!window.matchMedia("(min-width: 768px)").matches) {
+        prompt.style.removeProperty("--prompt-max-h");
+        return;
+      }
+      if (step.offsetParent === null) return;
+      const h = text.getBoundingClientRect().height;
+      if (h > 0) prompt.style.setProperty("--prompt-max-h", h + "px");
+    }
+    const ro = ("ResizeObserver" in window)
+      ? new ResizeObserver(function (entries) {
+          entries.forEach(function (entry) { syncPromptHeight(entry.target); });
+        })
+      : null;
+    if (ro) {
+      timeline.querySelectorAll(".step__body-text").forEach(function (t) { ro.observe(t); });
     }
 
     function setStep(stepEl, open, persist) {
@@ -492,9 +563,21 @@
       head.setAttribute("aria-expanded", open ? "true" : "false");
       body.hidden = !open;
       const id = stepEl.getAttribute("data-step");
-      if (open) expanded.add(id); else expanded.delete(id);
-      if (persist !== false) writeSet(expanded);
+      if (open) {
+        expanded.add(id);
+        explored.add(id);
+      } else {
+        expanded.delete(id);
+      }
+      if (persist !== false) {
+        writeSet(STEPS_KEY, expanded);
+        writeSet(EXPLORED_KEY, explored);
+      }
       updateProgress();
+      if (open) {
+        const text = stepEl.querySelector(".step__body-text");
+        if (text) syncPromptHeight(text);
+      }
     }
 
     // Restore from sessionStorage
@@ -514,20 +597,61 @@
       setStep(stepEl, !isOpen);
     });
 
+    /* Forward-declared so Expand all / Collapse all can flip show-all alongside
+       the per-row open state. Defined when the show-all button is wired. */
+    let setShowAll = function () {};
+
     const expandAll = timeline.querySelector("[data-expand-all]");
     const collapseAll = timeline.querySelector("[data-collapse-all]");
     if (expandAll) {
       expandAll.addEventListener("click", function () {
+        setShowAll(true);
         timeline.querySelectorAll("[data-step]").forEach(function (s) { setStep(s, true, false); });
-        writeSet(expanded);
+        writeSet(STEPS_KEY, expanded);
+        writeSet(EXPLORED_KEY, explored);
       });
     }
     if (collapseAll) {
       collapseAll.addEventListener("click", function () {
         timeline.querySelectorAll("[data-step]").forEach(function (s) { setStep(s, false, false); });
-        writeSet(expanded);
+        writeSet(STEPS_KEY, expanded);
+        writeSet(EXPLORED_KEY, explored);
+        setShowAll(false);
       });
     }
+
+    /* Show all 13 toggle. Always starts collapsed on load — persistence
+       drives only per-row expanded body state, never visibility of rows 4–13. */
+    const showAllBtn = timeline.querySelector("[data-show-all]");
+    if (showAllBtn) {
+      const labelEl = showAllBtn.querySelector("[data-show-all-label]");
+      setShowAll = function (state) {
+        timeline.setAttribute("data-show-all", state ? "true" : "false");
+        showAllBtn.setAttribute("aria-expanded", state ? "true" : "false");
+        if (labelEl) labelEl.textContent = state ? "Collapse rows" : "Show all 13";
+        if (state) {
+          timeline.querySelectorAll(".step__head[aria-expanded=\"true\"]").forEach(function (h) {
+            const s = h.closest("[data-step]");
+            const t = s && s.querySelector(".step__body-text");
+            if (t) syncPromptHeight(t);
+          });
+        }
+      };
+      timeline.setAttribute("data-show-all", "false");
+      showAllBtn.addEventListener("click", function () {
+        const next = showAllBtn.getAttribute("aria-expanded") !== "true";
+        setShowAll(next);
+      });
+    }
+
+    /* Re-sync any open row's prompt height when viewport reflows. */
+    window.addEventListener("resize", function () {
+      timeline.querySelectorAll(".step__head[aria-expanded=\"true\"]").forEach(function (h) {
+        const s = h.closest("[data-step]");
+        const t = s && s.querySelector(".step__body-text");
+        if (t) syncPromptHeight(t);
+      });
+    });
   }
 
   /* ===== Section 3 — Studio Brain row accordion =====
