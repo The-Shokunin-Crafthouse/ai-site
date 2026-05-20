@@ -141,10 +141,9 @@
   --radius-full: 9999px;
 
   /* Semantic surface — Studio Brain prompt panel (Figma 55:9705 "CC Prompt").
-     Always-dark code/prompt surface inside the open brain row.
-     Light: --border-strong (#0d0c0a) ≈ Figma #0e0c0b.
+     Mode-following: light surface in light, dark surface in dark.
      Radius snapped from Figma 16px to --radius-md (8px). */
-  --bg-prompt: var(--border-strong);
+  --bg-prompt: #ebeae6;
   --radius-prompt: var(--radius-md);
 
   /* Shadow */

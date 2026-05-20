@@ -1106,9 +1106,10 @@ html, body { overflow-x: clip; }
   text-underline-offset: 2px;
 }
 
-/* Prompt surface (Figma 55:9705) — always-dark, holds per-row content stack.
-   Token shadows below give every descendant the dark-theme palette regardless
-   of page mode, so the existing list components read correctly on dark. */
+/* Prompt surface (Figma 55:9705) — mode-following surface, holds per-row
+   content stack. Light: #ebeae6 via --bg-prompt. Dark: inherits the dark
+   palette through the .dark scope below so list components still read
+   correctly on dark. */
 .brain-row__prompt {
   flex: 1 1 0;
   min-width: 0;
@@ -1116,6 +1117,12 @@ html, body { overflow-x: clip; }
   padding: var(--space-6);
   background: var(--bg-prompt);
   border-radius: var(--radius-prompt);
+  color: var(--fg-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-sm-line);
+}
+.dark .brain-row__prompt {
   --fg-primary: #d0ceca;
   --fg-secondary: #98938d;
   --fg-tertiary: #545352;
@@ -1123,10 +1130,6 @@ html, body { overflow-x: clip; }
   --fg-muted: #545352;
   --border-subtle: #1c1a18;
   --bg-subtle: #1c1a18;
-  color: var(--fg-secondary);
-  font-family: var(--font-mono);
-  font-size: var(--text-body-sm-size);
-  line-height: var(--text-body-sm-line);
 }
 .brain-row__prompt > :first-child { margin-top: 0; }
 .brain-row__prompt > :last-child { margin-bottom: 0; }
