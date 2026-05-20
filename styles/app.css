@@ -2158,6 +2158,11 @@ html, body { overflow-x: clip; }
   color: var(--accent-primary);
 }
 
+/* Light mode only: bump overview row number weight from 100 → 400 on hover. */
+[data-row-hover][data-row-state="hot"] > button .overview-row__index:not(.dark *) {
+  font-weight: var(--font-regular);
+}
+
 /* Button: ONLY the arrow translates on hover. No text color shift, no border change. */
 .btn-trace {
   position: relative;
