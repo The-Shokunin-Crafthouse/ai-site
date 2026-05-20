@@ -827,6 +827,9 @@ html, body { overflow-x: clip; }
 /* Open row: number + title hold accent (matches Figma 54:7438 step 09 open). */
 .step__head[aria-expanded="true"] .step__num,
 .step__head[aria-expanded="true"] .step__title { color: var(--accent-primary); }
+/* Light mode: title stays at --fg-primary when expanded. Num still flips to
+   accent via the row-accent system. */
+.step__head[aria-expanded="true"]:not(.dark *) .step__title { color: var(--fg-primary); }
 
 .step__body {
   /* Top padding removed per spec — body sits flush under the step head. */
