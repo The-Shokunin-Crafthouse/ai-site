@@ -56,7 +56,7 @@
   --tracking-body-sm: 0.5px;
 
   /* Color — light */
-  --bg-base: #f7f7f5;
+  --bg-base: #e0dfdc;
   --bg-nav: var(--bg-base);
   --bg-subtle: #f7f5f3;
   --bg-recessed: #f7f5f3;
@@ -99,7 +99,7 @@
      reads as a separate plane against bg-base #0e0c0b. */
   --bg-callout: #f7f5f3;
   --fg-on-accent: #21201c;
-  --border-subtle: #e5e2db;
+  --border-subtle: #d4d0ca;
   --border-button: var(--border-subtle);
   --border-strong: #0d0c0a;
   --accent-primary: #daff60;
