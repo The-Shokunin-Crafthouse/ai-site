@@ -15,7 +15,7 @@ function initGrain() {
   function applyColorMode() {
     const dark = mq.matches;
     canvas.style.mixBlendMode = dark ? 'screen' : 'overlay';
-    canvas.style.opacity = dark ? '0.005' : '0.06';
+    canvas.style.opacity = dark ? '0.006' : '0.04';
   }
 
   applyColorMode();
@@ -31,7 +31,7 @@ function initGrain() {
   }
 
   function drawGrain() {
-    if (frame++ % 2 === 0) {
+    if (frame++ % 6 === 0) {
       const { width, height } = canvas;
       const imageData = ctx.createImageData(width, height);
       const data = imageData.data;
