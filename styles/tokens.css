@@ -69,10 +69,8 @@
   --fg-quiet: #9c9997;
   --fg-muted: #9b9997;
   --fg-footer: #62615a;
-  /* Inline body-copy link color follows the interaction signal so links match
-     hover/active feedback. Light: mint via --hover-accent. Dark: yellow via
-     the .dark override below. */
-  --fg-link: var(--hover-accent);
+  /* Inline body-copy link color = the studio accent, not the platform blue. */
+  --fg-link: var(--accent-primary);
   --fg-tag: #c1b29c;
 
   /* Workflow step badge colors — Figma 54:7438 step meta pills, mapped to
@@ -104,10 +102,8 @@
   --border-strong: #0d0c0a;
   --accent-primary: #daff60;
   --fg-accent: #ca4541;
+  --hover-accent: #daff60;
   --hover-mint: #58f5d2;
-  /* Light interaction signal = mint (yellow lacks contrast on the warm light
-     ground). Dark .dark block keeps --hover-accent on yellow. */
-  --hover-accent: var(--hover-mint);
   --hover-row: #f7f4f1;
   --bg-tooltip: var(--bg-base);
   --fg-tooltip: #21201c;

@@ -169,7 +169,7 @@ body {
   transition: color var(--dur-fast) var(--ease-standard);
 }
 .nav__link.is-active {
-  color: var(--hover-accent);
+  color: var(--accent-primary);
 }
 .nav__link.is-active::after {
   content: "";
@@ -574,9 +574,9 @@ html, body { overflow-x: clip; }
 /* Hover = active state. Border + index + CTA (text + arrow via currentColor)
    fade to accent. Title + summary stay. Press-scale handled by .btn-press. */
 @media (hover: hover) and (pointer: fine) {
-  .card:hover { border-color: var(--hover-accent); }
+  .card:hover { border-color: var(--accent-primary); }
   .card:hover .card__index,
-  .card:hover .card__cta { color: var(--hover-accent); }
+  .card:hover .card__cta { color: var(--accent-primary); }
 }
 .card__index {
   font-size: 12px;
@@ -666,8 +666,8 @@ html, body { overflow-x: clip; }
 @media (hover: hover) and (pointer: fine) {
   .timeline__btn:hover,
   .timeline__show-all:hover {
-    color: var(--hover-accent);
-    border-color: var(--hover-accent);
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
   }
 }
 .timeline__show-all-wrap {
@@ -793,7 +793,7 @@ html, body { overflow-x: clip; }
 }
 /* Open row: number + title hold accent (matches Figma 54:7438 step 09 open). */
 .step__head[aria-expanded="true"] .step__num,
-.step__head[aria-expanded="true"] .step__title { color: var(--hover-accent); }
+.step__head[aria-expanded="true"] .step__title { color: var(--accent-primary); }
 
 .step__body {
   /* Top padding removed per spec — body sits flush under the step head. */
@@ -1042,7 +1042,7 @@ html, body { overflow-x: clip; }
 /* Open state: number + title turn accent (Figma 55:9391 "Brain/Panel" active style). */
 .brain-row__head[aria-expanded="true"] .brain-row__num,
 .brain-row__head[aria-expanded="true"] .brain-row__title {
-  color: var(--hover-accent);
+  color: var(--accent-primary);
 }
 /* Open: tighten head's bottom padding so the gap from title to expanded body
    (head padding-bottom + body padding-top 0) lands at 16px. */
@@ -1123,9 +1123,6 @@ html, body { overflow-x: clip; }
   --fg-muted: #545352;
   --border-subtle: #1c1a18;
   --bg-subtle: #1c1a18;
-  /* Always-dark prompt surface — body-copy links stay yellow regardless of
-     page mode (matches dark mode's --fg-link binding). */
-  --fg-link: var(--accent-primary);
   color: var(--fg-secondary);
   font-family: var(--font-mono);
   font-size: var(--text-body-sm-size);
@@ -1348,7 +1345,7 @@ html, body { overflow-x: clip; }
 }
 .tools-row__head[aria-expanded="true"] .tools-row__num,
 .tools-row__head[aria-expanded="true"] .tools-row__title {
-  color: var(--hover-accent);
+  color: var(--accent-primary);
 }
 .tools-row__body {
   padding: 0 0 var(--space-8) 0;
@@ -1518,13 +1515,13 @@ html, body { overflow-x: clip; }
 }
 .hiring__tab:active { transform: scale(0.97); }
 .hiring__tab[aria-selected="true"] {
-  color: var(--hover-accent);
-  border-color: var(--hover-accent);
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
   background: transparent;
 }
-.hiring__tab[aria-selected="true"] .hiring__tab-label { color: var(--hover-accent); }
+.hiring__tab[aria-selected="true"] .hiring__tab-label { color: var(--accent-primary); }
 .hiring__tab:focus-visible {
-  outline: 2px solid var(--hover-accent);
+  outline: 2px solid var(--accent-primary);
   outline-offset: 4px;
 }
 .hiring__tab-size {
@@ -1690,7 +1687,7 @@ html, body { overflow-x: clip; }
    "no color shift" hover). currentColor inheritance flips the arrow with
    the text in one step. */
 .hiring__cta-link[data-btn-state="hot"] {
-  color: var(--hover-accent);
+  color: var(--accent-primary);
 }
 .hiring__cta-arrow {
   display: inline-block;
@@ -1865,7 +1862,7 @@ html, body { overflow-x: clip; }
    Per fixes: NO background-color, NO border-color, NO text-color changes on hover.
    The comet system (.hover-trace) + arrow translate provide the only hover signal. */
 @media (hover: hover) and (pointer: fine) {
-  .nav__link:hover { color: var(--hover-accent); }
+  .nav__link:hover { color: var(--accent-primary); }
   .hero__skip:hover .hero__arrow { transform: translateX(4px); }
   .card:hover .card__arrow { transform: translateX(4px); }
   .drawer__link a:hover [data-arrow] { transform: translateX(4px); }
@@ -1875,10 +1872,10 @@ html, body { overflow-x: clip; }
      Both border-color and label color fade to accent over --dur-fast/--dur-standard.
      Selected state still wins via [aria-selected="true"] rules earlier. */
   .hiring__tab:not([aria-selected="true"]):hover {
-    border-color: var(--hover-accent);
+    border-color: var(--accent-primary);
   }
   .hiring__tab:not([aria-selected="true"]):hover .hiring__tab-label {
-    color: var(--hover-accent);
+    color: var(--accent-primary);
   }
 }
 
@@ -2005,7 +2002,7 @@ html, body { overflow-x: clip; }
   overflow: hidden;
   animation: overview-eyebrow-in 640ms var(--ease-out-strong) both;
 }
-.overview-row__crumb.is-active { color: var(--hover-accent); }
+.overview-row__crumb.is-active { color: var(--accent-primary); }
 .overview-row__crumb-sep { color: var(--fg-muted); }
 
 /* Number stays vertically centered against the main column. When expanded the main
@@ -2150,7 +2147,7 @@ html, body { overflow-x: clip; }
   transition: color var(--dur-standard) var(--ease-out-strong);
 }
 [data-row-hover][data-row-state="hot"] > button [data-row-accent] {
-  color: var(--hover-accent);
+  color: var(--accent-primary);
 }
 
 /* Button: ONLY the arrow translates on hover. No text color shift, no border change. */
@@ -2282,9 +2279,9 @@ html, body { overflow-x: clip; }
   z-index: 1;
 }
 @media (hover: hover) and (pointer: fine) {
-  .copy-btn:hover { color: var(--hover-accent); }
+  .copy-btn:hover { color: var(--accent-primary); }
 }
-.copy-btn[data-copy-state="copied"] { color: var(--hover-accent); }
+.copy-btn[data-copy-state="copied"] { color: var(--accent-primary); }
 .copy-btn .icon { width: 16px; height: 16px; }
 
 /* Inline code inside body — switch from generic monospace to Cascadia Mono */
@@ -2522,10 +2519,10 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
 
 /* Card "open" state — accent border + index, dot eyebrow */
 .card[aria-expanded="true"] {
-  border-color: var(--hover-accent);
+  border-color: var(--accent-primary);
 }
-.card[aria-expanded="true"] .card__index { color: var(--hover-accent); }
-.card[aria-expanded="true"] .card__title { color: var(--hover-accent); }
+.card[aria-expanded="true"] .card__index { color: var(--accent-primary); }
+.card[aria-expanded="true"] .card__title { color: var(--accent-primary); }
 
 .card .card__arrow { transition: transform var(--dur-fast) var(--ease-out-strong); }
 @media (hover: hover) and (pointer: fine) {
