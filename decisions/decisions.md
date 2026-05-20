@@ -288,3 +288,48 @@ a fresh ADR.
 - **Split into two canvases up front** — Deferred. Single canvas + per-mode blend/opacity
   is the simpler primitive and currently sufficient. Revisit only if light mode forces
   divergence on the coupled knobs.
+
+## 2026-05-20 — Grain overlay: dark opacity re-anchored 0.011 → 0.01; light set to 0.4 with soft-light blend; mode source switched to site theme class
+**Stage:** 03-build
+**Status:** accepted (supersedes 2026-05-19 — Grain overlay dark-mode parameters locked; that ADR's coupled-knob policy still stands for SCALE, frame cadence, and blur)
+**File:** scripts/grain.js
+**Branch / PR:** feat/grain-overlay — PR #21
+
+**Context.** After ADR-2026-05-19 locked dark grain on `prefers-color-scheme: dark` at
+opacity 0.011 / screen, light-mode tuning surfaced two problems: (1) the in-site theme
+toggle adds/removes `class="dark"` on `<html>` but cannot change the OS-level media
+query, so grain never followed the site toggle — light page with grain still using
+dark branch and reading invisible; (2) live light-mode iteration on `#e0dfdc` warm
+ground showed 0.011 was unreadable in light regardless of blend, and the prior dark
+value itself read fractionally heavier than needed once the new light tuning made the
+canvas legibility-tested in both modes side-by-side.
+
+**Decision.** Make three coupled changes, treated as one ADR because they unblock each
+other:
+
+1. Switch mode source from `prefers-color-scheme` media query to `document.documentElement.classList.contains('dark')`. Watch via `MutationObserver` on `<html>` class. Drop the OS media query and its listener entirely — site toggle is now the single source of truth.
+2. Re-anchor dark opacity to `0.01` (was `0.011`). Sub-perceptual delta on dark composite; tested side-by-side with the new light branch.
+3. Set light branch to `mixBlendMode: 'soft-light'` and `opacity: '0.4'`. `soft-light` against full 0–255 grayscale noise + 0.4 opacity reads as quiet film grain on the warm light ground without competing with type or surfaces.
+
+**Locked values (post-change).**
+- `canvas.style.mixBlendMode = dark ? 'screen' : 'soft-light'`
+- `canvas.style.opacity = dark ? '0.01' : '0.4'`
+- `const dark = document.documentElement.classList.contains('dark')`
+- `const SCALE = 2` (unchanged, still coupled)
+- `if (frame++ % 2 === 0)` redraw cadence (unchanged, still coupled)
+- `'filter: blur(0.6px)'` (unchanged, still coupled)
+- Full 0–255 random pixel range, no mode branch (unchanged)
+
+**Consequences.**
+- Grain follows the site theme toggle in real time. OS-level dark preference no longer
+  affects the overlay — intentional: the site treats its own toggle as truth in every
+  other token system, grain now matches.
+- The previously "always-on dark" debug console log is retained (`console.log('applyColorMode —', { dark, opacity })`) for the remainder of light-mode iteration. Remove before merge.
+- Light-mode tuning is no longer in scope as an "open question" — values are accepted.
+  Further changes to either branch require a new ADR.
+- Dark opacity moved by 0.001. Documented for traceability; no perceptual regression.
+
+**Alternatives considered.**
+- **Listen to both `prefers-color-scheme` AND the `dark` class (union)** — Rejected. Half of users would see grain that disagrees with the visible page mode when their OS preference and site toggle diverge. Single source eliminates the ambiguity.
+- **Keep dark at 0.011, only tune light** — Considered. The 0.011 → 0.01 step is small enough to be defensible without re-tuning, and matching the round number reads cleaner in the diff. Both readings reviewed on hardware.
+- **Per-mode SCALE or blur** — Deferred. Light grain at SCALE=2 / blur(0.6px) reads correctly; no need to split. The coupled-knob policy from the prior ADR still stands.
