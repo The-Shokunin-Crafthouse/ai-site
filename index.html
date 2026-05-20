@@ -41,6 +41,10 @@
   <!-- Favicon — same accent dot as levibahn.com. -->
   <link rel="icon" href="./icon.svg" type="image/svg+xml" sizes="any" />
 
+  <!-- Preload Gentona Light: used above the fold on .t-hero headline with
+       font-display: block. Preload prevents FOIT during initial paint. -->
+  <link rel="preload" href="./fonts/Gentona_Light.woff2" as="font" type="font/woff2" crossorigin />
+
   <link rel="stylesheet" href="./styles/tokens.css" />
   <link rel="stylesheet" href="./styles/app.css" />
 </head>

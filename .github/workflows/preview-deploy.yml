@@ -34,7 +34,7 @@ jobs:
       - name: Deploy preview via rsync
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avzr --delete --exclude='.git' --exclude='.github' --exclude='.DS_Store' --exclude='SPEC.md' --exclude='README.md'
+          switches: -avzr --delete --exclude='.git' --exclude='.github' --exclude='.DS_Store' --exclude='SPEC.md' --exclude='README.md' --exclude='snapshots' --exclude='previews' --exclude='_config' --exclude='docs' --exclude='icons/phosphor.svg'
           path: ./
           remote_path: ~/domains/levibahn.com/public_html/ai/_previews/${{ github.event.pull_request.number }}/
           remote_host: ${{ secrets.HOSTINGER_HOST }}
