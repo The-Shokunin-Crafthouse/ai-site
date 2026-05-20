@@ -1084,6 +1084,11 @@ html, body { overflow-x: clip; }
 .brain-row__head[aria-expanded="true"] .brain-row__title {
   color: var(--accent-primary);
 }
+/* Light mode: title stays at --fg-primary when expanded. Num still flips via
+   row-accent system. */
+.brain-row__head[aria-expanded="true"]:not(.dark *) .brain-row__title {
+  color: var(--fg-primary);
+}
 /* Open: tighten head's bottom padding so the gap from title to expanded body
    (head padding-bottom + body padding-top 0) lands at 16px. */
 @media (min-width: 768px) {
