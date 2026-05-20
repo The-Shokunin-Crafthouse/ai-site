@@ -15,7 +15,7 @@ function initGrain() {
   function applyColorMode() {
     const dark = mq.matches;
     canvas.style.mixBlendMode = dark ? 'screen' : 'overlay';
-    canvas.style.opacity = dark ? '0.005' : '0.06';
+    canvas.style.opacity = dark ? '0.015' : '0.06';
   }
 
   applyColorMode();
@@ -23,7 +23,7 @@ function initGrain() {
   document.body.appendChild(canvas);
 
   let frame = 0;
-  const SCALE = 3;
+  const SCALE = 2;
 
   function resize() {
     canvas.width  = Math.ceil(window.innerWidth  / SCALE);
