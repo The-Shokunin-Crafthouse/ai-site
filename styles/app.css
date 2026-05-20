@@ -570,12 +570,13 @@ html, body { overflow-x: clip; }
   z-index: 10000;
   transition: border-color var(--dur-fast) var(--ease-out-strong),
               background-color var(--dur-fast) var(--ease-out-strong),
+              box-shadow var(--dur-fast) var(--ease-out-strong),
               transform var(--dur-fast) var(--ease-out-strong);
 }
-/* Light mode: card sits flush with page bg by default, swaps to the lighter
-   --bg-card surface on hover/active. No border, no font color shifts. */
+/* Light mode: card sits flush with page bg by default (1px --border-subtle
+   from base rule), swaps to the lighter --bg-card surface on hover/active.
+   No font color shifts. */
 .card:not(.dark *) {
-  border-color: transparent;
   background: var(--bg-base);
 }
 @media (max-width: 1023px) { .card { min-height: 220px; } }
@@ -590,9 +591,14 @@ html, body { overflow-x: clip; }
   .dark .card:hover { border-color: var(--accent-primary); }
   .dark .card:hover .card__index,
   .dark .card:hover .card__cta { color: var(--accent-primary); }
-  /* Light mode hover: swap bg to the lighter --bg-card surface. Index weight
-     pinned to 400, CTA to 500. No border, no font color shifts. */
-  .card:not(.dark *):hover { background: var(--bg-card); }
+  /* Light mode hover: swap bg to the lighter --bg-card surface, render a 2px
+     yellow border (1px border + 1px inset shadow = 2px effective ring, no
+     layout shift). Index weight pinned to 400, CTA to 500. No font color shifts. */
+  .card:not(.dark *):hover {
+    background: var(--bg-card);
+    border-color: var(--accent-primary);
+    box-shadow: inset 0 0 0 1px var(--accent-primary);
+  }
   .card:not(.dark *):hover .card__index { font-weight: var(--font-regular); }
   .card:not(.dark *):hover .card__cta { font-weight: var(--font-medium); }
 }
