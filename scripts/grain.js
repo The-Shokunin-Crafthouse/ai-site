@@ -14,13 +14,21 @@ function initGrain() {
   ].join(';');
 
   function applyColorMode() {
-    const dark = mq.matches;
-    canvas.style.mixBlendMode = dark ? 'screen' : 'screen';
+    const dark = document.documentElement.classList.contains('dark')
+      || (!document.documentElement.classList.contains('light') && mq.matches);
+    canvas.style.mixBlendMode = 'screen';
     canvas.style.opacity = dark ? '0.011' : '0.5';
-    console.log('applyColorMode fired — dark:', dark, '| opacity:', canvas.style.opacity, '| blend:', canvas.style.mixBlendMode);
   }
 
   applyColorMode();
+
+  // Watch for class changes on <html> (site toggle)
+  new MutationObserver(applyColorMode).observe(
+    document.documentElement,
+    { attributes: true, attributeFilter: ['class'] }
+  );
+
+  // Also keep OS-level fallback
   mq.addEventListener('change', applyColorMode);
   document.body.appendChild(canvas);
 
