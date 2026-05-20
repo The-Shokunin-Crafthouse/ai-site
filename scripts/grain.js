@@ -23,7 +23,7 @@ function initGrain() {
   document.body.appendChild(canvas);
 
   let frame = 0;
-  const SCALE = 2;
+  const SCALE = 3;
 
   function resize() {
     canvas.width  = Math.ceil(window.innerWidth  / SCALE);
