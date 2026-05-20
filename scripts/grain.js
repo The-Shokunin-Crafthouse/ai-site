@@ -1,7 +1,6 @@
 function initGrain() {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-  const mq = window.matchMedia('(prefers-color-scheme: dark)');
 
   canvas.style.cssText = [
     'position: fixed',
@@ -30,8 +29,6 @@ function initGrain() {
     { attributes: true, attributeFilter: ['class'] }
   );
 
-  // Also keep OS-level fallback
-  mq.addEventListener('change', applyColorMode);
   document.body.appendChild(canvas);
 
   let frame = 0;
