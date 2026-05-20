@@ -21,7 +21,7 @@ function initGrain() {
 
     console.log('applyColorMode —', { hasDarkClass, hasLightClass, osDark, dark, opacity: dark ? '0.011' : '0.5' });
 
-    canvas.style.mixBlendMode = 'screen';
+    canvas.style.mixBlendMode = dark ? 'screen' : 'multiply';
     canvas.style.opacity = dark ? '0.011' : '0.5';
   }
 
