@@ -442,7 +442,7 @@ html, body { overflow-x: clip; }
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
@@ -656,7 +656,7 @@ html, body { overflow-x: clip; }
   font-weight: var(--font-medium);
   color: var(--fg-secondary);
   background: transparent;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: color var(--dur-fast) var(--ease-out-strong),
@@ -1504,7 +1504,7 @@ html, body { overflow-x: clip; }
   align-items: baseline;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-5);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   color: var(--fg-secondary);
   background: transparent;
@@ -1672,7 +1672,7 @@ html, body { overflow-x: clip; }
   padding: var(--space-3) var(--space-5);
   background: transparent;
   color: var(--fg-primary);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   font-size: var(--text-link-sm-size);
   line-height: var(--text-link-sm-line);
@@ -1708,7 +1708,7 @@ html, body { overflow-x: clip; }
   background: color-mix(in srgb, var(--bg-base) 88%, transparent);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   opacity: 0;
   pointer-events: none;
   transform: translateY(8px);
