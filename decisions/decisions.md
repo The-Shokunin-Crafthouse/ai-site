@@ -392,3 +392,44 @@ opacity range we settled on.
   grain rather than digital noise.
 - **Per-mode cadence** — Deferred. Single shared cadence is the simpler primitive.
   Revisit only if dark and light register diverge on the shared value.
+
+## 2026-05-20 — Hiring role-mark: underline + slant applied in both modes
+**Stage:** 03-build
+**Status:** accepted (intentional dark-mode change inside the otherwise
+light-only feat/lightmode-yellow-ui-updates sprint)
+
+**Context.** The hiring section's role line carries an emphasis on one
+word per panel — `am` (Startup), `lead` (Mid), `function` (Enterprise).
+Light mode landed a 2px / 1px-radius accent underline 5px below the
+baseline plus a -5 Inter `slnt` lean on the marked word. The original
+plan kept the treatment light-only via `:not(.dark *)` so the active
+sprint stayed inside its light-mode contract. Reviewed on hardware:
+the marked word reads as the focal anchor of the role line. Dropping
+it in dark left dark feeling under-emphasized for the same content.
+
+**Decision.** Apply the emphasis underline and the slnt slant in dark
+mode too. The font color stays unchanged in dark — only the underline
+and the glyph slant cross the mode boundary. The sprint branch is
+otherwise still light-only; this is the single deliberate dark change
+on `feat/lightmode-yellow-ui-updates`.
+
+**Consequences.**
+- `.hiring__role-mark` rule and its `::after` no longer carry the
+  `:not(.dark *)` guard.
+- Tokens stay shared (no dark override needed) — `--accent-primary`
+  already resolves the same yellow in both modes, and the slnt token
+  is a font-axis value, not a color.
+- Inter Variable continues to serve both modes (font URL already
+  switched to axis ranges in the prior commit).
+- Light-only sprint contract is breached by one rule, deliberately.
+  Logged here so future audits of the branch don't read it as drift.
+
+**Alternatives considered.**
+- **Keep dark untouched.** Rejected — left dark feeling visually
+  under-emphasized on the same content.
+- **Flip dark to use a different accent.** Rejected — both modes
+  share `--accent-primary` for emphasis surfaces; a per-mode mark
+  color would split the treatment for one component only.
+- **Underline only, no slant in dark.** Rejected — the slnt lean is
+  what makes the mark feel like emphasis vs decoration. Halving it
+  loses the intent.
