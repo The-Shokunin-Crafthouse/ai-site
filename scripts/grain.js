@@ -1,7 +1,6 @@
 function initGrain() {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-  const mq = window.matchMedia('(prefers-color-scheme: dark)');
 
   canvas.style.cssText = [
     'position: fixed',
@@ -13,28 +12,9 @@ function initGrain() {
     'filter: blur(0.6px)',
   ].join(';');
 
-  function applyColorMode() {
-    const hasDarkClass = document.documentElement.classList.contains('dark');
-    const hasLightClass = document.documentElement.classList.contains('light');
-    const osDark = mq.matches;
-    const dark = hasDarkClass || (!hasLightClass && osDark);
-
-    console.log('applyColorMode —', { hasDarkClass, hasLightClass, osDark, dark, opacity: dark ? '0.011' : '0.5' });
-
-    canvas.style.mixBlendMode = dark ? 'screen' : 'soft-light';
-    canvas.style.opacity = dark ? '0.011' : '0.8';
-  }
-
-  applyColorMode();
-
-  // Watch for class changes on <html> (site toggle)
-  new MutationObserver(applyColorMode).observe(
-    document.documentElement,
-    { attributes: true, attributeFilter: ['class'] }
-  );
-
-  // Also keep OS-level fallback
-  mq.addEventListener('change', applyColorMode);
+  // DEBUG: hardcoded light-mode values to isolate visibility issue
+  canvas.style.mixBlendMode = 'soft-light';
+  canvas.style.opacity = '0.8';
   document.body.appendChild(canvas);
 
   let frame = 0;
