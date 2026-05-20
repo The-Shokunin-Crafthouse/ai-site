@@ -214,7 +214,7 @@
     const trail = document.createElementNS(SVG_NS, "path");
     trail.setAttribute("class", "orbit-trail");
     trail.setAttribute("fill", "none");
-    trail.setAttribute("stroke", "var(--hover-accent)");
+    trail.setAttribute("stroke", "var(--accent-primary)");
     trail.setAttribute("stroke-width", "1.5");
     trail.setAttribute("stroke-linecap", "round");
     trail.setAttribute("mask", "url(#" + uid + "-mask)");
@@ -222,7 +222,7 @@
     const head = document.createElementNS(SVG_NS, "circle");
     head.setAttribute("class", "orbit-head");
     head.setAttribute("r", "2");
-    head.setAttribute("fill", "var(--hover-accent)");
+    head.setAttribute("fill", "var(--accent-primary)");
 
     svg.appendChild(defs);
     svg.appendChild(trail);

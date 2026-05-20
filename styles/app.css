@@ -2105,7 +2105,7 @@ html, body { overflow-x: clip; }
   height: 1px;
   width: 200px;
   transform: translateX(-100vw);
-  background: linear-gradient(90deg, var(--hover-comet-trail-fade) 0%, var(--hover-accent) 100%);
+  background: linear-gradient(90deg, rgba(218, 255, 96, 0) 0%, var(--accent-primary) 100%);
 }
 .hover-trace--divider .hover-trace__head {
   position: absolute;
@@ -2114,7 +2114,7 @@ html, body { overflow-x: clip; }
   width: var(--hover-comet-head);
   height: var(--hover-comet-head);
   transform: translateX(-100vw);
-  background: var(--hover-accent);
+  background: var(--accent-primary);
   border-radius: 3px;
   box-shadow: var(--hover-comet-glow);
 }
@@ -2136,10 +2136,10 @@ html, body { overflow-x: clip; }
   overflow: visible;
 }
 .hover-trace--button-orbit .orbit-trail {
-  filter: var(--hover-comet-drop-shadow);
+  filter: drop-shadow(0 0 4px rgba(218, 255, 96, 0.6));
 }
 .hover-trace--button-orbit .orbit-head {
-  filter: drop-shadow(0 0 4px var(--hover-accent));
+  filter: drop-shadow(0 0 4px var(--accent-primary));
 }
 
 /* Row title accent shift — fades both directions, independent from comet.
