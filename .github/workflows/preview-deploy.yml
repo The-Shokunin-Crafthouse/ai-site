@@ -28,6 +28,8 @@ jobs:
           username: ${{ secrets.HOSTINGER_USER }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
           port: 65002
+          timeout: 10m
+          command_timeout: 30m
           script: |
             mkdir -p ~/domains/levibahn.com/public_html/ai/_previews
 
