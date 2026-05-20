@@ -10,6 +10,7 @@ function initGrain() {
     'height: 100%',
     'pointer-events: none',
     'z-index: 9999',
+    'filter: blur(0.6px)',
   ].join(';');
 
   function applyColorMode() {
