@@ -1627,6 +1627,15 @@ html, body { overflow-x: clip; }
   color: var(--fg-primary);
   margin-bottom: var(--space-6);
 }
+/* Light mode: emphasis underline on the key verb/noun in each role line
+   (am / lead / function). Dark mode unchanged. */
+.hiring__role-mark:not(.dark *) {
+  text-decoration: underline;
+  text-decoration-color: var(--underline-emphasis-color);
+  text-decoration-thickness: var(--underline-emphasis-thickness);
+  text-underline-offset: var(--underline-emphasis-offset);
+  text-decoration-skip-ink: none;
+}
 
 /* Brain callout — inset card with 48px Phosphor icon + label + body copy.
    Uses --bg-callout (Figma 57:11619 dark composite #121110) so the card
