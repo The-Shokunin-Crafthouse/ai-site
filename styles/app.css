@@ -1633,10 +1633,14 @@ html, body { overflow-x: clip; }
 }
 /* Light mode: emphasis underline on the key verb/noun in each role line
    (am / lead / function). Rendered via ::after pseudo so the line can carry
-   a corner radius — native text-decoration draws flat ends. Dark mode
+   a corner radius — native text-decoration draws flat ends. Italic-style
+   slant via skewX so the marked word leans into the underline. Dark mode
    unchanged. */
 .hiring__role-mark:not(.dark *) {
   position: relative;
+  display: inline-block;
+  transform: skewX(var(--text-emphasis-slant));
+  transform-origin: 0 100%;
 }
 .hiring__role-mark:not(.dark *)::after {
   content: "";

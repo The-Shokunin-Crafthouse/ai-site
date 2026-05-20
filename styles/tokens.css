@@ -148,6 +148,10 @@
   --underline-emphasis-radius: 1px;
   --underline-emphasis-color: var(--accent-primary);
 
+  /* Text emphasis slant — italic-style lean (top edge shifts right). Used
+     alongside the emphasis underline to mark a key word in a copy line. */
+  --text-emphasis-slant: -7deg;
+
   /* Radius */
   --radius-xs: 1px;
   --radius-sm: 3px;
