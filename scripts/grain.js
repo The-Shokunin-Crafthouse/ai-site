@@ -40,7 +40,7 @@ function initGrain() {
   }
 
   function drawGrain() {
-    if (frame++ % 2 === 0) {
+    if (frame++ % 5 === 0) {
       const { width, height } = canvas;
       const imageData = ctx.createImageData(width, height);
       const data = imageData.data;
