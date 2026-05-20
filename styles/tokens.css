@@ -83,10 +83,11 @@
   /* Prompt code body color — Figma 54:7438 / 55:9113 (CC Prompt). */
   --prompt-code-fg: #5b5b5a;
 
-  /* Hiring brain icon — Figma 57:11619 dark composite. Kept as its own
-     semantic token so the icon color stays fixed across modes (no .dark
-     override) and matches the callout's dark surface contrast intent. */
-  --fg-brain-icon: #2b2722;
+  /* Hiring brain icon — kept as its own semantic token so the contrast
+     intent against the callout surface stays controlled per mode.
+     Light: warm gray for low-contrast presence on the bg-callout panel.
+     Dark: deep brown to match Figma 57:11619 dark composite. */
+  --fg-brain-icon: #AEA7A0;
 
   /* Card-panel icon stamp — Figma 57:10923. Matches the primary text color
      (#21201C in light). Override in .dark for visibility. */
@@ -290,4 +291,8 @@
 
   /* Dark-mode card surface stays transparent — cards read against bg-base. */
   --bg-card: transparent;
+
+  /* Pin the brain icon to its original Figma value in dark; light gets a
+     softer warm gray via :root above. */
+  --fg-brain-icon: #2b2722;
 }
