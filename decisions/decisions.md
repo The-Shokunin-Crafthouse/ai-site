@@ -333,3 +333,62 @@ other:
 - **Listen to both `prefers-color-scheme` AND the `dark` class (union)** — Rejected. Half of users would see grain that disagrees with the visible page mode when their OS preference and site toggle diverge. Single source eliminates the ambiguity.
 - **Keep dark at 0.011, only tune light** — Considered. The 0.011 → 0.01 step is small enough to be defensible without re-tuning, and matching the round number reads cleaner in the diff. Both readings reviewed on hardware.
 - **Per-mode SCALE or blur** — Deferred. Light grain at SCALE=2 / blur(0.6px) reads correctly; no need to split. The coupled-knob policy from the prior ADR still stands.
+
+## 2026-05-20 — Grain overlay: light opacity finalized at 0.12; frame cadence relaxed to every 5th frame
+**Stage:** 03-build
+**Status:** accepted (supersedes 2026-05-20 — grain re-anchor light value of 0.4; relaxes the coupled-knob lock from 2026-05-19 on frame cadence specifically — SCALE and blur remain coupled and locked)
+**File:** scripts/grain.js
+**Branch / PR:** feat/grain-overlay — PR #21
+
+**Context.** After the 2026-05-20 re-anchor set light to `soft-light` / `0.4`, side-by-side
+review on the warm light ground (`#e0dfdc`) showed 0.4 was perceptibly heavier than
+intended — grain read as deliberate texture rather than as a barely-there film overlay,
+and competed with type rhythm on dense sections. Iterative tuning in this session walked
+the light branch down 0.4 → 0.2 → 0.16 → 0.14 → 0.12. 0.12 reads as the studio's intended
+register: noise visible on solid surfaces, invisible behind type, sub-perceptual at a
+glance. Separately, the every-other-frame redraw cadence (`frame % 2`) was changed to
+`frame % 5` to reduce perceived animation while still keeping the noise from feeling
+frozen — at SCALE=2 across a full viewport, 30fps regeneration was over-active for the
+opacity range we settled on.
+
+**Decision.**
+1. Set light opacity to `0.12` (final). Light blend remains `soft-light`. Dark branch
+   unchanged from prior ADR (`screen` / `0.01`).
+2. Change redraw cadence from `frame++ % 2 === 0` to `frame++ % 5 === 0`. Grain
+   regenerates every 5th `requestAnimationFrame` tick (~12fps on a 60Hz display) rather
+   than every other tick (~30fps). Visually identical noise pattern; quieter motion.
+
+**Locked values (post-change).**
+- `canvas.style.mixBlendMode = dark ? 'screen' : 'soft-light'`
+- `canvas.style.opacity = dark ? '0.01' : '0.12'`
+- `const dark = document.documentElement.classList.contains('dark')`
+- `const SCALE = 2` (unchanged, still coupled-locked)
+- `if (frame++ % 5 === 0)` redraw cadence (this ADR — was `% 2` in prior lock; now
+  decoupled from the dark lock per this ADR)
+- `'filter: blur(0.6px)'` (unchanged, still coupled-locked)
+- Full 0–255 random pixel range, no mode branch (unchanged)
+
+**Consequences.**
+- Light grain at 0.12 finalizes the light-mode tuning. Both branches now accepted as
+  the studio-final values for v1 of the overlay.
+- Frame cadence change applies to both modes (still shared). Dark grain redraws at ~12fps
+  instead of ~30fps — reviewed on hardware, dark register is unchanged perceptually.
+- Coupled-knob policy from 2026-05-19 explicitly relaxes for frame cadence only. SCALE
+  and blur stay coupled-locked. Cadence is now a "tuned but not coupled" value — future
+  cadence changes do not require splitting canvases or per-mode branching.
+- Perf budget improves measurably: ~2.5× fewer `createImageData` + `putImageData` calls
+  per second. Battery / GPU headroom on mobile improves.
+- The debug `console.log('applyColorMode —', { dark, opacity })` remains in code.
+  Removal is a pre-merge task — flagged on PR #21.
+
+**Alternatives considered.**
+- **Stop at 0.14** — Considered. 0.14 was readable but still competed faintly with
+  type on the densest text columns; 0.12 cleared that on review.
+- **Drop to 0.10 or below** — Tried earlier in the iteration (0.04–0.1 range). Below
+  0.12 the grain reads as absent on hardware in average ambient — undershoots the
+  studio register.
+- **Keep cadence at every-other-frame** — Rejected. With the lower opacity the
+  per-frame regen feels frizzy rather than filmic. Slower cadence reads as film
+  grain rather than digital noise.
+- **Per-mode cadence** — Deferred. Single shared cadence is the simpler primitive.
+  Revisit only if dark and light register diverge on the shared value.
