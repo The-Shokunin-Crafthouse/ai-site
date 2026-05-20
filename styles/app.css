@@ -2306,6 +2306,12 @@ html, body { overflow-x: clip; }
   overflow: clip;
   max-height: var(--prompt-max-h, none);
 }
+/* Light mode: prompt surface matches the .gates panel (--bg-subtle) so the
+   workflow's expanded content reads as one consistent light surface. Dark
+   keeps the deeper #080707 plane. */
+.step__prompt:not(.dark *) {
+  background: var(--bg-subtle);
+}
 .step__prompt--empty {
   background: transparent;
   padding: 0;
