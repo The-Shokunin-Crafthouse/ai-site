@@ -541,3 +541,254 @@ sits in tokens.css next to the other tracking tokens.
 - **Use em instead of px.** Rejected — the rest of the tracking
   tokens are px (matching Figma's px-anchored spec); switching units
   for one token would create a unit mismatch.
+
+## 2026-05-20 — Sprint: light-mode-only contract on feat/lightmode-yellow-ui-updates
+**Stage:** 02-design / 03-build
+**Status:** accepted
+
+**Context.** Sprint scope was a pass over light-mode UI: hover states,
+card surfaces, expanded-row text colors, the hiring section, active
+crumb pill, display weights, and the role-mark emphasis. Dark mode had
+just landed its own grain/tokens pass and was considered settled.
+
+**Decision.** All component-level changes scoped to light via
+`:not(.dark *)` guards or light-only token values. Dark mode left
+untouched except where logged separately. Two deliberate dark-mode
+carve-outs:
+1. Hiring role-mark: underline + slnt slant applied in both modes
+   (logged in its own ADR above).
+2. Hiring title: letter-spacing -1px applied in both modes (logged
+   above).
+
+**Consequences.**
+- `.section--hiring .section__title` and `.hiring__role-mark` are the
+  only sprint rules that cross the mode boundary. Every other rule is
+  either `:not(.dark *)`-guarded or scoped to a light-only token
+  value.
+- Future audits of this branch can use these two ADRs to account for
+  the dark deltas without re-reading the diff.
+- Inter Variable self-host (also logged) is infra, not a per-mode
+  change — applies in both modes by definition.
+
+## 2026-05-20 — Light hover pattern: drop yellow text flip, accent the ring
+**Stage:** 03-build
+**Status:** accepted
+
+**Context.** Light mode previously flipped text color to
+`--accent-primary` (yellow) on hover for: section 1 cards, section 2
+timeline buttons, hiring tabs, the hiring CTA, and the expanded
+row-title color shift across sections 2/3/4. Side-by-side review
+showed the text flip read as a click confirmation, not a hover hint —
+on light ground the yellow text on near-white lacked contrast and
+muddied the affordance hierarchy.
+
+**Decision.** Drop the text/color flip on hover in light mode. Use
+the accent ring (border + 1px inset shadow = 2px effective) as the
+sole hover signal. Dark mode keeps its existing color flip — yellow
+text on the dark ground reads as the correct affordance.
+
+**Consequences.**
+- Applied across: `.card`, `.timeline__btn`, `.timeline__show-all`,
+  `.hiring__tab`, `.hiring__cta-link`, and the expanded row-title
+  rules (`.step__title`, `.brain-row__title`, `.tools-row__title`).
+- Light hover affordance is uniform: ring on, text unchanged. The
+  ring color is always `--accent-primary` — emphasis surface stays
+  single-token across the page.
+- Expanded-row active state in light: title stays `--fg-primary`,
+  not yellow. Dark active state unchanged.
+
+## 2026-05-20 — Hover ring pattern: 2px effective border via inset shadow (no layout shift)
+**Stage:** 03-build
+**Status:** accepted
+
+**Context.** Section 1 cards, section 2 timeline buttons, and hiring
+tabs all needed a 2px accent ring on hover. The naive approach —
+`border: 2px` on hover — adds 1px of layout shift on every direction
+because the default is 1px, which pushed neighbors around as the
+cursor moved. The cards and tab rows are dense grids; any shift
+flickered visibly.
+
+**Decision.** Keep the 1px `border` declaration on every state.
+Express the additional 1px on hover via `box-shadow: inset 0 0 0 1px
+var(--accent-primary)`. The two layers stack into a visually-uniform
+2px ring at the accent color. Layout never changes — the element's
+border-box is the same on every state.
+
+**Consequences.**
+- Pattern reused across `.card:hover`, `.timeline__btn:hover`,
+  `.timeline__show-all:hover`, `.hiring__tab:hover`. Border color
+  shifts to `--accent-primary` on hover; the inset shadow fills the
+  inner 1px so the ring reads as uniform thickness.
+- Cheap, mode-agnostic, no calc() needed. The shadow can be tokenized
+  later if we end up applying it in more places, but at four call
+  sites inline value (`0 0 0 1px var(--accent-primary)`) is fine.
+- Active and default states get their normal `border-color` — only
+  the hover state stacks the shadow.
+
+## 2026-05-20 — Section 1 cards: lift above grain overlay via z-index
+**Stage:** 03-build
+**Status:** accepted
+
+**Context.** The animated grain canvas (`scripts/grain.js`) renders
+fixed at `z-index: 9999` with `mix-blend-mode: soft-light`, painting
+noise across the viewport. In light mode the section 1 cards had a
+distinct background (`--bg-card: #ebeae6`, lighter than the page
+ground); the grain blended over the card the same way it blended over
+the page, smearing the surface distinction.
+
+**Decision.** Promote `.card` to its own stacking context above the
+grain:
+
+```css
+.card {
+  position: relative;
+  z-index: 10000;
+}
+```
+
+The card's background now reads cleanly; grain still draws on the
+page ground around it.
+
+**Consequences.**
+- Cards become the only surface that excludes grain. This is
+  intentional — they're the primary content "tiles" of section 1
+  and need to feel material, not textured.
+- Other surfaces (hiring tabs, timeline buttons, prompt blocks) stay
+  under the grain because their texture reads correctly with noise.
+- If future surfaces need the same treatment, raising them above
+  `z-index: 9999` is the recipe.
+
+## 2026-05-20 — Active crumb pill: yellow surface, fg-primary text, caps-balanced padding
+**Stage:** 03-build
+**Status:** accepted
+
+**Context.** Expanded-row crumb active state was yellow text on the
+section ground. Light-mode review showed the active state reading as
+a hover hint rather than a current-state lock. Wanted a pill surface
+that feels like a tab.
+
+**Decision.** Active crumb (`.overview-row__crumb.is-active`) becomes
+a pill in light mode: `--accent-primary` background, `--fg-primary`
+text, `var(--radius-sm)` corners, `line-height: 1`, padding `6px 6px
+4px` (top/sides/bottom). New token `--space-1-5: 6px` added since
+neither 4 nor 8 worked for the caps-only text — the text has no
+descenders, so even padding looked top-heavy and required the
+asymmetric top-vs-bottom values.
+
+**Consequences.**
+- New spacing token `--space-1-5: 6px` joins the existing scale
+  (0.5/1/2/3/...). The half-step is justified by the optical-
+  centering need; it's the smallest tweak unit that reads correctly
+  for caps-only labels on a colored surface.
+- Pattern is light-only via `:not(.dark *)`. Dark active state still
+  uses the existing yellow text on dark ground (high contrast there).
+- The `--space-0-5: 2px` token added in the same pass is currently
+  used only by `--underline-emphasis-thickness` — kept because it
+  belongs to the same fractional scale.
+
+## 2026-05-20 — Display + section title: weight 100 → 200 in light mode
+**Stage:** 03-build
+**Status:** accepted
+
+**Context.** Figma `57:11618` specifies Inter ExtraLight 200 for the
+display titles. Earlier the site rendered them at 100 (Inter Thin)
+because the `--font-light` token historically meant "the lightest
+weight we use." On light ground, 100 disappeared into the warm gray
+page bg — letters thinned to anti-aliased ghosts. Dark mode kept 100
+for now because the deep ground holds Thin glyphs at a higher visual
+weight than the light ground does.
+
+**Decision.** Two rules added:
+
+```css
+.t-display:not(.dark *) { font-weight: var(--font-extralight); }
+.section__title:not(.dark *) { font-weight: var(--font-extralight); }
+```
+
+Plus the hiring title's own override at 200 (already in the base
+rule). New token `--font-extralight: 200` added next to the existing
+`--font-light: 100`.
+
+**Consequences.**
+- Light display headlines now match Figma spec (Inter ExtraLight).
+  Dark stays at 100 by omission of a dark-side rule.
+- The legacy `--font-light: 100` semantic is preserved (still
+  Thin) — the new `--font-extralight: 200` is additive, not a rename,
+  so existing rules referencing `--font-light` stay valid.
+- The hiring title sits on the same weight (200) but with tighter
+  tracking (-1px via `--tracking-hiring-title`, logged separately).
+
+## 2026-05-20 — Light card surface: --bg-card #ebeae6 above page ground
+**Stage:** 02-design / 03-build
+**Status:** accepted
+
+**Context.** Light mode page bg is `--bg-base: #e0dfdc` (warm gray
+ground). Section 1 cards needed a distinct surface — lighter than the
+ground — so they read as floating tiles, not painted regions. Hardcoding
+the color in every card rule risked the page bg drift problem we have
+already documented elsewhere.
+
+**Decision.** New token `--bg-card: #ebeae6` in the light palette.
+Dark resolves to `transparent` so cards inherit the dark ground (no
+surface distinction wanted in dark — the grain + ground hierarchy
+carries it). `.card` references `var(--bg-card)` in every state
+(default / hover / active); the hover state changes the ring, not
+the surface.
+
+**Consequences.**
+- Light surface ladder is now: `--bg-base` (#e0dfdc page) →
+  `--bg-card` / `--bg-subtle` (#ebeae6 cards, prompts, expanded
+  surfaces). Two-step ladder, tight value range, matches the
+  prior "warm ground" decision (2026-05-20 light tokens ADR).
+- `--bg-subtle` and `--bg-card` are the same value today. Kept
+  separate tokens because the semantic intent diverges (one is the
+  card surface, one is the recessed/prompt surface) — easy to drift
+  them independently later without a refactor.
+- The card rule combined with the z-index lift (see
+  "Lift above grain overlay" ADR) gives cards both a distinct color
+  and a grain-free render.
+
+## 2026-05-20 — Hiring brain icon: --fg-brain-icon token retargeted to #AEA7A0 (light)
+**Stage:** 03-build
+**Status:** accepted
+
+**Context.** The Phosphor brain icon in the hiring section used a
+darker fg-tertiary color in light mode that competed with the title.
+Wanted a softer mid-gray that reads as supporting, not focal.
+
+**Decision.** Update `--fg-brain-icon` light value to `#AEA7A0`. Dark
+value pinned to `#2b2722` (the prior dark value, now explicit on the
+dark side so a future light update doesn't drag dark along).
+
+**Consequences.**
+- The token `--fg-brain-icon` is now bi-modal with explicit values
+  per mode, instead of a single light value inherited cross-mode.
+- Any other element referencing `--fg-brain-icon` shifts in light
+  too — auditing the codebase showed the token is only consumed by
+  the hiring brain icon, so the change is local in effect even though
+  the token is global in scope. Logged for future readers.
+
+## 2026-05-20 — Preview deploy: SSH timeouts bumped to 10m / 30m
+**Stage:** 04-ship
+**Status:** accepted
+
+**Context.** PR preview deploys via `appleboy/ssh-action` to Hostinger
+were failing intermittently with `i/o timeout` and `connect:
+connection timed out` errors during the 2-minute default window —
+specifically on first-connection cold paths. Re-runs always
+succeeded; the failure mode was kernel-level TCP, not the deploy
+itself.
+
+**Decision.** Bump both preview workflow SSH steps:
+`timeout: 10m` (app-level dial timeout) and `command_timeout: 30m`
+(remote command timeout). Applied to both `preview-deploy.yml` and
+`preview-cleanup.yml`.
+
+**Consequences.**
+- Cold-connect failures now have headroom to recover within a single
+  run; no more "rerun the workflow" loop.
+- Worst-case workflow latency goes up, but only on the failure path —
+  the happy path still completes in ~15s.
+- If failures recur even at 10m, the root cause is upstream (Hostinger
+  SSH frontend), not workflow config — escalate there rather than
+  bumping again.
