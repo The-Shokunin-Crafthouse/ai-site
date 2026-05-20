@@ -144,7 +144,8 @@
   /* Text emphasis underline — semantic tokens for inline-word accent underlines
      (e.g. the marked role copy in the hiring section). */
   --underline-emphasis-thickness: var(--space-0-5);
-  --underline-emphasis-offset: 3px;
+  --underline-emphasis-offset: 5px;
+  --underline-emphasis-radius: 1px;
   --underline-emphasis-color: var(--accent-primary);
 
   /* Radius */

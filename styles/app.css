@@ -1575,6 +1575,10 @@ html, body { overflow-x: clip; }
   background: transparent;
 }
 .hiring__tab[aria-selected="true"] .hiring__tab-label { color: var(--accent-primary); }
+/* Light mode: active tab keeps the accent border but the text color stays
+   at --fg-secondary (no yellow flip). */
+.hiring__tab:not(.dark *)[aria-selected="true"] { color: var(--fg-secondary); }
+.hiring__tab:not(.dark *)[aria-selected="true"] .hiring__tab-label { color: var(--fg-secondary); }
 .hiring__tab:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 4px;
@@ -1628,13 +1632,21 @@ html, body { overflow-x: clip; }
   margin-bottom: var(--space-6);
 }
 /* Light mode: emphasis underline on the key verb/noun in each role line
-   (am / lead / function). Dark mode unchanged. */
+   (am / lead / function). Rendered via ::after pseudo so the line can carry
+   a corner radius — native text-decoration draws flat ends. Dark mode
+   unchanged. */
 .hiring__role-mark:not(.dark *) {
-  text-decoration: underline;
-  text-decoration-color: var(--underline-emphasis-color);
-  text-decoration-thickness: var(--underline-emphasis-thickness);
-  text-underline-offset: var(--underline-emphasis-offset);
-  text-decoration-skip-ink: none;
+  position: relative;
+}
+.hiring__role-mark:not(.dark *)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * var(--underline-emphasis-offset));
+  height: var(--underline-emphasis-thickness);
+  background: var(--underline-emphasis-color);
+  border-radius: var(--underline-emphasis-radius);
 }
 
 /* Brain callout — inset card with 48px Phosphor icon + label + body copy.
