@@ -31,7 +31,7 @@ from new --fg-tag (#8e7d65, warm Figma value, section-2 tags only).
 
 ## 2026-05-19 — Light --bg-base shifted to #f7f7f5; nav and tooltip derive
 **Stage:** 03-build
-**Status:** accepted
+**Status:** accepted (value superseded 2026-05-19 — see Light ground darkened to #e0dfdc below; the var()-indirection split for nav/tooltip stands)
 
 **Context.** Light mode page background was #fdfdfc — near-pure white with a
 sub-perceptual warm tilt. Two other tokens (--bg-nav, --bg-tooltip) hardcoded
@@ -54,7 +54,7 @@ so they propagate with the page ground.
 
 ## 2026-05-19 — Light --border-subtle → #e5e2db; split button borders into --border-button
 **Stage:** 03-build
-**Status:** accepted
+**Status:** accepted (value superseded 2026-05-19 — see Light ground darkened to #e0dfdc below; the --border-button split stands)
 
 **Context.** Light --border-subtle had been #c9c8c0 (Sprint-15 baseline) and
 was briefly stepped warm to #c9c6c0 earlier in this sprint. That value still
@@ -78,3 +78,36 @@ surfaces — .hero__skip, .timeline__show-all, .hiring__tab, .hiring__cta-link,
 - Two role names where there was one. Choosing between them is now a
   judgment call (is this thing a button or a surface?). Calibration above
   documents the current split.
+
+## 2026-05-19 — Light ground darkened to #e0dfdc; --border-subtle → #d4d0ca
+**Stage:** 03-build
+**Status:** accepted (supersedes the value choices in the two earlier
+2026-05-19 ADRs; the var()-indirection architecture from those entries
+— --bg-nav/--bg-tooltip via var(--bg-base), and the --border-button split —
+remains in force)
+
+**Context.** The first warm shift moved --bg-base from #fdfdfc to #f7f7f5 and
+--border-subtle to #e5e2db. Reading the result on actual hardware in light
+ambient, the ground still read closer to "off-white paper" than to the
+recessed, slightly absorbent plane the dark composite has at #0e0c0b. Plane
+separation against text and elevated surfaces was weaker than intended — the
+hierarchy from page → card felt tinted rather than stepped.
+
+**Decision.** Drop --bg-base to #e0dfdc (a noticeable, not perceptual, step
+darker). Step --border-subtle down in lockstep to #d4d0ca so dividers stay
+proportionally quieter than the new ground (~7 L* below page, similar gap
+to before).
+
+**Consequences.**
+- Page reads as a quieter warm stone instead of paper. Stronger plane
+  separation against --bg-recessed (#f7f5f3) and --bg-surface-2/3 — those
+  now feel like genuinely lighter surfaces rather than near-identical tints.
+  May want to reconcile those next so the elevation ladder steps consistently.
+- --fg-primary (#21201c) contrast against the new ground stays well above
+  WCAG AA (luminance ratio drops only ~1 point from the prior value).
+- --border-button (derives from --border-subtle) follows automatically —
+  button outlines stay perceptually quiet against the new ground.
+- Dark mode untouched.
+- Two prior 2026-05-19 ADR values are no longer current. Their architectural
+  contributions (var() indirection for nav/tooltip; --border-button split)
+  remain — only the hex choices were superseded.
