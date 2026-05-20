@@ -1186,8 +1186,9 @@ html, body { overflow-x: clip; }
   margin: 0 0 var(--space-1) 0;
 }
 
-/* Criteria + defaults shared list style. Cards sit on the page background with
-   a hairline border (matches section dividers); weight chip uses the workflow
+/* Criteria + defaults shared list style. Outline only (matches .learning in
+   Studio Memory) — hairline border, no fill, so the card reads as a quiet
+   container against the prompt surface. Weight chip uses the workflow
    step__badge pill style. */
 .criteria, .defaults {
   display: flex;
@@ -1198,7 +1199,7 @@ html, body { overflow-x: clip; }
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--bg-base);
+  background: transparent;
 }
 .criteria__head, .defaults__head {
   display: flex;
