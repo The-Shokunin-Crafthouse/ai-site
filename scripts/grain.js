@@ -16,7 +16,7 @@ function initGrain() {
   function applyColorMode() {
     const dark = mq.matches;
     canvas.style.mixBlendMode = dark ? 'screen' : 'screen';
-    canvas.style.opacity = dark ? '0.011' : '0.2';
+    canvas.style.opacity = dark ? '0.011' : '0.011';
   }
 
   applyColorMode();
@@ -36,12 +36,9 @@ function initGrain() {
       const { width, height } = canvas;
       const imageData = ctx.createImageData(width, height);
       const data = imageData.data;
-      const dark = mq.matches;
 
       for (let i = 0; i < data.length; i += 4) {
-        const v = dark
-          ? (Math.random() * 255) | 0
-          : (Math.random() * 80) | 0;
+        const v = (Math.random() * 255) | 0;
         data[i]     = v;
         data[i + 1] = v;
         data[i + 2] = v;
