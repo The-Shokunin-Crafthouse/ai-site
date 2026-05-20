@@ -56,8 +56,8 @@
   --tracking-body-sm: 0.5px;
 
   /* Color — light */
-  --bg-base: #fdfdfc;
-  --bg-nav: #fdfdfc;
+  --bg-base: #f7f7f5;
+  --bg-nav: var(--bg-base);
   --bg-subtle: #f7f5f3;
   --bg-recessed: #f7f5f3;
   --bg-surface-2: #edebe8;
@@ -104,7 +104,7 @@
   --hover-accent: #daff60;
   --hover-mint: #58f5d2;
   --hover-row: #f7f4f1;
-  --bg-tooltip: #fdfdfc;
+  --bg-tooltip: var(--bg-base);
   --fg-tooltip: #21201c;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.07);
   --decoration-fg-primary: rgba(33, 32, 28, 0.4);
