@@ -36,9 +36,10 @@ function initGrain() {
       const { width, height } = canvas;
       const imageData = ctx.createImageData(width, height);
       const data = imageData.data;
+      const dark = mq.matches;
 
       for (let i = 0; i < data.length; i += 4) {
-        const v = mq.matches
+        const v = dark
           ? (Math.random() * 255) | 0
           : (Math.random() * 80) | 0;
         data[i]     = v;
