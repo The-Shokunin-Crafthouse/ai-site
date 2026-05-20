@@ -874,8 +874,12 @@ html, body { overflow-x: clip; }
   margin-bottom: var(--space-4);
   padding: var(--space-8) var(--space-6);
   background: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
+}
+/* Dark keeps the hairline outline; light surface separation comes from the
+   --bg-subtle / --bg-base contrast alone. */
+.dark .gates {
+  border: 1px solid var(--border-subtle);
 }
 @media (min-width: 768px) {
   .gates { padding: var(--space-12); }
