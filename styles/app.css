@@ -1519,6 +1519,7 @@ html, body { overflow-x: clip; }
   transition: color var(--dur-fast) var(--ease-out-strong),
               border-color var(--dur-fast) var(--ease-out-strong),
               background-color var(--dur-fast) var(--ease-out-strong),
+              box-shadow var(--dur-fast) var(--ease-out-strong),
               transform var(--dur-fast) var(--ease-out-strong);
 }
 .hiring__tab:active { transform: scale(0.97); }
@@ -1876,13 +1877,18 @@ html, body { overflow-x: clip; }
   .drawer__link a:hover [data-arrow] { transform: translateX(4px); }
   .hiring__cta-link:hover .hiring__cta-arrow { transform: translateX(4px); }
   .section__next a:hover [data-arrow] { transform: translateX(6px); }
-  /* Hiring tab hover — full active-state mirror.
-     Both border-color and label color fade to accent over --dur-fast/--dur-standard.
-     Selected state still wins via [aria-selected="true"] rules earlier. */
+  /* Hiring tab hover — border-color fades to accent. Selected state still wins
+     via [aria-selected="true"] rules earlier. */
   .hiring__tab:not([aria-selected="true"]):hover {
     border-color: var(--accent-primary);
   }
-  .hiring__tab:not([aria-selected="true"]):hover .hiring__tab-label {
+  /* Light mode only: 2px effective border via inset shadow (no layout shift),
+     and no label color flip. */
+  .hiring__tab:not([aria-selected="true"]):not(.dark *):hover {
+    box-shadow: inset 0 0 0 1px var(--accent-primary);
+  }
+  /* Dark mode keeps the label color flip to accent. */
+  .dark .hiring__tab:not([aria-selected="true"]):hover .hiring__tab-label {
     color: var(--accent-primary);
   }
 }
