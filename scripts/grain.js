@@ -15,10 +15,10 @@ function initGrain() {
   function applyColorMode() {
     const dark = document.documentElement.classList.contains('dark');
 
-    console.log('applyColorMode —', { dark, opacity: dark ? '0.01' : '0.16' });
+    console.log('applyColorMode —', { dark, opacity: dark ? '0.01' : '0.14' });
 
     canvas.style.mixBlendMode = dark ? 'screen' : 'soft-light';
-    canvas.style.opacity = dark ? '0.01' : '0.16';
+    canvas.style.opacity = dark ? '0.01' : '0.14';
   }
 
   applyColorMode();
