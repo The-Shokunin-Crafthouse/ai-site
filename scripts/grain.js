@@ -14,8 +14,13 @@ function initGrain() {
   ].join(';');
 
   function applyColorMode() {
-    const dark = document.documentElement.classList.contains('dark')
-      || (!document.documentElement.classList.contains('light') && mq.matches);
+    const hasDarkClass = document.documentElement.classList.contains('dark');
+    const hasLightClass = document.documentElement.classList.contains('light');
+    const osDark = mq.matches;
+    const dark = hasDarkClass || (!hasLightClass && osDark);
+
+    console.log('applyColorMode —', { hasDarkClass, hasLightClass, osDark, dark, opacity: dark ? '0.011' : '0.5' });
+
     canvas.style.mixBlendMode = 'screen';
     canvas.style.opacity = dark ? '0.011' : '0.5';
   }
