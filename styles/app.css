@@ -3,7 +3,7 @@
    matching levibahn.com (portfolio-site/src/scss/_fonts.scss). */
 
 @font-face {
-  font-display: block;
+  font-display: optional;
   font-family: "GentonaLight";
   src: url("../fonts/Gentona_Light.woff2") format("woff2");
 }
