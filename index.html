@@ -33,10 +33,12 @@
     })();
   </script>
 
-  <!-- Inter (body/display) + Cascadia Mono (code/prompts) via Google Fonts. -->
+  <!-- Inter Variable self-hosted (wght + slnt axes — Google Fonts strips slnt).
+       Cascadia Mono (code/prompts) still via Google Fonts. -->
+  <link rel="preload" href="./fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400&family=Inter:wght@100;200;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400&display=swap" rel="stylesheet" />
 
   <!-- Favicon — same accent dot as levibahn.com. -->
   <link rel="icon" href="./icon.svg" type="image/svg+xml" sizes="any" />
@@ -1413,7 +1415,7 @@ Commit the updated file and push.</code></pre>
           <div class="hiring__panels">
             <article class="hiring__panel" role="tabpanel" id="hire-startup" aria-labelledby="tab-startup" data-hiring-panel="startup" hidden>
               <p class="hiring__eyebrow">It's <s>rocket</s> AI science</p>
-              <p class="hiring__role">I am the design team.</p>
+              <p class="hiring__role">I <span class="hiring__role-mark">am</span> the design team.</p>
               <div class="hiring__brain-card">
                 <span class="hiring__brain-icon" aria-hidden="true">
                   <svg class="icon" viewBox="0 0 256 256"><use href="#ph-brain"/></svg>
@@ -1434,7 +1436,7 @@ Commit the updated file and push.</code></pre>
 
             <article class="hiring__panel" role="tabpanel" id="hire-mid" aria-labelledby="tab-mid" data-hiring-panel="mid" hidden>
               <p class="hiring__eyebrow">It's <s>rocket</s> AI science</p>
-              <p class="hiring__role">I lead a design team.</p>
+              <p class="hiring__role">I <span class="hiring__role-mark">lead</span> a design team.</p>
               <div class="hiring__brain-card">
                 <span class="hiring__brain-icon" aria-hidden="true">
                   <svg class="icon" viewBox="0 0 256 256"><use href="#ph-brain"/></svg>
@@ -1455,7 +1457,7 @@ Commit the updated file and push.</code></pre>
 
             <article class="hiring__panel" role="tabpanel" id="hire-enterprise" aria-labelledby="tab-enterprise" data-hiring-panel="enterprise" hidden>
               <p class="hiring__eyebrow">It's <s>rocket</s> AI science</p>
-              <p class="hiring__role">I lead a design function.</p>
+              <p class="hiring__role">I lead a design <span class="hiring__role-mark">function</span>.</p>
               <div class="hiring__brain-card">
                 <span class="hiring__brain-icon" aria-hidden="true">
                   <svg class="icon" viewBox="0 0 256 256"><use href="#ph-brain"/></svg>

@@ -6,8 +6,10 @@
   --font-display: var(--font-body);
   --font-mono: "Cascadia Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
 
-  /* Typography — weights */
+  /* Typography — weights. Note: --font-light is 100 (Inter Thin) for
+     backwards compat with existing rules — not Inter's "Light" 300 cut. */
   --font-light: 100;
+  --font-extralight: 200;
   --font-regular: 400;
   --font-medium: 500;
   --font-semibold: 600;
@@ -50,6 +52,7 @@
      px instead of em so the token transfers cleanly across font-sizes. */
   --tracking-hero: -0.31px;
   --tracking-display: -0.31px;
+  --tracking-hiring-title: -1px;
   --tracking-overview-num: -0.34px;
   --tracking-eyebrow: 0.48px;
   --tracking-eyebrow-strong: 0.96px;
@@ -83,10 +86,11 @@
   /* Prompt code body color — Figma 54:7438 / 55:9113 (CC Prompt). */
   --prompt-code-fg: #5b5b5a;
 
-  /* Hiring brain icon — Figma 57:11619 dark composite. Kept as its own
-     semantic token so the icon color stays fixed across modes (no .dark
-     override) and matches the callout's dark surface contrast intent. */
-  --fg-brain-icon: #2b2722;
+  /* Hiring brain icon — kept as its own semantic token so the contrast
+     intent against the callout surface stays controlled per mode.
+     Light: warm gray for low-contrast presence on the bg-callout panel.
+     Dark: deep brown to match Figma 57:11619 dark composite. */
+  --fg-brain-icon: #AEA7A0;
 
   /* Card-panel icon stamp — Figma 57:10923. Matches the primary text color
      (#21201C in light). Override in .dark for visibility. */
@@ -96,6 +100,11 @@
      Section 06. Sinks deeper than --bg-recessed in dark so the card
      reads as a separate plane against bg-base #0e0c0b. */
   --bg-callout: #ebeae6;
+
+  /* Overview card surface (Section 1 — "The system, in 90 seconds" 4 cards).
+     Light: warm light surface above --bg-base. Dark: transparent so the
+     card reads against --bg-base without a separate plane. */
+  --bg-card: #ebeae6;
   --fg-on-accent: #21201c;
   --border-subtle: #d4d0ca;
   --border-button: var(--border-subtle);
@@ -110,8 +119,10 @@
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.07);
   --decoration-fg-primary: rgba(33, 32, 28, 0.4);
 
-  /* Spacing — 4pt scale */
+  /* Spacing — 4pt scale (half-steps exist for tight inline padding only). */
+  --space-0-5: 2px;
   --space-1: 4px;
+  --space-1-5: 6px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
@@ -132,6 +143,18 @@
 
   /* Layout — horizontal padding */
   --pad-h: 24px;
+
+  /* Text emphasis underline — semantic tokens for inline-word accent underlines
+     (e.g. the marked role copy in the hiring section). */
+  --underline-emphasis-thickness: var(--space-0-5);
+  --underline-emphasis-offset: 5px;
+  --underline-emphasis-radius: 1px;
+  --underline-emphasis-color: var(--accent-primary);
+
+  /* Text emphasis slant — italic-style lean. Driven by the Inter Variable
+     `slnt` axis (range -10..0, negative leans forward). Unitless because
+     font-variation-settings takes a raw axis value, not an angle. */
+  --text-emphasis-slant: -5;
 
   /* Radius */
   --radius-xs: 1px;
@@ -280,4 +303,11 @@
 
   /* Dark-mode prompt surface = --bg-base (#0e0c0b, exact Figma match). */
   --bg-prompt: var(--bg-base);
+
+  /* Dark-mode card surface stays transparent — cards read against bg-base. */
+  --bg-card: transparent;
+
+  /* Pin the brain icon to its original Figma value in dark; light gets a
+     softer warm gray via :root above. */
+  --fg-brain-icon: #2b2722;
 }

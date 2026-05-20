@@ -1,6 +1,16 @@
 /* Base styles + components. Tokens live in tokens.css.
-   Inter via Google Fonts <link>. Gentona Light used only on hero headline,
-   matching levibahn.com (portfolio-site/src/scss/_fonts.scss). */
+   Inter Variable self-hosted (wght 100..900, slnt -10..0) — Google Fonts
+   does not expose Inter's slnt axis, so we ship the variable woff2 directly
+   to keep the role-mark slnt italic working. Gentona Light used only on hero
+   headline, matching levibahn.com (portfolio-site/src/scss/_fonts.scss). */
+
+@font-face {
+  font-family: "Inter";
+  font-style: oblique 0deg 10deg;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/InterVariable.woff2") format("woff2-variations");
+}
 
 @font-face {
   font-display: optional;
@@ -66,6 +76,9 @@ body {
   line-height: var(--text-display-line);
   letter-spacing: var(--tracking-display);
 }
+/* Light mode: bump display weight one step up (100 → 200). Inter Variable
+   serves the in-between weight from the wght axis. Dark stays at 100. */
+.t-display:not(.dark *) { font-weight: var(--font-extralight); }
 .t-title {
   font-family: var(--font-body);
   font-weight: var(--font-medium);
@@ -510,6 +523,9 @@ html, body { overflow-x: clip; }
   letter-spacing: -0.01em;
   margin-bottom: var(--space-4);
 }
+/* Light mode: bump section title weight one step up (100 → 200). Dark stays
+   at 100 to preserve the original display weight on the dark composite. */
+.section__title:not(.dark *) { font-weight: var(--font-extralight); }
 .section__lede {
   font-size: var(--text-body-lg-size);
   line-height: var(--text-body-lg-line);
@@ -561,22 +577,46 @@ html, body { overflow-x: clip; }
   padding: var(--space-6) var(--space-6) var(--space-4);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: transparent;
+  background: var(--bg-card);
   color: inherit;
+  /* Lift above the fixed grain canvas (scripts/grain.js renders at z=9999
+     with mix-blend-mode: soft-light) so the card surface paints opaquely
+     and the noise texture doesn't render inside the card. */
+  position: relative;
+  z-index: 10000;
   transition: border-color var(--dur-fast) var(--ease-out-strong),
+              background-color var(--dur-fast) var(--ease-out-strong),
+              box-shadow var(--dur-fast) var(--ease-out-strong),
               transform var(--dur-fast) var(--ease-out-strong);
+}
+/* Light mode: card sits flush with page bg by default (1px --border-subtle
+   from base rule), swaps to the lighter --bg-card surface on hover/active.
+   No font color shifts. */
+.card:not(.dark *) {
+  background: var(--bg-base);
 }
 @media (max-width: 1023px) { .card { min-height: 220px; } }
 .card:focus-visible {
   outline: 2px solid var(--fg-primary);
   outline-offset: 4px;
 }
-/* Hover = active state. Border + index + CTA (text + arrow via currentColor)
-   fade to accent. Title + summary stay. Press-scale handled by .btn-press. */
+/* Dark mode: hover mirrors the open state — border + index + CTA fade to
+   accent. Title + summary stay. Light mode handles hover via bg swap only
+   (no font color shifts) — rule below. Press-scale handled by .btn-press. */
 @media (hover: hover) and (pointer: fine) {
-  .card:hover { border-color: var(--accent-primary); }
-  .card:hover .card__index,
-  .card:hover .card__cta { color: var(--accent-primary); }
+  .dark .card:hover { border-color: var(--accent-primary); }
+  .dark .card:hover .card__index,
+  .dark .card:hover .card__cta { color: var(--accent-primary); }
+  /* Light mode hover: swap bg to the lighter --bg-card surface, render a 2px
+     yellow border (1px border + 1px inset shadow = 2px effective ring, no
+     layout shift). Index weight pinned to 400, CTA to 500. No font color shifts. */
+  .card:not(.dark *):hover {
+    background: var(--bg-card);
+    border-color: var(--accent-primary);
+    box-shadow: inset 0 0 0 1px var(--accent-primary);
+  }
+  .card:not(.dark *):hover .card__index { font-weight: var(--font-regular); }
+  .card:not(.dark *):hover .card__cta { font-weight: var(--font-medium); }
 }
 .card__index {
   font-size: 12px;
@@ -661,13 +701,22 @@ html, body { overflow-x: clip; }
   cursor: pointer;
   transition: color var(--dur-fast) var(--ease-out-strong),
               border-color var(--dur-fast) var(--ease-out-strong),
+              box-shadow var(--dur-fast) var(--ease-out-strong),
               transform 160ms var(--ease-out-strong);
 }
 @media (hover: hover) and (pointer: fine) {
-  .timeline__btn:hover,
-  .timeline__show-all:hover {
+  /* Dark mode: hover flips both text and border to accent. */
+  .dark .timeline__btn:hover,
+  .dark .timeline__show-all:hover {
     color: var(--accent-primary);
     border-color: var(--accent-primary);
+  }
+  /* Light mode: 2px yellow border on hover (1px border + 1px inset shadow,
+     no layout shift). Text color stays. */
+  .timeline__btn:not(.dark *):hover,
+  .timeline__show-all:not(.dark *):hover {
+    border-color: var(--accent-primary);
+    box-shadow: inset 0 0 0 1px var(--accent-primary);
   }
 }
 .timeline__show-all-wrap {
@@ -794,6 +843,9 @@ html, body { overflow-x: clip; }
 /* Open row: number + title hold accent (matches Figma 54:7438 step 09 open). */
 .step__head[aria-expanded="true"] .step__num,
 .step__head[aria-expanded="true"] .step__title { color: var(--accent-primary); }
+/* Light mode: title stays at --fg-primary when expanded. Num still flips to
+   accent via the row-accent system. */
+.step__head[aria-expanded="true"]:not(.dark *) .step__title { color: var(--fg-primary); }
 
 .step__body {
   /* Top padding removed per spec — body sits flush under the step head. */
@@ -1047,6 +1099,11 @@ html, body { overflow-x: clip; }
 .brain-row__head[aria-expanded="true"] .brain-row__num,
 .brain-row__head[aria-expanded="true"] .brain-row__title {
   color: var(--accent-primary);
+}
+/* Light mode: title stays at --fg-primary when expanded. Num still flips via
+   row-accent system. */
+.brain-row__head[aria-expanded="true"]:not(.dark *) .brain-row__title {
+  color: var(--fg-primary);
 }
 /* Open: tighten head's bottom padding so the gap from title to expanded body
    (head padding-bottom + body padding-top 0) lands at 16px. */
@@ -1355,6 +1412,11 @@ html, body { overflow-x: clip; }
 .tools-row__head[aria-expanded="true"] .tools-row__title {
   color: var(--accent-primary);
 }
+/* Light mode: title stays at --fg-primary when expanded. Num still flips via
+   row-accent system. */
+.tools-row__head[aria-expanded="true"]:not(.dark *) .tools-row__title {
+  color: var(--fg-primary);
+}
 .tools-row__body {
   padding: 0 0 var(--space-8) 0;
   animation: step-body-in var(--dur-expand) var(--ease-out-strong);
@@ -1486,11 +1548,14 @@ html, body { overflow-x: clip; }
      visible (the static line would dominate). */
 }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
-/* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero. */
+/* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero.
+   Tighter tracking than base display via --tracking-hiring-title;
+   applies in both modes (logged in decisions/decisions.md). */
 .section--hiring .section__title {
   color: var(--fg-primary);
   font-family: var(--font-body);
   font-weight: 200;
+  letter-spacing: var(--tracking-hiring-title);
 }
 .section--hiring .section__lede { color: var(--fg-secondary); }
 
@@ -1519,6 +1584,7 @@ html, body { overflow-x: clip; }
   transition: color var(--dur-fast) var(--ease-out-strong),
               border-color var(--dur-fast) var(--ease-out-strong),
               background-color var(--dur-fast) var(--ease-out-strong),
+              box-shadow var(--dur-fast) var(--ease-out-strong),
               transform var(--dur-fast) var(--ease-out-strong);
 }
 .hiring__tab:active { transform: scale(0.97); }
@@ -1528,6 +1594,10 @@ html, body { overflow-x: clip; }
   background: transparent;
 }
 .hiring__tab[aria-selected="true"] .hiring__tab-label { color: var(--accent-primary); }
+/* Light mode: active tab keeps the accent border but the text color stays
+   at --fg-secondary (no yellow flip). */
+.hiring__tab:not(.dark *)[aria-selected="true"] { color: var(--fg-secondary); }
+.hiring__tab:not(.dark *)[aria-selected="true"] .hiring__tab-label { color: var(--fg-secondary); }
 .hiring__tab:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 4px;
@@ -1579,6 +1649,27 @@ html, body { overflow-x: clip; }
   letter-spacing: -0.005em;
   color: var(--fg-primary);
   margin-bottom: var(--space-6);
+}
+/* Emphasis underline + slant on the key verb/noun in each role line
+   (am / lead / function). Applied in both modes so the treatment stays
+   consistent across light and dark — see decisions.md 2026-05-20 ADR.
+   The underline rides 5px below the baseline via an ::after pseudo (so
+   the line can carry a corner radius — native text-decoration draws flat
+   ends). Slant uses the Inter Variable `slnt` axis so the glyphs lean
+   correctly instead of being sheared. Font color is unchanged. */
+.hiring__role-mark {
+  position: relative;
+  font-variation-settings: "slnt" var(--text-emphasis-slant);
+}
+.hiring__role-mark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * var(--underline-emphasis-offset));
+  height: var(--underline-emphasis-thickness);
+  background: var(--underline-emphasis-color);
+  border-radius: var(--underline-emphasis-radius);
 }
 
 /* Brain callout — inset card with 48px Phosphor icon + label + body copy.
@@ -1690,12 +1781,17 @@ html, body { overflow-x: clip; }
      by .btn-press + .btn-trace shared rules. Arrow translate on hot state
      comes from .btn-trace[data-btn-state="hot"] [data-btn-arrow]. */
 }
-/* Hover state — mirrors the hero button's orbit comet + arrow translate,
-   plus a yellow text/icon fade (user-spec extension over hero's
-   "no color shift" hover). currentColor inheritance flips the arrow with
-   the text in one step. */
-.hiring__cta-link[data-btn-state="hot"] {
+/* Hover state — mirrors the hero button's orbit comet + arrow translate.
+   Dark keeps the yellow text/icon fade; light drops the color shift and
+   relies on the orbit comet + arrow translate alone. */
+.dark .hiring__cta-link[data-btn-state="hot"] {
   color: var(--accent-primary);
+}
+/* Press scale — explicit so the press/release feedback is visible even if
+   the shared .btn-press rule changes. Uses the studio --press-scale-button
+   token so the value matches other CTAs. */
+.hiring__cta-link:active {
+  transform: scale(var(--press-scale-button));
 }
 .hiring__cta-arrow {
   display: inline-block;
@@ -1876,13 +1972,18 @@ html, body { overflow-x: clip; }
   .drawer__link a:hover [data-arrow] { transform: translateX(4px); }
   .hiring__cta-link:hover .hiring__cta-arrow { transform: translateX(4px); }
   .section__next a:hover [data-arrow] { transform: translateX(6px); }
-  /* Hiring tab hover — full active-state mirror.
-     Both border-color and label color fade to accent over --dur-fast/--dur-standard.
-     Selected state still wins via [aria-selected="true"] rules earlier. */
+  /* Hiring tab hover — border-color fades to accent. Selected state still wins
+     via [aria-selected="true"] rules earlier. */
   .hiring__tab:not([aria-selected="true"]):hover {
     border-color: var(--accent-primary);
   }
-  .hiring__tab:not([aria-selected="true"]):hover .hiring__tab-label {
+  /* Light mode only: 2px effective border via inset shadow (no layout shift),
+     and no label color flip. */
+  .hiring__tab:not([aria-selected="true"]):not(.dark *):hover {
+    box-shadow: inset 0 0 0 1px var(--accent-primary);
+  }
+  /* Dark mode keeps the label color flip to accent. */
+  .dark .hiring__tab:not([aria-selected="true"]):hover .hiring__tab-label {
     color: var(--accent-primary);
   }
 }
@@ -2011,6 +2112,18 @@ html, body { overflow-x: clip; }
   animation: overview-eyebrow-in 640ms var(--ease-out-strong) both;
 }
 .overview-row__crumb.is-active { color: var(--accent-primary); }
+/* Light mode: active crumb renders as a yellow pill — fg-primary text on
+   accent surface, 3px radius, 6/6/4 padding. Asymmetric vertical padding
+   compensates for the all-caps text having no descenders. line-height: 1
+   collapses the inherited 12px/~18px line-box. Dark mode keeps text-only
+   accent. */
+.overview-row__crumb.is-active:not(.dark *) {
+  color: var(--fg-primary);
+  background: var(--accent-primary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1-5) var(--space-1-5) var(--space-1);
+  line-height: 1;
+}
 .overview-row__crumb-sep { color: var(--fg-muted); }
 
 /* Number stays vertically centered against the main column. When expanded the main
@@ -2158,6 +2271,11 @@ html, body { overflow-x: clip; }
   color: var(--accent-primary);
 }
 
+/* Light mode only: bump overview row number weight from 100 → 400 on hover. */
+[data-row-hover][data-row-state="hot"] > button .overview-row__index:not(.dark *) {
+  font-weight: var(--font-regular);
+}
+
 /* Button: ONLY the arrow translates on hover. No text color shift, no border change. */
 .btn-trace {
   position: relative;
@@ -2249,6 +2367,12 @@ html, body { overflow-x: clip; }
   min-width: 0;
   overflow: clip;
   max-height: var(--prompt-max-h, none);
+}
+/* Light mode: prompt surface matches the .gates panel (--bg-subtle) so the
+   workflow's expanded content reads as one consistent light surface. Dark
+   keeps the deeper #080707 plane. */
+.step__prompt:not(.dark *) {
+  background: var(--bg-subtle);
 }
 .step__prompt--empty {
   background: transparent;
@@ -2525,12 +2649,16 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   }
 }
 
-/* Card "open" state — accent border + index, dot eyebrow */
-.card[aria-expanded="true"] {
+/* Card "open" state — dark keeps the accent border + index/title color shift;
+   light renders the lighter --bg-card surface with no border, no color shifts. */
+.dark .card[aria-expanded="true"] {
   border-color: var(--accent-primary);
 }
-.card[aria-expanded="true"] .card__index { color: var(--accent-primary); }
-.card[aria-expanded="true"] .card__title { color: var(--accent-primary); }
+.dark .card[aria-expanded="true"] .card__index { color: var(--accent-primary); }
+.dark .card[aria-expanded="true"] .card__title { color: var(--accent-primary); }
+.card:not(.dark *)[aria-expanded="true"] {
+  background: var(--bg-card);
+}
 
 .card .card__arrow { transition: transform var(--dur-fast) var(--ease-out-strong); }
 @media (hover: hover) and (pointer: fine) {
