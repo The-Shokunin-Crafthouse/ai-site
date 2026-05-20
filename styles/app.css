@@ -2025,6 +2025,14 @@ html, body { overflow-x: clip; }
   animation: overview-eyebrow-in 640ms var(--ease-out-strong) both;
 }
 .overview-row__crumb.is-active { color: var(--accent-primary); }
+/* Light mode: active crumb renders as a yellow pill — fg-primary text on
+   accent surface, 3px radius, 2/4 padding. Dark mode keeps text-only accent. */
+.overview-row__crumb.is-active:not(.dark *) {
+  color: var(--fg-primary);
+  background: var(--accent-primary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-0-5) var(--space-1);
+}
 .overview-row__crumb-sep { color: var(--fg-muted); }
 
 /* Number stays vertically centered against the main column. When expanded the main

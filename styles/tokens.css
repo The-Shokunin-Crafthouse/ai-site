@@ -115,7 +115,8 @@
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.07);
   --decoration-fg-primary: rgba(33, 32, 28, 0.4);
 
-  /* Spacing — 4pt scale */
+  /* Spacing — 4pt scale (half-step exists for sub-4px inline padding only). */
+  --space-0-5: 2px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
