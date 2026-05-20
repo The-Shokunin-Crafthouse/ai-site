@@ -1,0 +1,58 @@
+function initGrain() {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+  canvas.style.cssText = [
+    'position: fixed',
+    'inset: 0',
+    'width: 100%',
+    'height: 100%',
+    'pointer-events: none',
+    'z-index: 9999',
+  ].join(';');
+
+  function applyColorMode() {
+    const dark = mq.matches;
+    canvas.style.mixBlendMode = dark ? 'screen' : 'multiply';
+    canvas.style.opacity = dark ? '0.04' : '0.05';
+  }
+
+  applyColorMode();
+  mq.addEventListener('change', applyColorMode);
+  document.body.appendChild(canvas);
+
+  let frame = 0;
+  const SCALE = 3;
+
+  function resize() {
+    canvas.width  = Math.ceil(window.innerWidth  / SCALE);
+    canvas.height = Math.ceil(window.innerHeight / SCALE);
+  }
+
+  function drawGrain() {
+    if (frame++ % 2 === 0) {
+      const { width, height } = canvas;
+      const imageData = ctx.createImageData(width, height);
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const v = (Math.random() * 255) | 0;
+        data[i]     = v;
+        data[i + 1] = v;
+        data[i + 2] = v;
+        data[i + 3] = 255;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    requestAnimationFrame(drawGrain);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  drawGrain();
+}
+
+document.addEventListener('DOMContentLoaded', initGrain);
