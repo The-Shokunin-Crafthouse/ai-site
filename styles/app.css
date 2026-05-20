@@ -3,7 +3,7 @@
    matching levibahn.com (portfolio-site/src/scss/_fonts.scss). */
 
 @font-face {
-  font-display: block;
+  font-display: optional;
   font-family: "GentonaLight";
   src: url("../fonts/Gentona_Light.woff2") format("woff2");
 }
@@ -442,7 +442,7 @@ html, body { overflow-x: clip; }
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
@@ -629,237 +629,6 @@ html, body { overflow-x: clip; }
   transition: transform var(--dur-fast) var(--ease-out-strong);
   display: inline-block;
 }
-/* ===== Drawer overlay ===== */
-.drawer-scrim {
-  position: fixed; inset: 0;
-  background: color-mix(in srgb, var(--bg-inverse) 14%, transparent);
-  backdrop-filter: blur(12px) saturate(120%);
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
-  z-index: var(--z-overlay);
-  opacity: 0;
-  transition: opacity var(--dur-standard) var(--ease-out-strong),
-              backdrop-filter var(--dur-standard) var(--ease-out-strong);
-  pointer-events: none;
-}
-.drawer-scrim[data-shown="true"] { opacity: 1; pointer-events: auto; }
-
-.drawer {
-  position: fixed;
-  z-index: calc(var(--z-overlay) + 1);
-  background: var(--bg-base);
-  color: var(--fg-primary);
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform var(--dur-expand) var(--ease-figma-gentle),
-              opacity var(--dur-fast) var(--ease-out-strong);
-  /* Mobile: slide up from bottom */
-  left: 0; right: 0; bottom: 0;
-  max-height: 88vh;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  transform: translateY(100%);
-}
-@media (min-width: 768px) {
-  /* Desktop: slide in from right */
-  .drawer {
-    top: 0; right: 0; left: auto; bottom: 0;
-    width: min(520px, 92vw);
-    max-height: none;
-    border-radius: 0;
-    border-left: 1px solid var(--border-subtle);
-    transform: translateX(100%);
-  }
-}
-.drawer[data-shown="true"] {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-@media (min-width: 768px) {
-  .drawer[data-shown="true"] { transform: translateX(0); }
-}
-.drawer__handle {
-  width: 36px;
-  height: 4px;
-  margin: var(--space-3) auto var(--space-2);
-  background: var(--border-subtle);
-  border-radius: var(--radius-full);
-}
-@media (min-width: 768px) { .drawer__handle { display: none; } }
-.drawer__head {
-  padding: var(--space-3) var(--space-6) var(--space-3);
-  border-bottom: 1px solid var(--border-subtle);
-  text-align: center;
-}
-@media (min-width: 768px) {
-  .drawer__head { padding: var(--space-4) var(--space-12) var(--space-5); }
-}
-.drawer__eyebrow {
-  font-size: var(--text-body-sm-size);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  margin-bottom: var(--space-2);
-}
-.drawer__title {
-  font-family: var(--font-body);
-  font-weight: var(--font-light);
-  font-size: 32px;
-  line-height: 38px;
-  letter-spacing: -0.01em;
-}
-@media (min-width: 768px) {
-  .drawer__title { font-size: 40px; line-height: 46px; }
-}
-.drawer__close {
-  position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
-  z-index: 2;
-  width: 40px; height: 40px;
-  border-radius: var(--radius-full);
-  display: inline-flex;
-  align-items: center; justify-content: center;
-  color: var(--fg-secondary);
-  background: color-mix(in srgb, var(--bg-base) 80%, transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid var(--border-subtle);
-  transition: color var(--dur-fast) var(--ease-out-strong),
-              border-color var(--dur-fast) var(--ease-out-strong),
-              transform var(--dur-fast) var(--ease-out-strong);
-}
-.drawer__close:active { transform: scale(0.92); }
-
-/* Drawer media slot — centered visual above the eyebrow */
-.drawer__media {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-6) var(--space-6) var(--space-2);
-  min-height: 0;
-}
-.drawer__media:empty { display: none; }
-@media (min-width: 768px) {
-  .drawer__media { padding: var(--space-12) var(--space-12) var(--space-3); }
-}
-.d-media {
-  width: 100%;
-  max-width: 260px;
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  color: var(--fg-primary);
-}
-.d-media__svg { width: 100%; height: 100%; overflow: visible; }
-.d-media__hint {
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  white-space: nowrap;
-}
-
-/* 3D rotating brain — auto-rotate, drag to interact, resume */
-.d-media--brain {
-  perspective: 600px;
-  cursor: grab;
-}
-.d-media--brain:active { cursor: grabbing; }
-.d-media--brain .d-media__svg {
-  transform-style: preserve-3d;
-  animation: brain-spin 14s linear infinite;
-  transform-origin: center;
-}
-.d-media--brain[data-paused="true"] .d-media__svg { animation-play-state: paused; }
-.d-media--brain[data-dragging="true"] .d-media__svg { animation: none; }
-@keyframes brain-spin {
-  from { transform: rotateY(0deg) rotateX(8deg); }
-  to   { transform: rotateY(360deg) rotateX(8deg); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .d-media--brain .d-media__svg { animation: none; transform: rotateY(20deg) rotateX(8deg); }
-}
-
-/* Other media decorations: gentle float on hover */
-.d-media--workflow .d-media__svg,
-.d-media--agents .d-media__svg,
-.d-media--stack .d-media__svg {
-  transition: transform var(--dur-standard) var(--ease-out-strong);
-}
-.drawer__body {
-  padding: var(--space-6);
-  overflow-y: auto;
-  flex: 1;
-  font-size: var(--text-body-base-size);
-  line-height: var(--text-body-base-line);
-  color: var(--fg-secondary);
-}
-@media (min-width: 768px) {
-  .drawer__body { padding: var(--space-6) var(--space-12); }
-}
-.drawer__body p + p { margin-top: var(--space-4); }
-.drawer__body code {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-subtle);
-  color: inherit;
-}
-.drawer__body strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
-.drawer__stats {
-  display: flex;
-  gap: var(--space-6);
-  margin-top: var(--space-8);
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--border-subtle);
-}
-.drawer__stat-num {
-  display: block;
-  font-family: var(--font-body);
-  font-weight: var(--font-light);
-  font-size: 36px;
-  line-height: 1;
-  color: var(--fg-primary);
-  letter-spacing: -0.02em;
-}
-.drawer__stat-label {
-  display: block;
-  font-size: var(--text-body-sm-size);
-  color: var(--fg-tertiary);
-  margin-top: var(--space-1);
-}
-.drawer__link {
-  margin-top: var(--space-8);
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--border-subtle);
-}
-.drawer__link a {
-  font-size: var(--text-link-sm-size);
-  font-weight: var(--font-medium);
-  color: var(--fg-primary);
-  display: inline-flex;
-  gap: var(--space-2);
-  align-items: center;
-}
-.drawer__link a [data-arrow] {
-  transition: transform var(--dur-fast) var(--ease-out-strong);
-}
-@media (prefers-reduced-motion: reduce) {
-  .drawer { transition: opacity var(--dur-fast) var(--ease-out-strong) !important; transform: none !important; }
-  .drawer[data-shown="true"] { transform: none !important; }
-}
-
 /* ===== Section 3 — Timeline / steps ===== */
 .timeline {
   max-width: none;
@@ -887,7 +656,7 @@ html, body { overflow-x: clip; }
   font-weight: var(--font-medium);
   color: var(--fg-secondary);
   background: transparent;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: color var(--dur-fast) var(--ease-out-strong),
@@ -1105,8 +874,12 @@ html, body { overflow-x: clip; }
   margin-bottom: var(--space-4);
   padding: var(--space-8) var(--space-6);
   background: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
+}
+/* Dark keeps the hairline outline; light surface separation comes from the
+   --bg-subtle / --bg-base contrast alone. */
+.dark .gates {
+  border: 1px solid var(--border-subtle);
 }
 @media (min-width: 768px) {
   .gates { padding: var(--space-12); }
@@ -1337,9 +1110,10 @@ html, body { overflow-x: clip; }
   text-underline-offset: 2px;
 }
 
-/* Prompt surface (Figma 55:9705) — always-dark, holds per-row content stack.
-   Token shadows below give every descendant the dark-theme palette regardless
-   of page mode, so the existing list components read correctly on dark. */
+/* Prompt surface (Figma 55:9705) — mode-following surface, holds per-row
+   content stack. Light: #ebeae6 via --bg-prompt. Dark: inherits the dark
+   palette through the .dark scope below so list components still read
+   correctly on dark. */
 .brain-row__prompt {
   flex: 1 1 0;
   min-width: 0;
@@ -1347,6 +1121,12 @@ html, body { overflow-x: clip; }
   padding: var(--space-6);
   background: var(--bg-prompt);
   border-radius: var(--radius-prompt);
+  color: var(--fg-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-sm-line);
+}
+.dark .brain-row__prompt {
   --fg-primary: #d0ceca;
   --fg-secondary: #98938d;
   --fg-tertiary: #545352;
@@ -1354,10 +1134,6 @@ html, body { overflow-x: clip; }
   --fg-muted: #545352;
   --border-subtle: #1c1a18;
   --bg-subtle: #1c1a18;
-  color: var(--fg-secondary);
-  font-family: var(--font-mono);
-  font-size: var(--text-body-sm-size);
-  line-height: var(--text-body-sm-line);
 }
 .brain-row__prompt > :first-child { margin-top: 0; }
 .brain-row__prompt > :last-child { margin-bottom: 0; }
@@ -1414,8 +1190,9 @@ html, body { overflow-x: clip; }
   margin: 0 0 var(--space-1) 0;
 }
 
-/* Criteria + defaults shared list style. Cards sit on the page background with
-   a hairline border (matches section dividers); weight chip uses the workflow
+/* Criteria + defaults shared list style. Outline only (matches .learning in
+   Studio Memory) — hairline border, no fill, so the card reads as a quiet
+   container against the prompt surface. Weight chip uses the workflow
    step__badge pill style. */
 .criteria, .defaults {
   display: flex;
@@ -1426,7 +1203,7 @@ html, body { overflow-x: clip; }
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--bg-base);
+  background: transparent;
 }
 .criteria__head, .defaults__head {
   display: flex;
@@ -1735,7 +1512,7 @@ html, body { overflow-x: clip; }
   align-items: baseline;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-5);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   color: var(--fg-secondary);
   background: transparent;
@@ -1903,7 +1680,7 @@ html, body { overflow-x: clip; }
   padding: var(--space-3) var(--space-5);
   background: transparent;
   color: var(--fg-primary);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   font-size: var(--text-link-sm-size);
   line-height: var(--text-link-sm-line);
@@ -1939,7 +1716,7 @@ html, body { overflow-x: clip; }
   background: color-mix(in srgb, var(--bg-base) 88%, transparent);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   opacity: 0;
   pointer-events: none;
   transform: translateY(8px);
