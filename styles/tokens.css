@@ -52,7 +52,7 @@
      px instead of em so the token transfers cleanly across font-sizes. */
   --tracking-hero: -0.31px;
   --tracking-display: -0.31px;
-  --tracking-hiring-title: -0.8px;
+  --tracking-hiring-title: -1px;
   --tracking-overview-num: -0.34px;
   --tracking-eyebrow: 0.48px;
   --tracking-eyebrow-strong: 0.96px;
