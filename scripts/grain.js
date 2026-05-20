@@ -15,7 +15,7 @@ function initGrain() {
 
   function applyColorMode() {
     const dark = mq.matches;
-    canvas.style.mixBlendMode = dark ? 'screen' : 'multiply';
+    canvas.style.mixBlendMode = dark ? 'screen' : 'screen';
     canvas.style.opacity = dark ? '0.011' : '0.2';
   }
 
