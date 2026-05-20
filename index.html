@@ -398,7 +398,7 @@
       <p><strong>Claude Max</strong> ($100/mo) gives me Opus and Sonnet on a shared token pool. Sonnet for planning, content, scaffolding; Opus for sprint builds and evaluator passes.</p>
       <p><strong>Claude Design</strong> runs on Opus 4.7 with its own independent weekly limit that does not touch the Max pool. I use it for visual direction before committing anything to Figma.</p>
       <p><strong>Cowork</strong> is the Desktop app's third tab. File-based knowledge work — briefs, memory updates, deliverable organization. Same connectors as chat. Remote dispatch from iPhone. Not Claude Code, not Agent View.</p>
-      <p><strong>Figma + Figma MCP</strong> are the design system and the agent's read interface to it. Sandbox is creative; Production is canonical. Promotion is always manual.</p>
+      <p><strong>Figma + Figma MCP</strong> are the design system and the agent's interface to it. Sandbox is creative workspace; Production is canonical. <code>generate_figma_design</code> writes approved frames straight to the Production canvas — no manual promotion step. <code>/sync-figma-token</code> pulls tokens from Sandbox into <code>token-map.md</code>.</p>
       <p><strong>GitHub Actions + Hostinger</strong> handle deploys. Every PR opens a live preview at a real URL.</p>
       <ul class="drawer__stats">
         <li><span class="drawer__stat-num">4</span><span class="drawer__stat-label">surfaces</span></li>
@@ -532,7 +532,7 @@ Be ambitious. Look for opportunities where AI-native features would serve the pr
               <div class="step__body" id="step-3-body" hidden>
                 <div class="step__body-text">
                   <p>Figma MCP cannot create files. This step is always manual. I name the file, set up the four pages, and grab the file URL for the scaffold prompt.</p>
-                  <p><strong>The Sandbox rule:</strong> Sandbox is creative workspace, Production is canonical. Promotion is always manual. Claude reads from both but writes to neither.</p>
+                  <p><strong>The Sandbox rule:</strong> Sandbox is creative workspace, Production is canonical. Claude reads from Sandbox and writes approved frames into Production via <code>generate_figma_design</code>. No manual promotion step.</p>
                 </div>
                 <div class="step__prompt step__prompt--empty" aria-hidden="true"></div>
               </div>
@@ -613,6 +613,7 @@ Report the GitHub URL when done.</code></pre>
                 <div class="step__body-text">
                   <p>Push to main triggers an rsync to Hostinger production. Every PR opens triggers a preview build at <code>/_previews/[pr-number]/</code> with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down.</p>
                   <p>Claude Code prints the predicted preview URL directly in chat and runs <code>gh run watch</code> to confirm the deploy succeeded. No GitHub round-trip to find a URL.</p>
+                  <p>I review desktop and mobile from the live URL, not screenshots. The PR closes and the preview tears down on its own.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-5-prompt" aria-label="Copy prompt">
@@ -901,7 +902,7 @@ Output:
               <div class="step__body" id="step-11-body" hidden>
                 <div class="step__body-text">
                   <p>Final desktop and phone review on the preview URL. Click Merge. The production deploy workflow rsyncs to Hostinger in seconds; the cleanup workflow tears down the preview directory in parallel.</p>
-                  <p>Then I promote the approved frames from the Figma Sandbox page to the Production page. Always manual. Always me.</p>
+                  <p>Then <code>generate_figma_design</code> writes the approved Sandbox frames to the Production page in Figma. No manual promotion step.</p>
                   <p><strong>Approval gate three — Development.</strong> Sprint passes only after preview review, evaluator PASS, and final visual check.</p>
                 </div>
                 <div class="step__prompt step__prompt--empty" aria-hidden="true"></div>
@@ -1316,7 +1317,12 @@ Commit the updated file and push.</code></pre>
                     <tr>
                       <td data-label="If I need to…">Translate Figma into code</td>
                       <td data-label="Use this">Claude Code + Figma MCP</td>
-                      <td data-label="Why">Reads Sandbox, writes implementation. Never writes to Figma.</td>
+                      <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Sync Figma tokens into the repo</td>
+                      <td data-label="Use this"><code>/sync-figma-token</code></td>
+                      <td data-label="Why">Reads the Sandbox page, extracts tokens, syncs to <code>_config/design-system/token-map.md</code>. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Get a live preview on every PR</td>
@@ -1326,12 +1332,12 @@ Commit the updated file and push.</code></pre>
                     <tr>
                       <td data-label="If I need to…">Run unattended within a phase</td>
                       <td data-label="Use this"><code>/goal</code> after contract approval</td>
-                      <td data-label="Why">Collapses per-turn prompting. Never bypasses a gate.</td>
+                      <td data-label="Why">Claude Code 2.1.139+. Sets a session-scoped completion condition; Haiku checks every turn. Use for Step 4 scaffold and Step 9 sprints. Never on the Evaluator. Always cap with <em>or stop after N turns</em>.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Monitor multiple sprints at once</td>
                       <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
-                      <td data-label="Why">One screen, all background sessions, status indicators.</td>
+                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. I cap parallel sessions at 2–3.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
