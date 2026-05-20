@@ -1549,11 +1549,13 @@ html, body { overflow-x: clip; }
 }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
 /* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero.
-   letter-spacing -0.01em inherited from .section__title base rule. */
+   Tighter tracking than base display via --tracking-hiring-title;
+   applies in both modes (logged in decisions/decisions.md). */
 .section--hiring .section__title {
   color: var(--fg-primary);
   font-family: var(--font-body);
   font-weight: 200;
+  letter-spacing: var(--tracking-hiring-title);
 }
 .section--hiring .section__lede { color: var(--fg-secondary); }
 

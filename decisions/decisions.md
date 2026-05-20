@@ -496,3 +496,48 @@ parse.
 - **Use rsms.me CDN-hosted Inter Variable.** Rejected — third-party
   font CDN reintroduces the DNS hop we're trying to remove, and
   rsms.me has no uptime SLA.
+
+## 2026-05-20 — Hiring title: letter-spacing -0.4px applied in both modes
+**Stage:** 03-build
+**Status:** accepted (second deliberate dark-mode change inside the
+otherwise light-only feat/lightmode-yellow-ui-updates sprint, on top of
+the role-mark slnt+underline carve-out)
+
+**Context.** Light-only review of the hiring section showed the title
+"How I'd apply this at your company." reading slightly slack at the
+base display tracking (-0.01em ≈ -0.31px at 31px Inter ExtraLight). On
+Inter 200 the counters open up enough that the line wants a touch more
+optical tightening than the rest of the display titles. Held side-by-
+side against dark, the same observation applies — both modes share the
+type stack and font, so the slack is identical and the tighter setting
+reads correctly in both.
+
+**Decision.** Apply `letter-spacing: var(--tracking-hiring-title)` =
+-0.4px on `.section--hiring .section__title` in both modes (no
+`:not(.dark *)` guard). New semantic token `--tracking-hiring-title`
+sits in tokens.css next to the other tracking tokens.
+
+**Consequences.**
+- Hiring title tightens from -0.31px to -0.4px in both modes — a ~30%
+  bump in negative tracking, small enough to read as setting tone, not
+  as a different typographic choice.
+- Other display titles (`.t-display`, other `.section__title`) keep
+  their existing -0.01em base tracking. The carve-out is local to the
+  hiring section.
+- Second deliberate dark-mode change on the light-only sprint branch
+  after the role-mark slnt+underline. Logged so future audits can
+  account for both.
+- Token added (semantic, scoped name) instead of inline value, per the
+  sprint's no-hardcoded-values rule.
+
+**Alternatives considered.**
+- **Apply in light only.** Rejected — the slack is identical in dark
+  and looks wrong there too. Splitting it per mode would create a
+  cross-mode inconsistency for no perceptible reason.
+- **Tighten the base display token to -0.4px.** Rejected — would shift
+  every `.t-display` and section title on the site. The Figma source
+  has hero/display at -0.31px; touching the global is out of scope
+  for a hiring-section tweak.
+- **Use em instead of px.** Rejected — the rest of the tracking
+  tokens are px (matching Figma's px-anchored spec); switching units
+  for one token would create a unit mismatch.
