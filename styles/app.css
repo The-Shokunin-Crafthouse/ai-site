@@ -1396,6 +1396,11 @@ html, body { overflow-x: clip; }
 .tools-row__head[aria-expanded="true"] .tools-row__title {
   color: var(--accent-primary);
 }
+/* Light mode: title stays at --fg-primary when expanded. Num still flips via
+   row-accent system. */
+.tools-row__head[aria-expanded="true"]:not(.dark *) .tools-row__title {
+  color: var(--fg-primary);
+}
 .tools-row__body {
   padding: 0 0 var(--space-8) 0;
   animation: step-body-in var(--dur-expand) var(--ease-out-strong);
