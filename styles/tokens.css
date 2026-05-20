@@ -58,8 +58,8 @@
   /* Color — light */
   --bg-base: #e0dfdc;
   --bg-nav: var(--bg-base);
-  --bg-subtle: #f7f5f3;
-  --bg-recessed: #f7f5f3;
+  --bg-subtle: #ebeae6;
+  --bg-recessed: #ebeae6;
   --bg-surface-2: #edebe8;
   --bg-surface-3: #e4e1dd;
   --bg-inverse: #21201c;
@@ -95,7 +95,7 @@
   /* Inset callout surface — used by the "What I build first" card in
      Section 06. Sinks deeper than --bg-recessed in dark so the card
      reads as a separate plane against bg-base #0e0c0b. */
-  --bg-callout: #f7f5f3;
+  --bg-callout: #ebeae6;
   --fg-on-accent: #21201c;
   --border-subtle: #d4d0ca;
   --border-button: var(--border-subtle);
