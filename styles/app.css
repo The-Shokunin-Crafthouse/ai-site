@@ -1758,12 +1758,17 @@ html, body { overflow-x: clip; }
      by .btn-press + .btn-trace shared rules. Arrow translate on hot state
      comes from .btn-trace[data-btn-state="hot"] [data-btn-arrow]. */
 }
-/* Hover state — mirrors the hero button's orbit comet + arrow translate,
-   plus a yellow text/icon fade (user-spec extension over hero's
-   "no color shift" hover). currentColor inheritance flips the arrow with
-   the text in one step. */
-.hiring__cta-link[data-btn-state="hot"] {
+/* Hover state — mirrors the hero button's orbit comet + arrow translate.
+   Dark keeps the yellow text/icon fade; light drops the color shift and
+   relies on the orbit comet + arrow translate alone. */
+.dark .hiring__cta-link[data-btn-state="hot"] {
   color: var(--accent-primary);
+}
+/* Press scale — explicit so the press/release feedback is visible even if
+   the shared .btn-press rule changes. Uses the studio --press-scale-button
+   token so the value matches other CTAs. */
+.hiring__cta-link:active {
+  transform: scale(var(--press-scale-button));
 }
 .hiring__cta-arrow {
   display: inline-block;
