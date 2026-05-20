@@ -96,6 +96,11 @@
      Section 06. Sinks deeper than --bg-recessed in dark so the card
      reads as a separate plane against bg-base #0e0c0b. */
   --bg-callout: #ebeae6;
+
+  /* Overview card surface (Section 1 — "The system, in 90 seconds" 4 cards).
+     Light: warm light surface above --bg-base. Dark: transparent so the
+     card reads against --bg-base without a separate plane. */
+  --bg-card: #ebeae6;
   --fg-on-accent: #21201c;
   --border-subtle: #d4d0ca;
   --border-button: var(--border-subtle);
@@ -280,4 +285,7 @@
 
   /* Dark-mode prompt surface = --bg-base (#0e0c0b, exact Figma match). */
   --bg-prompt: var(--bg-base);
+
+  /* Dark-mode card surface stays transparent — cards read against bg-base. */
+  --bg-card: transparent;
 }
