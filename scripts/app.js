@@ -112,7 +112,6 @@
 
   /* ===== Active section tracking — feeds both nav + tabbar ===== */
   const sections = Array.from(document.querySelectorAll("[data-section]"));
-  const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
   const tabLinks = Array.from(document.querySelectorAll("[data-tab-link]"));
 
   function clearActive() {
@@ -182,52 +181,6 @@
         ticking = true;
       }
     }, { passive: true });
-  }
-
-  /* ===== Drawer brain — auto-rotate, drag to play, resume on release ===== */
-  function initBrainInteraction(el) {
-    const svg = el.querySelector(".d-media__svg");
-    if (!svg) return;
-    let dragging = false;
-    let startX = 0, startY = 0;
-    let curY = 20, curX = 8;
-    let resumeTimer = 0;
-
-    function onDown(e) {
-      if (e.button !== undefined && e.button !== 0) return;
-      dragging = true;
-      el.setAttribute("data-dragging", "true");
-      startX = e.clientX;
-      startY = e.clientY;
-      try { el.setPointerCapture(e.pointerId); } catch (err) {}
-      if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = 0; }
-    }
-    function onMove(e) {
-      if (!dragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      curY += dx * 0.6;
-      curX = Math.max(-30, Math.min(30, curX - dy * 0.4));
-      startX = e.clientX;
-      startY = e.clientY;
-      svg.style.transform = "rotateY(" + curY + "deg) rotateX(" + curX + "deg)";
-    }
-    function onUp() {
-      if (!dragging) return;
-      dragging = false;
-      el.removeAttribute("data-dragging");
-      // Brief hold, then clear inline transform so the CSS animation picks back up
-      resumeTimer = setTimeout(function () {
-        svg.style.transform = "";
-        resumeTimer = 0;
-      }, 600);
-    }
-
-    el.addEventListener("pointerdown", onDown);
-    el.addEventListener("pointermove", onMove);
-    el.addEventListener("pointerup", onUp);
-    el.addEventListener("pointercancel", onUp);
-    el.addEventListener("pointerleave", onUp);
   }
 
   /* ===== Structural fold-in =====
