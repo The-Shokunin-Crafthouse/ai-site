@@ -1548,19 +1548,12 @@ html, body { overflow-x: clip; }
      visible (the static line would dominate). */
 }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
-/* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero. */
+/* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero.
+   letter-spacing -0.01em inherited from .section__title base rule. */
 .section--hiring .section__title {
   color: var(--fg-primary);
   font-family: var(--font-body);
   font-weight: 200;
-}
-/* Light mode: push the hiring title one weight further (Inter Light 300)
-   and reset the negative letter-spacing so the line has room to breathe.
-   Scoped tightly so no other section title or .t-display element is
-   affected. Dark stays at 200 + inherited tracking. */
-.section--hiring .section__title:not(.dark *) {
-  font-weight: var(--font-light-300);
-  letter-spacing: 0;
 }
 .section--hiring .section__lede { color: var(--fg-secondary); }
 
