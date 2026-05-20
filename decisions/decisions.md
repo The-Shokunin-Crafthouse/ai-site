@@ -433,3 +433,66 @@ on `feat/lightmode-yellow-ui-updates`.
 - **Underline only, no slant in dark.** Rejected — the slnt lean is
   what makes the mark feel like emphasis vs decoration. Halving it
   loses the intent.
+
+## 2026-05-20 — Inter Variable: self-hosted (Google Fonts strips slnt axis)
+**Stage:** 03-build
+**Status:** accepted
+
+**Context.** Earlier this sprint we swapped Inter delivery to a Google
+Fonts axis-range URL — `family=Inter:slnt,wght@-10..0,100..900` — so the
+role-mark `font-variation-settings: "slnt" -5` would resolve and the
+hiring title could move off 200 weight. DevTools inspection showed the
+title computed `font-weight: 200` even after a 300 rule landed; system
+font fallback (single weight) was masquerading as Inter. Curling the
+Google Fonts CSS endpoint returned `"Missing font family — Requested:
+Inter (slnt=[-10.0,0.0], wght=[100.0,900.0])"`. Google Fonts only exposes
+Inter's `wght` axis. The slnt request silently failed → no Inter
+@font-face served → everything fell back to system-ui, where every
+`font-weight` rendered identically.
+
+**Decision.** Self-host Inter Variable. Ship `fonts/InterVariable.woff2`
+(rsms.me/inter, ~344KB unsubsetted) and declare it locally:
+
+```css
+@font-face {
+  font-family: "Inter";
+  font-style: oblique 0deg 10deg;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/InterVariable.woff2") format("woff2-variations");
+}
+```
+
+Drop Inter from the Google Fonts `<link>` (Cascadia Mono still served
+there). Add `<link rel="preload" as="font" type="font/woff2" crossorigin>`
+for the variable file so the fetch starts with the HTML, not after CSS
+parse.
+
+**Consequences.**
+- Full `wght` axis (100..900) and `slnt` axis (-10..0) both resolve.
+  Hiring title weight 300 now renders. Role-mark `slnt -5` now renders.
+- One extra asset on the critical path (~344KB woff2), offset by:
+  removing two third-party DNS hops (fonts.googleapis.com,
+  fonts.gstatic.com) for Inter, and serving one file instead of
+  per-weight static instances. Net real-world delta is ≤100ms either
+  direction on warm networks; on cold connects self-host typically wins
+  by skipping the third-party TLS handshake.
+- `font-display: swap` (not `optional`) so a brief FOUT is preferred
+  over a permanent fallback when the woff2 misses the early window —
+  Inter is the primary typeface and locking out the variable axes via
+  fallback would defeat the whole point of self-hosting.
+- The Hostinger rsync deploy already copies `fonts/` — no workflow
+  change needed.
+
+**Alternatives considered.**
+- **Stay on Google Fonts, drop slnt, revert role-mark to `skewX(-5deg)`.**
+  Rejected — skew shears glyphs, which is the exact reason we switched
+  to slnt. Restoring it would re-introduce the distortion the slnt
+  swap was meant to remove.
+- **Subset Inter Variable to latin only (~80–100KB).** Deferred — worth
+  doing if Lighthouse flags font weight as a regression, but not worth
+  the build-step complexity right now. The asset is cacheable for the
+  full domain lifetime; first-paint is the only hit.
+- **Use rsms.me CDN-hosted Inter Variable.** Rejected — third-party
+  font CDN reintroduces the DNS hop we're trying to remove, and
+  rsms.me has no uptime SLA.

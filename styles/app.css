@@ -1,6 +1,16 @@
 /* Base styles + components. Tokens live in tokens.css.
-   Inter via Google Fonts <link>. Gentona Light used only on hero headline,
-   matching levibahn.com (portfolio-site/src/scss/_fonts.scss). */
+   Inter Variable self-hosted (wght 100..900, slnt -10..0) — Google Fonts
+   does not expose Inter's slnt axis, so we ship the variable woff2 directly
+   to keep the role-mark slnt italic working. Gentona Light used only on hero
+   headline, matching levibahn.com (portfolio-site/src/scss/_fonts.scss). */
+
+@font-face {
+  font-family: "Inter";
+  font-style: oblique 0deg 10deg;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/InterVariable.woff2") format("woff2-variations");
+}
 
 @font-face {
   font-display: optional;
