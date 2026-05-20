@@ -442,7 +442,7 @@ html, body { overflow-x: clip; }
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
@@ -656,7 +656,7 @@ html, body { overflow-x: clip; }
   font-weight: var(--font-medium);
   color: var(--fg-secondary);
   background: transparent;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: color var(--dur-fast) var(--ease-out-strong),
@@ -874,8 +874,12 @@ html, body { overflow-x: clip; }
   margin-bottom: var(--space-4);
   padding: var(--space-8) var(--space-6);
   background: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
+}
+/* Dark keeps the hairline outline; light surface separation comes from the
+   --bg-subtle / --bg-base contrast alone. */
+.dark .gates {
+  border: 1px solid var(--border-subtle);
 }
 @media (min-width: 768px) {
   .gates { padding: var(--space-12); }
@@ -1106,9 +1110,10 @@ html, body { overflow-x: clip; }
   text-underline-offset: 2px;
 }
 
-/* Prompt surface (Figma 55:9705) — always-dark, holds per-row content stack.
-   Token shadows below give every descendant the dark-theme palette regardless
-   of page mode, so the existing list components read correctly on dark. */
+/* Prompt surface (Figma 55:9705) — mode-following surface, holds per-row
+   content stack. Light: #ebeae6 via --bg-prompt. Dark: inherits the dark
+   palette through the .dark scope below so list components still read
+   correctly on dark. */
 .brain-row__prompt {
   flex: 1 1 0;
   min-width: 0;
@@ -1116,6 +1121,12 @@ html, body { overflow-x: clip; }
   padding: var(--space-6);
   background: var(--bg-prompt);
   border-radius: var(--radius-prompt);
+  color: var(--fg-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-sm-line);
+}
+.dark .brain-row__prompt {
   --fg-primary: #d0ceca;
   --fg-secondary: #98938d;
   --fg-tertiary: #545352;
@@ -1123,10 +1134,6 @@ html, body { overflow-x: clip; }
   --fg-muted: #545352;
   --border-subtle: #1c1a18;
   --bg-subtle: #1c1a18;
-  color: var(--fg-secondary);
-  font-family: var(--font-mono);
-  font-size: var(--text-body-sm-size);
-  line-height: var(--text-body-sm-line);
 }
 .brain-row__prompt > :first-child { margin-top: 0; }
 .brain-row__prompt > :last-child { margin-bottom: 0; }
@@ -1183,8 +1190,9 @@ html, body { overflow-x: clip; }
   margin: 0 0 var(--space-1) 0;
 }
 
-/* Criteria + defaults shared list style. Cards sit on the page background with
-   a hairline border (matches section dividers); weight chip uses the workflow
+/* Criteria + defaults shared list style. Outline only (matches .learning in
+   Studio Memory) — hairline border, no fill, so the card reads as a quiet
+   container against the prompt surface. Weight chip uses the workflow
    step__badge pill style. */
 .criteria, .defaults {
   display: flex;
@@ -1195,7 +1203,7 @@ html, body { overflow-x: clip; }
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--bg-base);
+  background: transparent;
 }
 .criteria__head, .defaults__head {
   display: flex;
@@ -1504,7 +1512,7 @@ html, body { overflow-x: clip; }
   align-items: baseline;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-5);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   color: var(--fg-secondary);
   background: transparent;
@@ -1672,7 +1680,7 @@ html, body { overflow-x: clip; }
   padding: var(--space-3) var(--space-5);
   background: transparent;
   color: var(--fg-primary);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   border-radius: var(--radius-full);
   font-size: var(--text-link-sm-size);
   line-height: var(--text-link-sm-line);
@@ -1708,7 +1716,7 @@ html, body { overflow-x: clip; }
   background: color-mix(in srgb, var(--bg-base) 88%, transparent);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-button);
   opacity: 0;
   pointer-events: none;
   transform: translateY(8px);

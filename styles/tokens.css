@@ -56,10 +56,10 @@
   --tracking-body-sm: 0.5px;
 
   /* Color — light */
-  --bg-base: #fdfdfc;
-  --bg-nav: #fdfdfc;
-  --bg-subtle: #f7f5f3;
-  --bg-recessed: #f7f5f3;
+  --bg-base: #e0dfdc;
+  --bg-nav: var(--bg-base);
+  --bg-subtle: #ebeae6;
+  --bg-recessed: #ebeae6;
   --bg-surface-2: #edebe8;
   --bg-surface-3: #e4e1dd;
   --bg-inverse: #21201c;
@@ -95,16 +95,17 @@
   /* Inset callout surface — used by the "What I build first" card in
      Section 06. Sinks deeper than --bg-recessed in dark so the card
      reads as a separate plane against bg-base #0e0c0b. */
-  --bg-callout: #f7f5f3;
+  --bg-callout: #ebeae6;
   --fg-on-accent: #21201c;
-  --border-subtle: #c9c8c0;
+  --border-subtle: #d4d0ca;
+  --border-button: var(--border-subtle);
   --border-strong: #0d0c0a;
   --accent-primary: #daff60;
   --fg-accent: #ca4541;
   --hover-accent: #daff60;
   --hover-mint: #58f5d2;
   --hover-row: #f7f4f1;
-  --bg-tooltip: #fdfdfc;
+  --bg-tooltip: var(--bg-base);
   --fg-tooltip: #21201c;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.07);
   --decoration-fg-primary: rgba(33, 32, 28, 0.4);
@@ -140,10 +141,9 @@
   --radius-full: 9999px;
 
   /* Semantic surface — Studio Brain prompt panel (Figma 55:9705 "CC Prompt").
-     Always-dark code/prompt surface inside the open brain row.
-     Light: --border-strong (#0d0c0a) ≈ Figma #0e0c0b.
+     Mode-following: light surface in light, dark surface in dark.
      Radius snapped from Figma 16px to --radius-md (8px). */
-  --bg-prompt: var(--border-strong);
+  --bg-prompt: #ebeae6;
   --radius-prompt: var(--radius-md);
 
   /* Shadow */
