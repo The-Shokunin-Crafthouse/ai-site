@@ -14,12 +14,9 @@ function initGrain() {
   ].join(';');
 
   function applyColorMode() {
-    const hasDarkClass = document.documentElement.classList.contains('dark');
-    const hasLightClass = document.documentElement.classList.contains('light');
-    const osDark = mq.matches;
-    const dark = hasDarkClass || (!hasLightClass && osDark);
+    const dark = document.documentElement.classList.contains('dark');
 
-    console.log('applyColorMode —', { hasDarkClass, hasLightClass, osDark, dark, opacity: dark ? '0.011' : '0.5' });
+    console.log('applyColorMode —', { dark, opacity: dark ? '0.011' : '0.8' });
 
     canvas.style.mixBlendMode = dark ? 'screen' : 'soft-light';
     canvas.style.opacity = dark ? '0.011' : '0.8';
