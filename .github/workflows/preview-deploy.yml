@@ -13,7 +13,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout PR head
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -43,7 +43,7 @@ jobs:
           remote_key: ${{ secrets.HOSTINGER_SSH_KEY }}
 
       - name: Post or update sticky preview comment
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
