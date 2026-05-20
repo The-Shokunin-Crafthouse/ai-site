@@ -168,11 +168,15 @@
   /* Motion — durations (toggle slide) */
   --dur-figma-slide: 1280ms;
 
-  /* Hover comet — 6s edge-to-edge at 1440px = 240 px/s linear (per Figma proto 57:10951/57:11158). */
+  /* Hover comet — 6s edge-to-edge at 1440px = 240 px/s linear (per Figma proto 57:10951/57:11158).
+     Comet hue tracks the light interaction signal (mint) so it contrasts with
+     the warm light ground. Dark overrides below restore the yellow comet. */
   --hover-comet-speed: 240;
   --hover-comet-trail: 200px;
   --hover-comet-head: 4px;
-  --hover-comet-glow: 0 0 4px rgba(218, 255, 96, 0.9);
+  --hover-comet-glow: 0 0 4px rgba(88, 245, 210, 0.9);
+  --hover-comet-trail-fade: rgba(88, 245, 210, 0);
+  --hover-comet-drop-shadow: drop-shadow(0 0 4px rgba(88, 245, 210, 0.6));
 
   /* Press scale — matches levibahn.com convention from studio-memory.md §Motion. */
   --press-scale-button: 0.985;
@@ -285,4 +289,9 @@
 
   /* Dark-mode prompt surface = --bg-base (#0e0c0b, exact Figma match). */
   --bg-prompt: var(--bg-base);
+
+  /* Restore yellow comet on dark (light :root binds these to mint). */
+  --hover-comet-glow: 0 0 4px rgba(218, 255, 96, 0.9);
+  --hover-comet-trail-fade: rgba(218, 255, 96, 0);
+  --hover-comet-drop-shadow: drop-shadow(0 0 4px rgba(218, 255, 96, 0.6));
 }
