@@ -38,7 +38,9 @@ function initGrain() {
       const data = imageData.data;
 
       for (let i = 0; i < data.length; i += 4) {
-        const v = (Math.random() * 255) | 0;
+        const v = mq.matches
+          ? (Math.random() * 255) | 0
+          : (Math.random() * 80) | 0;
         data[i]     = v;
         data[i + 1] = v;
         data[i + 2] = v;
