@@ -66,6 +66,9 @@ body {
   line-height: var(--text-display-line);
   letter-spacing: var(--tracking-display);
 }
+/* Light mode: bump display weight one step up (100 → 200). Inter Variable
+   serves the in-between weight from the wght axis. Dark stays at 100. */
+.t-display:not(.dark *) { font-weight: var(--font-extralight); }
 .t-title {
   font-family: var(--font-body);
   font-weight: var(--font-medium);
@@ -510,6 +513,9 @@ html, body { overflow-x: clip; }
   letter-spacing: -0.01em;
   margin-bottom: var(--space-4);
 }
+/* Light mode: bump section title weight one step up (100 → 200). Dark stays
+   at 100 to preserve the original display weight on the dark composite. */
+.section__title:not(.dark *) { font-weight: var(--font-extralight); }
 .section__lede {
   font-size: var(--text-body-lg-size);
   line-height: var(--text-body-lg-line);
