@@ -497,7 +497,7 @@ parse.
   font CDN reintroduces the DNS hop we're trying to remove, and
   rsms.me has no uptime SLA.
 
-## 2026-05-20 — Hiring title: letter-spacing -0.4px applied in both modes
+## 2026-05-20 — Hiring title: letter-spacing -0.5px applied in both modes
 **Stage:** 03-build
 **Status:** accepted (second deliberate dark-mode change inside the
 otherwise light-only feat/lightmode-yellow-ui-updates sprint, on top of
@@ -513,14 +513,14 @@ type stack and font, so the slack is identical and the tighter setting
 reads correctly in both.
 
 **Decision.** Apply `letter-spacing: var(--tracking-hiring-title)` =
--0.4px on `.section--hiring .section__title` in both modes (no
+-0.5px on `.section--hiring .section__title` in both modes (no
 `:not(.dark *)` guard). New semantic token `--tracking-hiring-title`
 sits in tokens.css next to the other tracking tokens.
 
 **Consequences.**
-- Hiring title tightens from -0.31px to -0.4px in both modes — a ~30%
-  bump in negative tracking, small enough to read as setting tone, not
-  as a different typographic choice.
+- Hiring title tightens from -0.31px to -0.5px in both modes — enough
+  to close the slack on Inter 200 counters without crossing into a
+  visibly different typographic register from the other display titles.
 - Other display titles (`.t-display`, other `.section__title`) keep
   their existing -0.01em base tracking. The carve-out is local to the
   hiring section.
