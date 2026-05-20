@@ -148,9 +148,10 @@
   --underline-emphasis-radius: 1px;
   --underline-emphasis-color: var(--accent-primary);
 
-  /* Text emphasis slant — italic-style lean (top edge shifts right). Used
-     alongside the emphasis underline to mark a key word in a copy line. */
-  --text-emphasis-slant: -7deg;
+  /* Text emphasis slant — italic-style lean. Driven by the Inter Variable
+     `slnt` axis (range -10..0, negative leans forward). Unitless because
+     font-variation-settings takes a raw axis value, not an angle. */
+  --text-emphasis-slant: -5;
 
   /* Radius */
   --radius-xs: 1px;
