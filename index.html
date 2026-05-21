@@ -331,7 +331,7 @@
           <p class="d-media__hint" aria-hidden="true">13 steps · 4 gates</p>
         </div>
       </div>
-      <p>Thirteen steps, in order. I write a brief. The Planner expands it into a spec. I create the Figma file. The Generator scaffolds the project, sets up deploy and preview workflows, and waits. I design the brand system and pages in Figma. The Generator builds one section per sprint. The Evaluator grades each sprint against the four Shokunin criteria. I review the live preview on desktop and mobile, then merge.</p>
+      <p>Thirteen steps, in order. I write a brief. The Planner expands it into a spec. I create the Figma file. The Generator scaffolds the project, sets up deploy and preview workflows, and waits. I design the brand system and pages in Figma. The Generator builds one section per sprint. The Evaluator grades each sprint against the four Shokunin criteria. In a team context, user testing runs here before the merge decision. I review the live preview on desktop and mobile, then merge.</p>
       <p>Four approval gates protect the work: Concept (after Planner), Design (after Figma), Development (after Evaluator pass), Delivery (after final review). Nothing crosses a gate without me.</p>
       <p>Goal Mode (<code>/goal</code>) only runs <em>between</em> gates. It collapses the per-turn prompting inside an authorized phase. It never replaces a gate.</p>
       <ul class="drawer__stats">
@@ -849,6 +849,7 @@ When complete:
                 <div class="step__body-text">
                   <p>A fresh Claude Code session, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
                   <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.</p>
+                  <p>In a team context, the Evaluator pass is necessary but not sufficient. The AI grades Functionality against code and visual snapshots — not against observed behavior. User testing runs here, between the Evaluator result and the merge decision. Which tool depends on company stage.</p>
                   <p><strong>Never put a <code>/goal</code> on this session.</strong> The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
@@ -1005,7 +1006,7 @@ Commit the updated file and push.</code></pre>
                   <tr>
                     <th scope="row"><span class="gates__num">03</span> Development</th>
                     <td>Evaluator pass</td>
-                    <td>All interaction states implemented, Core Web Vitals met, keyboard and screen-reader verified, reduced-motion working, Chrome/Firefox/Safari verified.</td>
+                    <td>All interaction states implemented, Core Web Vitals met, keyboard and screen-reader verified, reduced-motion working, Chrome/Firefox/Safari verified. User testing completed, or formally skipped with documented rationale.</td>
                   </tr>
                   <tr>
                     <th scope="row"><span class="gates__num">04</span> Delivery</th>
@@ -1169,7 +1170,7 @@ Commit the updated file and push.</code></pre>
                   </li>
                   <li>
                     <p class="criteria__head"><strong>Functionality</strong> <span class="criteria__weight criteria__weight--required">Required pass</span></p>
-                    <p>Users understand what the interface does, find primary actions, and complete tasks without guessing.</p>
+                    <p>Users understand what the interface does, find primary actions, and complete tasks without guessing. The AI Evaluator approximates this from code and snapshots. User testing confirms it from real behavior.</p>
                   </li>
                 </ul>
               </div>
@@ -1344,6 +1345,11 @@ Commit the updated file and push.</code></pre>
                       <td data-label="Use this">Evaluator — fresh Claude Code session</td>
                       <td data-label="Why">Single-pass audit. Never put <code>/goal</code> on it.</td>
                     </tr>
+                    <tr>
+                      <td data-label="If I need to…">Validate decisions with real users</td>
+                      <td data-label="Use this">Maze / Lyssna / Dscout</td>
+                      <td data-label="Why">The AI Evaluator grades Functionality from code and snapshots. It cannot replace a real user. Tool scales to company stage — see For Hiring Managers.</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -1451,6 +1457,7 @@ Commit the updated file and push.</code></pre>
                 <li>Studio memory means day-one context on your product, users, and patterns. No ramp-up amnesia between sprints.</li>
                 <li>The Planner turns a founder's rough brief into a structured spec in one session. No weeks of requirements gathering.</li>
                 <li>The Evaluator catches quality issues before they reach stakeholders. Design review without the headcount.</li>
+                <li>Maze runs unmoderated tests in hours from a Figma prototype. Zero recruitment overhead, zero extra budget against the $120/mo baseline. The step I skip in solo studio sprints is a half-hour setup on a team.</li>
                 <li>Tooling cost: ~$120/mo. The ROI is output velocity with zero quality compromise.</li>
               </ul>
             </article>
@@ -1471,6 +1478,7 @@ Commit the updated file and push.</code></pre>
                 <li>This system is how I multiply their output without multiplying headcount.</li>
                 <li>Studio memory becomes the team's shared design intelligence. Onboarding accelerates, decisions compound, institutional knowledge survives turnover.</li>
                 <li>The Planner-Generator-Evaluator loop standardizes quality without standardizing creativity. Every designer still owns their craft. The system owns the consistency.</li>
+                <li>At this stage the research function exists or is forming. Lyssna sits between guerrilla testing and enterprise contracts — quantitative benchmarking, custom panels, moderated sessions, no six-figure procurement. It runs after the Evaluator and before Gate 03.</li>
                 <li>Sprint contracts and approval gates create the accountability structure design teams at this stage need, without adding process overhead.</li>
                 <li>The token strategy translates to a team budget: Sonnet for the volume work, Opus for the judgment work, Claude Design as a free creative resource on its own clock.</li>
               </ul>
@@ -1493,6 +1501,7 @@ Commit the updated file and push.</code></pre>
                 <li>Studio memory at this scale is a design knowledge graph. Principles, patterns, component decisions, and accumulated learnings any team in the org can query.</li>
                 <li>The agent architecture maps to enterprise roles: Planner is strategic design, Generator is the production team, Evaluator is the design quality function. AI makes each layer faster without collapsing the separation of concerns.</li>
                 <li>Approval gates align naturally with enterprise review cadences. Design review, accessibility audit, brand compliance, legal. No new sequential bottlenecks.</li>
+                <li>At this scale, user research is a governance problem, not a tooling problem. Dscout replaces the standard UserTesting and UserZoom stack with diary studies and longitudinal on-demand research. Behavioral signals over time, not just session recordings. It maps to the design knowledge graph the way the Evaluator maps to internal design review.</li>
                 <li>The token model translates directly to enterprise AI budgeting. Right-size the model to the task. Preserve capacity for high-judgment work.</li>
               </ul>
             </article>
