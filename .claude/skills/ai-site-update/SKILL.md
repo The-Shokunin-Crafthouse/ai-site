@@ -54,6 +54,12 @@ Use SPEC.md as the authority on what content is correct and in scope. If any app
 Read each file listed under `## Files Modified` in the handoff.
 Hold the updated content in context — this is the source of truth for what the site should say.
 
+For `site-content-audit`: the file is versioned as `site-content-audit-v[N].md` in `content/`. Always read the highest-numbered version (e.g. if `content/` contains `site-content-audit-v1.md`, `site-content-audit-v2.md`, `site-content-audit-v3.md`, read v3). The highest version is the current source of truth; older versions are historical.
+
+```bash
+ls content/site-content-audit-v*.md | sort -V | tail -n 1
+```
+
 ---
 
 ## STEP 4 — FETCH THE LIVE SITE
