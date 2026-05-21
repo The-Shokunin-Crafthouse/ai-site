@@ -55,6 +55,12 @@ Read `content/site-content-audit.md`. This is the source of truth for what the s
 
 Cross-reference the files listed under `## Files Modified` in the handoff against `content/site-content-audit.md` to confirm the approved changes match the audit. If the handoff diverges from the audit, flag the discrepancy before proceeding.
 
+For `site-content-audit`: the file is versioned as `site-content-audit-v[N].md` in `content/`. Always read the highest-numbered version (e.g. if `content/` contains `site-content-audit-v1.md`, `site-content-audit-v2.md`, `site-content-audit-v3.md`, read v3). The highest version is the current source of truth; older versions are historical.
+
+```bash
+ls content/site-content-audit-v*.md | sort -V | tail -n 1
+```
+
 ---
 
 ## STEP 4 — FETCH THE LIVE SITE

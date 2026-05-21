@@ -211,9 +211,19 @@ If items approved:
 
 1. **Archive first.** For every file in `content/` that will be modified, copy it to `_archive/[filename]-[YYYY-MM-DD].md` before writing changes.
 
-2. **Update content files.** Apply only approved changes. Surgical edits only.
+2. **Version the site content audit.** If any approved change updates `site-content-audit`, do NOT overwrite the existing file. Instead:
+   - Find the current highest-numbered version in `content/`:
+     ```bash
+     ls content/site-content-audit-v*.md 2>/dev/null | sort -V | tail -n 1
+     ```
+     If none exist, start at `v1`. Otherwise increment: e.g. `site-content-audit-v3.md` → next is `v4`.
+   - Move the previous highest version to `_archive/site-content-audit-v[OLD_N]-[YYYY-MM-DD].md`. Do not delete it.
+   - Save the updated content as `content/site-content-audit-v[NEW_N].md`.
+   - Record the new filename in the handoff `## Files Modified` list.
 
-3. **Write the handoff file** to `_pending/approved-[YYYY-MM-DD].md`:
+3. **Update content files.** Apply only approved changes. Surgical edits only.
+
+4. **Write the handoff file** to `_pending/approved-[YYYY-MM-DD].md`:
 
 ```markdown
 # Approved Site Updates — YYYY-MM-DD
@@ -235,14 +245,14 @@ Commit to a feature branch, open a PR. Do not deploy directly to main.
 Levi must review and merge the PR before changes go live.
 ```
 
-4. **Move processed reports.** Move the `_reports/weekly-report-[date].md` into `_archive/reports/`.
+5. **Move processed reports.** Move the `_reports/weekly-report-[date].md` into `_archive/reports/`.
 
 ---
 
 ## STEP 10 — NOTIFY COMPLETION
 
 Send a remote dispatch notification to iOS:
-> "Files updated. Open Claude Code and run: read _pending/approved-[date].md and execute"
+> "Files updated. Open Claude Code and run: read _pending/approved-[date].md and execute. Also upload site-content-audit-v[N].md to Claude project knowledge and delete the previous version."
 
 ---
 
