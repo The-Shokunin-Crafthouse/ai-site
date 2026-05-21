@@ -17,3 +17,4 @@ _reports/*
 !_reports/.gitkeep
 content/*
 !content/.gitkeep
+!content/site-content-audit.md
