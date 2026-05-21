@@ -51,8 +51,9 @@ Use SPEC.md as the authority on what content is correct and in scope. If any app
 
 ## STEP 3 — READ THE UPDATED MARKDOWN
 
-Read each file listed under `## Files Modified` in the handoff.
-Hold the updated content in context — this is the source of truth for what the site should say.
+Read `content/site-content-audit.md`. This is the source of truth for what the site should say.
+
+Cross-reference the files listed under `## Files Modified` in the handoff against `content/site-content-audit.md` to confirm the approved changes match the audit. If the handoff diverges from the audit, flag the discrepancy before proceeding.
 
 ---
 
