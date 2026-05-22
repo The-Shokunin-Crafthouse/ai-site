@@ -340,7 +340,8 @@ body {
 /* Figma "Hero/Copy" (55:9574) fixes the column at 600px.
    Mobile: gap-24 between eyebrow, headline group, actions per Figma
    `I142:4357;14:21` (MOBILE-UPDATE-SPEC §1.1). Margin-based stack on the
-   children below collapses to this gap on mobile. */
+   children below collapses to this gap on mobile. Hero/CTAs gap → 0 on
+   mobile per audit (Figma `Hero/CTAs gap: 0`). */
 .hero__copy { max-width: 600px; min-width: 0; }
 @media (max-width: 767px) {
   .hero__copy {
@@ -351,6 +352,18 @@ body {
   .hero__copy > .hero__eyebrow,
   .hero__copy > .hero__subline,
   .hero__copy > .hero__actions { margin-bottom: 0; }
+  .hero__actions { gap: 0; }
+  /* Mobile headline + subtext typography reconciliation (Figma 142:4357).
+     Heading 28/35 -0.28; subtext 16/24 -0.16. Desktop unchanged. */
+  .hero__headline {
+    font-size: 28px;
+    line-height: 35px;
+    letter-spacing: -0.28px;
+  }
+  .hero__subline {
+    line-height: 24px;
+    letter-spacing: -0.16px;
+  }
 }
 .hero__visual { min-width: 0; }
 html, body { overflow-x: clip; }
