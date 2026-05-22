@@ -636,6 +636,20 @@
         if (t) syncPromptHeight(t);
       });
     });
+
+    /* Public hook so the mobile sheet (scripts/sheet.js) can increment the
+       explored counter when a step opens in a tier-3 sheet instead of an
+       inline body. Same monotonic semantics as desktop: once a step is
+       marked explored, closing the sheet or re-opening doesn't move it. */
+    window.AiSiteTimeline = {
+      markExplored: function (stepId) {
+        if (!stepId) return;
+        if (explored.has(stepId)) return;
+        explored.add(stepId);
+        writeSet(EXPLORED_KEY, explored);
+        updateProgress();
+      }
+    };
   }
 
   /* ===== Section 3 — Studio Brain row accordion =====

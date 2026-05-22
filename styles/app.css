@@ -957,7 +957,10 @@ html, body { overflow-x: clip; }
    No HTML change — grid-template-areas swap moves .step__meta into the
    main column visually. */
 @media (max-width: 767px) {
-  .timeline__actions { gap: var(--space-4); }
+  /* Hide Expand all / Collapse all on mobile per owner direction
+     2026-05-22. Only the Show all 13 ↔ Collapse rows button remains
+     (lives outside the toolbar in .timeline__show-all-wrap). */
+  .timeline__actions { display: none; }
   .timeline__btn,
   .timeline__show-all {
     padding: var(--space-2) var(--space-3-5);     /* 8 14 */
@@ -965,14 +968,18 @@ html, body { overflow-x: clip; }
     line-height: 16px;
     font-weight: var(--font-regular);
   }
+  /* Progress now owns the full toolbar row — label sits left, bar fills
+     the remaining horizontal space. */
   .timeline__progress {
+    flex: 1;
     font-size: 11px;
     line-height: 14px;
     color: var(--fg-quiet);
     gap: var(--space-2);                          /* 8 between label + bar */
   }
   .timeline__progress-bar {
-    width: 80px;                                  /* shrink on mobile per owner */
+    flex: 1;
+    width: auto;
     height: 4px;
     border-radius: var(--radius-xs);
   }
@@ -1295,10 +1302,16 @@ html, body { overflow-x: clip; }
     color: var(--fg-tertiary);                 /* = Figma text/muted in light */
   }
   .gates__title {
-    font-weight: var(--font-semibold);
-    font-size: 16px;
-    line-height: 24px;
+    font-family: var(--font-display);
+    font-weight: var(--font-light);
+    font-size: var(--text-display-size);         /* match section title — owner direction 2026-05-22 */
+    line-height: var(--text-display-line);
     letter-spacing: 0;
+  }
+  /* Light mode follows .section__title — extralight for the extra-thin
+     display weight pairing. */
+  .gates__title:not(.dark *) {
+    font-weight: var(--font-extralight);
   }
 }
 

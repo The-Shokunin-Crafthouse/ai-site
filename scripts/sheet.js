@@ -454,6 +454,13 @@
       activeTriggerCard = trig.el;
       trig.el.classList.add("is-open");
     }
+    /* Mobile sheet bypasses the inline step expand path, so the timeline
+       counter never sees it. Hand the step id off so the explored set in
+       app.js still increments. Same semantics as desktop. */
+    if (trig.type === "step" && window.AiSiteTimeline && window.AiSiteTimeline.markExplored) {
+      var stepLi = trig.el.closest("[data-step]");
+      if (stepLi) window.AiSiteTimeline.markExplored(stepLi.getAttribute("data-step"));
+    }
     openSheet(payload);
   }
 
