@@ -136,6 +136,7 @@
     var title = opts.title || "";
     var bodyHTML = opts.bodyHTML || "";
     var statsHTML = opts.statsHTML || "";
+    var iconHTML = opts.iconHTML || "";
 
     var sheet = document.createElement("aside");
     sheet.className = "sheet";
@@ -155,10 +156,22 @@
     sheet.appendChild(handleArea);
 
     if (title) {
+      /* Title row holds icon + heading. Icon optional via opts.iconHTML
+         (raw SVG markup, e.g. cloned from card template's d-media). */
+      var titleRow = document.createElement("div");
+      titleRow.className = "sheet__title-row";
+      if (iconHTML) {
+        var iconWrap = document.createElement("span");
+        iconWrap.className = "sheet__title-icon";
+        iconWrap.setAttribute("aria-hidden", "true");
+        iconWrap.innerHTML = iconHTML;
+        titleRow.appendChild(iconWrap);
+      }
       var h = document.createElement("h2");
       h.className = "sheet__title";
       h.textContent = title;
-      sheet.appendChild(h);
+      titleRow.appendChild(h);
+      sheet.appendChild(titleRow);
     }
 
     if (bodyHTML) {
