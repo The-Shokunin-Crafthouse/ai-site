@@ -3440,6 +3440,21 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   color: var(--accent-primary);
 }
 
+/* Light mode: any section number rendered in accent (expanded row, tapped
+   row, or hover-hot row) renders SemiBold so the yellow weight reads at
+   the same density Figma shows. Dark numbers stay at their default thin
+   weight per Figma dark composite. */
+.overview-row[aria-expanded="true"]:not(.dark *) .overview-row__index,
+.overview-row[data-tap-active="true"]:not(.dark *) .overview-row__index,
+.step__head[aria-expanded="true"]:not(.dark *) .step__num,
+.step__head[data-tap-active="true"]:not(.dark *) .step__num,
+.brain-row__head[aria-expanded="true"]:not(.dark *) .brain-row__num,
+.brain-row__head[data-tap-active="true"]:not(.dark *) .brain-row__num,
+.tools-row__head[aria-expanded="true"]:not(.dark *) .tools-row__num,
+.tools-row__head[data-tap-active="true"]:not(.dark *) .tools-row__num {
+  font-weight: var(--font-semibold);
+}
+
 /* Suppress hover-comet on touch devices — MOBILE-UPDATE-SPEC §3.4.
    .hover-trace + comet system are decorative; touch users get tap-scale +
    yellow flash instead. */
