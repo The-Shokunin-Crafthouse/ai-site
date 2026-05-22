@@ -40,6 +40,17 @@
   function snapInitialPx() { return readPxToken("--sheet-snap-initial", 282); }
   function snapMaxPx()     { return readPxToken("--sheet-snap-max",     660); }
 
+  /* Per-sheet effective max — capped by the natural content height so a
+     short sheet doesn't leave empty space below the content at max snap.
+     Measured once in openSheet, reset in finalizeClose. */
+  var activeSheetMaxPx = null;
+  function effectiveMaxPx() {
+    return activeSheetMaxPx != null ? activeSheetMaxPx : snapMaxPx();
+  }
+  function effectiveInitialPx() {
+    return Math.min(snapInitialPx(), effectiveMaxPx());
+  }
+
   var SPRING_OPEN = { stiffness: 300, damping: 30 };
   var SPRING_SNAP = { stiffness: 300, damping: 30 };
   var DISMISS_VELOCITY = 0.5; /* px/ms */
@@ -74,9 +85,9 @@
   }
 
   /* translateY for a given visible height (sheet anchored to bottom of viewport,
-     max-height = snapMax). 0 visible → translateY(snapMax). snapMax visible → 0. */
+     max-height = effective max). 0 visible → translateY(max). max visible → 0. */
   function translateFor(visibleHeightPx) {
-    return Math.max(0, snapMaxPx() - visibleHeightPx);
+    return Math.max(0, effectiveMaxPx() - visibleHeightPx);
   }
 
   function springTo(targetY, onComplete) {
@@ -103,7 +114,7 @@
     if (activeOverlay) activeOverlay.removeAttribute("data-active");
     activeAnim = pm.animate({
       from: currentY,
-      to: snapMaxPx(),
+      to: effectiveMaxPx(),
       velocity: (velocity || 0) * 1000, /* popmotion uses px/sec */
       type: "spring",
       stiffness: SPRING_SNAP.stiffness,
@@ -137,6 +148,7 @@
     document.removeEventListener("click", onOutsideClick, true);
     /* Sheet is fully gone — let the grain canvas paint again. */
     document.documentElement.removeAttribute("data-sheet-open");
+    activeSheetMaxPx = null;
   }
 
   function onKey(e) { if (e.key === "Escape") closeSheet(); }
@@ -248,8 +260,21 @@
     document.body.appendChild(sheet);
     activeSheet = sheet;
 
-    var maxPx = snapMaxPx();
-    var initPx = snapInitialPx();
+    /* Cap the sheet's height at its natural content height when that
+       comes in under the token max. Lets the sheet hug short content at
+       max snap instead of leaving blank space below. Measure with
+       height:auto temporarily so scrollHeight reflects the natural
+       intrinsic size. */
+    var tokenMax = snapMaxPx();
+    sheet.style.height = "auto";
+    sheet.style.maxHeight = tokenMax + "px";
+    var natural = sheet.scrollHeight;
+    activeSheetMaxPx = Math.min(natural, tokenMax);
+    sheet.style.height = activeSheetMaxPx + "px";
+    sheet.style.maxHeight = activeSheetMaxPx + "px";
+
+    var maxPx = effectiveMaxPx();
+    var initPx = effectiveInitialPx();
 
     /* Start fully hidden. */
     setSheetY(maxPx);
@@ -324,7 +349,7 @@
     var lastY = startY;
     var lastT = e.timeStamp;
     var velocity = 0;
-    var maxPx = snapMaxPx();
+    var maxPx = effectiveMaxPx();
 
     function onMove(ev) {
       var dy = ev.clientY - startY;
@@ -342,7 +367,7 @@
       document.removeEventListener("pointerup", onUp);
       document.removeEventListener("pointercancel", onUp);
 
-      var initY = translateFor(snapInitialPx());
+      var initY = translateFor(effectiveInitialPx());
       var maxY  = translateFor(maxPx);
       var hidden = maxPx;
 
