@@ -1022,13 +1022,11 @@ html, body { overflow-x: clip; }
   background: var(--bg-subtle);
   border-radius: var(--radius-md);
 }
-/* Dark keeps the hairline outline; light surface separation comes from the
-   --bg-subtle / --bg-base contrast alone. */
-/* TODO(dark-fill-pending §4.3): MOBILE-UPDATE-SPEC §4.3 — owner to confirm
-   dark gates panel fill treatment vs border. Current: border. Expected:
-   fill. Awaiting frame IDs 148:7358–151:18015. */
+/* Dark gates panel — audit resolution 2026-05-22 (§4.3 closed). Solid
+   --bg-gates-dark fill (#121110), no border. Cascades to desktop. */
 .dark .gates {
-  border: 1px solid var(--border-subtle);
+  background: var(--bg-gates-dark);
+  border: 0;
 }
 @media (min-width: 768px) {
   .gates { padding: var(--space-12); }
@@ -1101,6 +1099,34 @@ html, body { overflow-x: clip; }
   font-weight: var(--font-medium);
 }
 .gates__table td { color: var(--fg-secondary); }
+
+/* ===== Gates mobile reconciliation (audit 2026-05-22) =====
+   Figma 142:4517+. Mobile-only overrides; desktop gates spec unchanged. */
+@media (max-width: 767px) {
+  .gates__eyebrow {
+    font-size: 10px;
+    line-height: 14px;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.8px;
+    color: var(--fg-tertiary);                /* = Figma text/muted in light */
+  }
+  .gates__title {
+    font-weight: var(--font-semibold);
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0;
+  }
+  .gates__table th,
+  .gates__table td {
+    padding: var(--space-4) var(--space-4);
+  }
+  .gates__num {
+    margin-right: var(--space-1);
+    font-weight: 300;                          /* Inter Light */
+    color: var(--fg-secondary);
+  }
+  .gates__table tbody th { font-weight: var(--font-semibold); }
+}
 
 /* ===== Section 3 — Studio Brain rows (Figma 55:9391) =====
    Same row+accordion pattern as workflow steps, but no meta/summary column
