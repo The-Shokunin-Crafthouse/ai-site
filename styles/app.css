@@ -3235,7 +3235,7 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: color-mix(in srgb, var(--bg-base) 80%, transparent);
+  background: color-mix(in srgb, var(--bg-base) 30%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   opacity: 0;
