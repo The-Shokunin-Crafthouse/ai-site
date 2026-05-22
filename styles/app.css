@@ -3375,16 +3375,19 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   padding-top: var(--space-4);
 }
 
-/* Stats inner — 3 cols, gap 8, padding pt-8 pl-16 pb-4 per Figma. */
+/* Stats inner — 3 equal-width cols, gap 8. Horizontal padding is symmetric
+   so column centers stay fixed regardless of label length, and the same
+   columns line up across all four sheets. */
 .sheet__stats {
   display: flex;
   gap: var(--space-2);                              /* 8 between cols */
-  padding: var(--space-2) 0 var(--space-1) var(--space-4);
+  padding: var(--space-2) 0 var(--space-1);
   list-style: none;
   margin: 0;
 }
 .sheet__stats > li {
   flex: 1 1 0;
+  min-width: 0;                                     /* prevent intrinsic width from expanding cols */
   display: flex;
   flex-direction: column;
   align-items: center;
