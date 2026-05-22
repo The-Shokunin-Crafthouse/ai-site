@@ -688,17 +688,18 @@ html, body { overflow-x: clip; }
    row 3. Card body = flex column; outer gap 10 between content frame and
    CTA; content frame gap 4 between title-row and body. */
 @media (max-width: 767px) {
-  /* Cards/Stack mobile: pt 8 pb 40, px 24, gap 16. The 40px below the
-     last card supersedes the prior Figma pb-24 — owner direction
-     2026-05-22 (light + dark both). To land at 40px net, zero the parent
-     .overview-row__open padding-bottom when it directly contains the
-     cards stack (other expanded rows — workflow / brain / tools — keep
-     their --space-12 bottom padding via the unscoped rule). */
-  .overview-row__open:has(> .cards) {
+  /* Cards/Stack mobile: pt 8 pb 72, px 24, gap 16. 72px below the last
+     card per owner spec 2026-05-22 — matches the ~36px horizontal
+     padding visual rhythm at 2× vertical.
+     Selector includes the [aria-expanded="true"] + adjacent match so it
+     beats the unscoped base rule's specificity (0,1,2) → ours is (0,3,1).
+     Scoped via :has(> .cards) so workflow / brain / tools rows keep
+     their default --space-12 bottom padding. */
+  .overview-row[aria-expanded="true"] + .overview-row__open:has(> .cards) {
     padding-bottom: 0;
   }
   .overview-row__open > .cards {
-    padding-block: var(--space-2) var(--space-10);    /* 8 / 40 */
+    padding-block: var(--space-2) 72px;               /* 8 / 72 */
     gap: var(--space-4);                              /* 16 */
   }
   .card {
