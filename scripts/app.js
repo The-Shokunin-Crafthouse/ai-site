@@ -110,37 +110,11 @@
 
   /* ===== Sticky nav — visible on load (CSS handles fixed positioning). ===== */
 
-  /* ===== Active section tracking — feeds both nav + tabbar ===== */
+  /* ===== Active section tracking =====
+     Tabbar removed per MOBILE-UPDATE-SPEC §6.1, so no tab-link state to
+     update. Section observer remains in case future code re-attaches a
+     hash-tracking UI to it. */
   const sections = Array.from(document.querySelectorAll("[data-section]"));
-  const tabLinks = Array.from(document.querySelectorAll("[data-tab-link]"));
-
-  function clearActive() {
-    // Nav links are no longer auto-highlighted on scroll. Hover is the only
-    // way they turn yellow. Mobile tab bar still tracks active section.
-    tabLinks.forEach(function (link) {
-      link.classList.remove("is-active");
-      link.removeAttribute("aria-current");
-    });
-  }
-
-  function setActive(id) {
-    if (window.scrollY === 0) {
-      clearActive();
-      return;
-    }
-    tabLinks.forEach(function (link) {
-      const match = link.getAttribute("href") === "#" + id;
-      link.classList.toggle("is-active", match);
-      if (match) link.setAttribute("aria-current", "true");
-      else link.removeAttribute("aria-current");
-    });
-  }
-
-  // Scroll back to the top → clear all nav highlights (observer may not fire
-  // again once we're already at 0, so we listen explicitly).
-  window.addEventListener("scroll", function () {
-    if (window.scrollY === 0) clearActive();
-  }, { passive: true });
 
   if (sections.length) {
     let visible = new Map();
@@ -149,13 +123,6 @@
         if (e.isIntersecting) visible.set(e.target.id, e.intersectionRatio);
         else visible.delete(e.target.id);
       });
-      if (visible.size) {
-        let bestId = null, bestRatio = -1;
-        visible.forEach(function (ratio, id) {
-          if (ratio > bestRatio) { bestRatio = ratio; bestId = id; }
-        });
-        if (bestId) setActive(bestId);
-      }
     }, { rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] });
     sections.forEach(function (s) { sectionObserver.observe(s); });
     // Expose so the structural fold-in (later in this IIFE) can re-observe the
@@ -163,25 +130,7 @@
     window.__sectionObserver = sectionObserver;
   }
 
-  /* ===== Bottom tab bar — hide on scroll-down past 200, reveal on scroll-up ===== */
-  const tabbar = document.querySelector("[data-tabbar]");
-  if (tabbar) {
-    let lastY = window.scrollY;
-    let ticking = false;
-    function onScroll() {
-      const y = window.scrollY;
-      if (y > 200 && y > lastY + 4) tabbar.classList.add("is-hidden");
-      else if (y < lastY - 4 || y <= 200) tabbar.classList.remove("is-hidden");
-      lastY = y;
-      ticking = false;
-    }
-    window.addEventListener("scroll", function () {
-      if (!ticking) {
-        window.requestAnimationFrame(onScroll);
-        ticking = true;
-      }
-    }, { passive: true });
-  }
+  /* Bottom tab bar removed — no scroll-hide/show handler needed. */
 
   /* ===== Structural fold-in =====
      Lift the workflow/brain/tools sections out of the page and into their

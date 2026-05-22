@@ -125,10 +125,15 @@
   --space-1-5: 6px;
   --space-2: 8px;
   --space-3: 12px;
+  /* --space-3-5: half-step (14px) — Figma prompt inset, learnings gap,
+     tab-panel padding (142:4484, 142:4582, 142:4703) consistently use 14. */
+  --space-3-5: 14px;
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
+  /* --space-10: 40px — hero mobile padding-block (Figma 142:4357 px-24 py-40). */
+  --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
   --space-20: 80px;
@@ -232,6 +237,31 @@
   /* Layout — nav heights */
   --nav-h-desktop: 64px;
   --tabbar-h-mobile: 64px;
+
+  /* ===== Tier-3 bottom sheet (mobile) — MOBILE-UPDATE-SPEC §3.1.
+     Definitive values from Figma sheet frames (sheet spec consistent
+     across Steps/Structure/Tools per owner confirm 2026-05-21). */
+  --surface-sheet-bg: var(--bg-base);
+  --surface-sheet-overlay: rgba(13, 12, 10, 0.40); /* INFERRED — pending Figma confirm */
+  --sheet-radius: var(--radius-lg);
+  --sheet-snap-initial: 33vh;
+  --sheet-snap-max: 85vh;
+  --sheet-pad-top: var(--space-3);   /* 12px */
+  --sheet-pad-bottom: var(--space-8); /* 32px */
+  --sheet-pad-inline: var(--space-6); /* 24px */
+  --sheet-gap: var(--space-6);
+  --sheet-shadow: drop-shadow(0 -2px 5px rgba(40, 24, 0, 0.08));
+  --sheet-handle-color: #ffffff;
+  --sheet-handle-width: 34px;
+  --sheet-handle-height: 5px;
+  --sheet-handle-radius: 8px;
+  /* Stats section inside sheet — intentional dark palette both modes. */
+  --sheet-stats-divider: #1c1a18;
+  --sheet-stats-num: #d0ceca;
+  --sheet-stats-label: var(--fg-tertiary);
+
+  /* Active/tapped card dark surface — §4.6 resolved, cascades to desktop. */
+  --bg-card-dark: #121110;
 }
 
 @media (min-width: 768px) {
@@ -310,4 +340,10 @@
   /* Pin the brain icon to its original Figma value in dark; light gets a
      softer warm gray via :root above. */
   --fg-brain-icon: #2b2722;
+
+  /* Sheet overrides — handle + overlay tuned for dark. Sheet bg follows
+     --bg-base which already swaps via .dark. */
+  --sheet-handle-color: var(--fg-secondary); /* #98938d */
+  --surface-sheet-overlay: rgba(13, 12, 10, 0.60); /* INFERRED — pending Figma confirm */
+  --sheet-stats-label: var(--fg-tertiary);
 }

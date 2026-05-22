@@ -139,8 +139,11 @@
               Studio memory that compounds, agents that hand off, approval gates that stay human. This is the working system, not a concept deck.
             </p>
             <div class="hero__actions reveal">
-              <a class="hero__skip btn-trace btn-press" href="#hiring" data-hover="button">
-                Skip to: How I'd apply this at your company
+              <!-- Hero CTA copy diverges by breakpoint per Figma `I142:4357;14:28`:
+                   mobile shows "See it at your company" (no "Skip to:" prefix). -->
+              <a class="hero__skip btn-trace btn-press" href="#hiring" data-hover="button" aria-label="See it at your company">
+                <span class="hero__skip-label hero__skip-label--desktop">Skip to: How I'd apply this at your company</span>
+                <span class="hero__skip-label hero__skip-label--mobile">See it at your company</span>
                 <svg class="icon icon--md hero__arrow" data-btn-arrow aria-hidden="true"><use href="#ph-arrow-right"/></svg>
               </a>
             </div>
@@ -1540,19 +1543,16 @@ Commit the updated file and push.</code></pre>
     <svg class="icon" aria-hidden="true"><use href="#ph-arrow-up"/></svg>
   </button>
 
-  <!-- Mobile bottom tab bar. Active state mirrors desktop nav via shared observer. -->
-  <nav class="tabbar" data-tabbar aria-label="Primary, mobile">
-    <ul class="tabbar__list">
-      <li><a class="tabbar__item" data-tab-link href="#overview"><span class="tabbar__dot" aria-hidden="true"></span><span class="tabbar__label">Overview</span></a></li>
-      <li><a class="tabbar__item" data-tab-link href="#workflow"><span class="tabbar__dot" aria-hidden="true"></span><span class="tabbar__label">Workflow</span></a></li>
-      <li><a class="tabbar__item" data-tab-link href="#brain"><span class="tabbar__dot" aria-hidden="true"></span><span class="tabbar__label">Brain</span></a></li>
-      <li><a class="tabbar__item" data-tab-link href="#tools"><span class="tabbar__dot" aria-hidden="true"></span><span class="tabbar__label">Tools</span></a></li>
-      <li><a class="tabbar__item" data-tab-link href="#hiring"><span class="tabbar__dot" aria-hidden="true"></span><span class="tabbar__label">Hiring</span></a></li>
-    </ul>
-  </nav>
+  <!-- Mobile bottom tab bar removed per MOBILE-UPDATE-SPEC §6.1 (approved 2026-05-21).
+       Tabbar was mobile-only (display:none ≥ 768px), so desktop layout unaffected. -->
 
+  <!-- Popmotion (vendored UMD, MIT) — used by sheet.js for tier-3 spring physics.
+       MOBILE-UPDATE-SPEC §2.4 — approved import method. -->
+  <script src="./scripts/popmotion.min.js" defer></script>
   <script src="./scripts/app.js" defer></script>
   <script src="./scripts/hover.js" defer></script>
+  <script src="./scripts/sheet.js" defer></script>
+  <script src="./scripts/tap.js" defer></script>
   <script src="./scripts/grain.js"></script>
   <script src="./scripts/favicon.js" defer></script>
 </body>
