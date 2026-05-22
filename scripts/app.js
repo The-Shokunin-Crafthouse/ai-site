@@ -291,56 +291,6 @@
     }, durationMs);
   }
 
-  /* Close a single overview row with the standard collapse animation.
-     Extracted from the click handler so the mobile accordion path can
-     invoke it programmatically on the previously-open sibling. */
-  function closeOverviewRow(btn) {
-    const li = btn.closest("li");
-    const openEl = li && li.querySelector(".overview-row__open");
-    if (openEl) {
-      const h = openEl.scrollHeight;
-      openEl.style.transition = "none";
-      openEl.style.maxHeight = h + "px";
-      void openEl.offsetHeight;
-      openEl.style.transition =
-        "max-height " + CLOSE_MS + "ms " + CLOSE_EASE + ", " +
-        "padding " + CLOSE_MS + "ms " + CLOSE_EASE;
-      void openEl.offsetHeight;
-    }
-    if (li) li.classList.add("is-closing");
-    btn.setAttribute("aria-expanded", "false");
-    if (openEl) openEl.style.maxHeight = "0px";
-    setTimeout(function () {
-      if (li) li.classList.remove("is-closing");
-      if (openEl) {
-        openEl.style.maxHeight = "";
-        openEl.style.transition = "";
-      }
-    }, CLOSE_MS);
-  }
-
-  /* Hold a target row's getBoundingClientRect().top constant across a
-     window of frames. Used by the mobile accordion path so when a sibling
-     row above the tapped row collapses, the tapped row stays visually
-     pinned to where the user's finger landed. Returns a cancel fn. */
-  function pinRowTop(targetBtn, durationMs) {
-    const desiredTop = targetBtn.getBoundingClientRect().top;
-    const start = performance.now();
-    let raf;
-    function tick() {
-      const currentTop = targetBtn.getBoundingClientRect().top;
-      const delta = currentTop - desiredTop;
-      if (Math.abs(delta) > 0.5) window.scrollBy(0, delta);
-      if (performance.now() - start < durationMs) {
-        raf = requestAnimationFrame(tick);
-      }
-    }
-    raf = requestAnimationFrame(tick);
-    return function cancel() { cancelAnimationFrame(raf); };
-  }
-
-  const mqMobileRows = window.matchMedia("(max-width: 767px)");
-
   document.querySelectorAll(".overview-row").forEach(function (btn) {
     if (btn.hasAttribute("disabled")) return;
     btn.addEventListener("click", function () {
@@ -348,34 +298,38 @@
       const li = btn.closest("li");
       const openEl = li && li.querySelector(".overview-row__open");
       if (isOpen) {
-        lockRowToViewport(btn, CLOSE_MS);
-        closeOverviewRow(btn);
-      } else {
-        /* Find any sibling row that's currently open. On mobile we want
-           single-open behavior (accordion) with the tapped row's viewport
-           position preserved across the collapse + expand. */
-        const others = [];
-        document.querySelectorAll('.overview-row[aria-expanded="true"]').forEach(function (other) {
-          if (other !== btn) others.push(other);
-        });
-
-        if (mqMobileRows.matches && others.length > 0) {
-          /* Pin tapped row's top BEFORE any DOM mutation, then close
-             siblings (animated) and open target. The rAF loop runs for
-             max(OPEN_MS, CLOSE_MS) + small buffer, compensating scroll
-             every frame so the tapped row stays under the finger. */
-          const lockMs = Math.max(OPEN_MS, CLOSE_MS) + 80;
-          pinRowTop(btn, lockMs);
-          others.forEach(closeOverviewRow);
-          if (openEl) openEl.style.maxHeight = "";
-          if (li) li.classList.remove("is-closing");
-          btn.setAttribute("aria-expanded", "true");
-        } else {
-          if (openEl) openEl.style.maxHeight = ""; // clear any leftover from a previous close
-          lockRowToViewport(btn, OPEN_MS);
-          if (li) li.classList.remove("is-closing");
-          btn.setAttribute("aria-expanded", "true");
+        /* Anchor the close transition to the actual content height so the
+           ease-out curve plays across visible pixels (not the empty buffer
+           up to the 20000px max-height cap). Step 1: freeze the current
+           height with transitions disabled. Step 2: switch aria off and
+           kick a new transition down to 0 with an explicit ease-out curve. */
+        if (openEl) {
+          const h = openEl.scrollHeight;
+          openEl.style.transition = "none";
+          openEl.style.maxHeight = h + "px";
+          void openEl.offsetHeight;
+          // Restore transition explicitly so the next style write animates.
+          openEl.style.transition =
+            "max-height " + CLOSE_MS + "ms " + CLOSE_EASE + ", " +
+            "padding " + CLOSE_MS + "ms " + CLOSE_EASE;
+          void openEl.offsetHeight;
         }
+        lockRowToViewport(btn, CLOSE_MS);
+        if (li) li.classList.add("is-closing");
+        btn.setAttribute("aria-expanded", "false");
+        if (openEl) openEl.style.maxHeight = "0px";
+        setTimeout(function () {
+          if (li) li.classList.remove("is-closing");
+          if (openEl) {
+            openEl.style.maxHeight = "";
+            openEl.style.transition = "";
+          }
+        }, CLOSE_MS);
+      } else {
+        if (openEl) openEl.style.maxHeight = ""; // clear any leftover from a previous close
+        lockRowToViewport(btn, OPEN_MS);
+        if (li) li.classList.remove("is-closing");
+        btn.setAttribute("aria-expanded", "true");
       }
     });
   });
