@@ -62,17 +62,38 @@
         // Collapse the text label 5s after first reveal.
         window.setTimeout(collapseLabel, 5000);
         // Detach all interaction listeners now that we've fired.
-        window.removeEventListener("scroll", reveal);
+        window.removeEventListener("scroll", onScroll);
         window.removeEventListener("touchstart", reveal);
         window.removeEventListener("pointerdown", reveal);
         window.removeEventListener("click", reveal);
         window.removeEventListener("keydown", reveal);
       };
-      window.addEventListener("scroll", reveal, { passive: true });
-      window.addEventListener("touchstart", reveal, { passive: true });
-      window.addEventListener("pointerdown", reveal, { passive: true });
-      window.addEventListener("click", reveal);
-      window.addEventListener("keydown", reveal);
+      // Filter spurious scroll events fired by Safari on layout settle /
+      // scroll restoration. Require an actual scroll delta of >= 8px from
+      // whatever Y position the page rests at when listeners attach.
+      let startY = window.scrollY;
+      const onScroll = function () {
+        if (Math.abs(window.scrollY - startY) < 8) return;
+        reveal();
+      };
+      // Defer listener attachment one frame past `load` so any browser-fired
+      // scroll-restore events have already settled and won't trigger reveal.
+      const attach = function () {
+        // Re-baseline startY at attach time.
+        startY = window.scrollY;
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("touchstart", reveal, { passive: true });
+        window.addEventListener("pointerdown", reveal, { passive: true });
+        window.addEventListener("click", reveal);
+        window.addEventListener("keydown", reveal);
+      };
+      if (document.readyState === "complete") {
+        window.requestAnimationFrame(attach);
+      } else {
+        window.addEventListener("load", function () {
+          window.requestAnimationFrame(attach);
+        }, { once: true });
+      }
     } else {
       window.setTimeout(function () {
         toggle.setAttribute("data-toggle-shown", "true");
