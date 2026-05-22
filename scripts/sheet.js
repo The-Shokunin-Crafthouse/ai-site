@@ -52,6 +52,9 @@
   var activeAnim = null;
   var currentY = 0;
   var snapState = "initial";
+  /* Card-trigger element gets .is-open while its sheet is mounted. Cleared
+     in finalizeClose. Resolution log 2026-05-21 §4.6 correction. */
+  var activeTriggerCard = null;
 
   function setSheetY(yPx) {
     if (!activeSheet) return;
@@ -108,6 +111,10 @@
     if (activeSheet) activeSheet.remove();
     activeSheet = null;
     activeAnim = null;
+    if (activeTriggerCard) {
+      activeTriggerCard.classList.remove("is-open");
+      activeTriggerCard = null;
+    }
     document.body.style.overflow = "";
     document.removeEventListener("keydown", onKey);
     document.removeEventListener("click", onOutsideClick, true);
@@ -294,9 +301,8 @@
       });
       statsList.remove();
     }
-    /* Drop the d-media block (mobile sheet shows text + stats, not the
-       desktop schematic). TODO(sheet-content-section01): owner to confirm
-       whether the schematic should render in the sheet. */
+    /* d-media excluded from mobile sheet per resolution log 2026-05-21.
+       Desktop inline expansion only — no further action needed here. */
     var media = scratch.querySelector("[data-tpl-media]");
     if (media) media.remove();
     return {
@@ -352,6 +358,13 @@
 
     e.preventDefault();
     e.stopPropagation();
+    /* Track the triggering card so it can flip .is-open while the sheet
+     is mounted (Sheet2-correction state machine). Only cards carry this
+     state — step/brain/tools heads do not. */
+    if (trig.type === "card") {
+      activeTriggerCard = trig.el;
+      trig.el.classList.add("is-open");
+    }
     openSheet(payload);
   }
 

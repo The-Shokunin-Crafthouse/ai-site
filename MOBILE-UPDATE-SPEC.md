@@ -40,7 +40,35 @@ closed or re-tagged with section-specific identifiers.
 - Removed from mobile sheet payload (desktop drawer pattern only). Flagged in code as `TODO(sheet-content-section01)` — owner to confirm whether the schematic should also render in the sheet.
 
 **Status of original deferred items:**
-- §4.1 step-badge · §4.2 criteria-weight · §4.3 gates · §4.4 learning · §4.5 criteria/defaults dark border→fill — **still deferred**; awaiting separate frame IDs. TODO markers remain in `styles/app.css`.
+- §4.1 step-badge · §4.2 criteria-weight · §4.3 gates · §4.4 learning · §4.5 criteria/defaults: **desktop-only components. Deferred to desktop dark mode pass. Out of scope for PR #32.** Confirmed absent from all provided mobile frames. TODO markers remain in `styles/app.css` for the future desktop pass.
+
+---
+
+## FINAL RESOLUTION PASS — 2026-05-21 (PR #32 close-out)
+
+Last-mile corrections from owner. Applied in this commit.
+
+**Dark handle two-state correction:**
+- Initial snap (Sheet1 dark): `--fg-secondary` (#98938d).
+- Max snap (Sheet2 dark): `--color-fg-tertiary` (#545352).
+- New token: `--color-fg-tertiary: #545352`.
+- `.sheet__handle` gets `transition: background-color 150ms ease-out-strong` so the color shift rides the spring.
+- `.dark .sheet.sheet--expanded .sheet__handle` swaps to `--color-fg-tertiary`.
+- Light mode handle stays white in both states.
+
+**§4.6 Sheet2 card-state correction:**
+- Sheet2 dark frame shows the triggering card with **border-only**, not bg-fill. The `#121110` fill is the transient tap/spring state, not a sticky open-state. State machine:
+  - default → border (no fill)
+  - `.is-tapping` (transient press) → fill `#121110`, no border. Mapped to existing tap.js attribute: `[data-tap-active="true"]`.
+  - `.is-open` (sheet mounted) → border (re-asserts default; tracked for future hooks via sheet.js).
+- CSS updated to remove `aria-expanded="true"` and `.is-active` from the bg-fill selector.
+- `sheet.js` now toggles `.is-open` on the triggering card while its sheet is mounted, clears it in `finalizeClose`.
+
+**§4.1–§4.5 final status: out of scope for PR #32.**
+- Confirmed absent from all provided mobile frames. Desktop-only components. Will be handled in a separate desktop dark-mode pass.
+
+**d-media in mobile sheet — final:**
+- Excluded entirely from mobile sheet payload. Desktop inline expansion only. No follow-up needed. Stale TODO removed from `sheet.js`.
 
 ---
 

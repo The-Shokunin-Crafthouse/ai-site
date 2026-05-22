@@ -238,6 +238,13 @@
   --nav-h-desktop: 64px;
   --tabbar-h-mobile: 64px;
 
+  /* Sheet dark-handle expanded color — exposed as a top-level token so the
+     transition rule in app.css can reference it without a dark-scope lookup.
+     Resolution log 2026-05-21: handle darkens from --fg-secondary (#98938d)
+     to --color-fg-tertiary (#545352) when sheet reaches max snap. Light mode
+     handle stays white in both states (no expanded override). */
+  --color-fg-tertiary: #545352;
+
   /* ===== Tier-3 bottom sheet (mobile) — MOBILE-UPDATE-SPEC §3.1.
      Definitive Figma values from owner resolution log 2026-05-21.
      Snap heights are absolute px (Figma reference viewport 844px tall):

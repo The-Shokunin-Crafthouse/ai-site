@@ -564,16 +564,24 @@ html, body { overflow-x: clip; }
   background: var(--bg-base);
 }
 
-/* MOBILE-UPDATE-SPEC §4.6 (resolved 2026-05-21, desktop cascade approved).
-   Dark mode state distinction:
-   - Active / tapped / aria-expanded=true → bg #121110, no border.
-   - Inactive / collapsed                  → 1px #1c1a18 border, no fill.
-   Applies on every breakpoint (not gated by media query). */
-.dark .card[aria-expanded="true"],
-.dark .card.is-active,
-.dark .card[data-tap-active="true"] {
+/* MOBILE-UPDATE-SPEC §4.6 — CORRECTION via resolution log 2026-05-21.
+   Dark Sheet2 frame shows ALL 4 cards with border-only, including the card
+   that triggered the sheet. The bg-fill (#121110) is the transient
+   tap/spring state, NOT a sticky open-state. State machine:
+     - default          → border (no fill)
+     - .is-tapping      → fill #121110, no border (during press spring)
+     - .is-open         → border (re-asserts default; tracked for future hooks)
+   Mapped to existing tap.js attribute: [data-tap-active="true"] = is-tapping. */
+.dark .card[data-tap-active="true"],
+.dark .card.is-tapping {
   background: var(--bg-card-dark);
   border-color: transparent;
+}
+/* Explicit no-op rule for .is-open so the state class round-trips cleanly
+   even if a future hook attaches behavior to it. */
+.dark .card.is-open {
+  background: transparent;
+  border-color: var(--border-subtle);
 }
 @media (max-width: 1023px) { .card { min-height: 220px; } }
 .card:focus-visible {
@@ -2873,6 +2881,14 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   height: var(--sheet-handle-height);
   border-radius: var(--sheet-handle-radius);
   background: var(--sheet-handle-color);
+  /* Resolution log 2026-05-21 — dark handle darkens at max snap. Smooth
+     it so the spring + color transitions land together. */
+  transition: background-color 150ms var(--ease-out-strong);
+}
+/* Dark + expanded → handle darkens from --fg-secondary (#98938d) to
+   --color-fg-tertiary (#545352). Light handle stays white in both states. */
+.dark .sheet.sheet--expanded .sheet__handle {
+  background-color: var(--color-fg-tertiary);
 }
 
 /* Sheet title region — divider below per spec. */
