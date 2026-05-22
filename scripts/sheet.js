@@ -187,10 +187,13 @@
     sheet.appendChild(handleArea);
 
     if (title) {
-      /* Title row holds icon + heading. Icon optional via opts.iconHTML
-         (raw SVG markup, e.g. cloned from card template's d-media). */
+      /* Title row holds either icon + heading (card sheet) or step
+         number + heading (step sheet, no icon, no divider). Number is
+         passed via opts.numberText — Figma 150:13513 / 150:13975. */
       var titleRow = document.createElement("div");
       titleRow.className = "sheet__title-row";
+      var numberText = opts.numberText || "";
+      if (numberText) titleRow.classList.add("sheet__title-row--with-num");
       if (iconHTML) {
         var iconWrap = document.createElement("span");
         iconWrap.className = "sheet__title-icon";
@@ -198,8 +201,16 @@
         iconWrap.innerHTML = iconHTML;
         titleRow.appendChild(iconWrap);
       }
+      if (numberText) {
+        var num = document.createElement("span");
+        num.className = "sheet__num";
+        num.setAttribute("aria-hidden", "true");
+        num.textContent = numberText;
+        titleRow.appendChild(num);
+      }
       var h = document.createElement("h2");
       h.className = "sheet__title";
+      if (numberText) h.classList.add("sheet__title--compact");
       h.textContent = title;
       titleRow.appendChild(h);
       sheet.appendChild(titleRow);
@@ -401,14 +412,16 @@
     };
   }
 
-  function extractRowSheet(headBtn, bodySelector, titleSelector) {
+  function extractRowSheet(headBtn, bodySelector, titleSelector, numberSelector) {
     var titleEl = headBtn.querySelector(titleSelector);
+    var numberEl = numberSelector ? headBtn.querySelector(numberSelector) : null;
     var body = headBtn.nextElementSibling;
     /* Walk forward to find the matching body element if it's not directly
        next (some markups insert a divider between head and body). */
     while (body && !body.matches(bodySelector)) body = body.nextElementSibling;
     return {
       title: titleEl ? titleEl.textContent.trim() : "",
+      numberText: numberEl ? numberEl.textContent.trim() : "",
       bodyHTML: body ? body.innerHTML : "",
       statsHTML: "",
     };
@@ -439,7 +452,7 @@
 
     var payload = null;
     if      (trig.type === "card")  payload = extractCardSheet(trig.el);
-    else if (trig.type === "step")  payload = extractRowSheet(trig.el, ".step__body",       ".step__title");
+    else if (trig.type === "step")  payload = extractRowSheet(trig.el, ".step__body",       ".step__title",       ".step__num");
     else if (trig.type === "brain") payload = extractRowSheet(trig.el, ".brain-row__body",  ".brain-row__title");
     else if (trig.type === "tools") payload = extractRowSheet(trig.el, ".tools-row__body",  ".tools-row__title");
 

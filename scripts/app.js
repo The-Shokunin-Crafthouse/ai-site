@@ -778,43 +778,49 @@
 
   /* ===== Copy-to-clipboard for [data-copy] buttons.
      Reads the textContent of #[data-copy-target] and writes it to the clipboard.
-     Swaps the icon + label to a "Copied" affordance for 1.6s. */
-  const copyButtons = document.querySelectorAll("[data-copy]");
-  copyButtons.forEach(function (btn) {
+     Swaps the icon + label to a "Copied" affordance for 1.6s.
+     Delegated at the document level so buttons cloned into the mobile
+     bottom sheet (scripts/sheet.js) get the same behavior without
+     re-binding per instance. */
+  const copyResetTimers = new WeakMap();
+  document.addEventListener("click", async function (e) {
+    const btn = e.target.closest("[data-copy]");
+    if (!btn) return;
     const targetId = btn.getAttribute("data-copy-target");
+    if (!targetId) return;
+    /* Original (unhidden) element is the source of truth even when a
+       clone of the same content lives inside the sheet — getElementById
+       returns the first match, which is what we want. */
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    const text = target.textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "absolute";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (_) {}
+      document.body.removeChild(ta);
+    }
     const labelEl = btn.querySelector("[data-copy-label]");
     const iconUse = btn.querySelector(".icon use");
-    let resetTimer = null;
-
-    btn.addEventListener("click", async function () {
-      const target = document.getElementById(targetId);
-      if (!target) return;
-      const text = target.textContent;
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch (e) {
-        // Fallback for non-secure contexts
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.setAttribute("readonly", "");
-        ta.style.position = "absolute";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.select();
-        try { document.execCommand("copy"); } catch (_) {}
-        document.body.removeChild(ta);
-      }
-      btn.setAttribute("data-copy-state", "copied");
-      if (labelEl) labelEl.textContent = "Copied";
-      if (iconUse) iconUse.setAttribute("href", "#ph-check");
-      if (resetTimer) clearTimeout(resetTimer);
-      resetTimer = setTimeout(function () {
-        btn.removeAttribute("data-copy-state");
-        if (labelEl) labelEl.textContent = "Copy";
-        if (iconUse) iconUse.setAttribute("href", "#ph-copy");
-        resetTimer = null;
-      }, 1600);
-    });
+    btn.setAttribute("data-copy-state", "copied");
+    if (labelEl) labelEl.textContent = "Copied";
+    if (iconUse) iconUse.setAttribute("href", "#ph-check");
+    const prev = copyResetTimers.get(btn);
+    if (prev) clearTimeout(prev);
+    const t = setTimeout(function () {
+      btn.removeAttribute("data-copy-state");
+      if (labelEl) labelEl.textContent = "Copy";
+      if (iconUse) iconUse.setAttribute("href", "#ph-copy");
+      copyResetTimers.delete(btn);
+    }, 1600);
+    copyResetTimers.set(btn, t);
   });
 
   /* ===== Drop .reveal class after animation completes so Chrome dismantles
