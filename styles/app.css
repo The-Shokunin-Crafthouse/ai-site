@@ -3383,6 +3383,14 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   }
 }
 
+/* Expanded overview row — number stays yellow while open (matches the
+   step/brain/tools heads which already set this via their own
+   aria-expanded rules). Applied globally so desktop + mobile share the
+   same expanded-state visual. */
+.overview-row[aria-expanded="true"] .overview-row__index {
+  color: var(--accent-primary);
+}
+
 /* Suppress hover-comet on touch devices — MOBILE-UPDATE-SPEC §3.4.
    .hover-trace + comet system are decorative; touch users get tap-scale +
    yellow flash instead. */
