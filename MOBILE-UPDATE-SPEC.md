@@ -384,6 +384,40 @@ Every change below would touch desktop if cascaded naively. **BLOCKED until expl
 
 ---
 
+## LOCK — Section 1 (Overview) + Sheets — 2026-05-22
+
+Owner confirmed all Section 1 mobile work + tier-3 bottom sheet treatment
+locked. Treat as freeze surface — do not modify without explicit reopen.
+
+**Scope covered by lock:**
+- Section 1 row expand/collapse behavior (mobile), per-row spacing, padding
+  cascade, divider treatment, expanded-state typography + accent color.
+- 4 overview cards (brain, workflow, agents, stack) on mobile: layout grid,
+  dark fill cascade, number+title inline rendering, font normalization.
+- Tier-3 bottom sheet entirely:
+  - Open/close trigger, drag physics, snap heights (282 / 660 px), overlay
+    (15% bg-base mix + blur 12), dismiss velocity threshold.
+  - Sheet content: phosphor title icon (`ph-brain` / `ph-kanban` /
+    `ph-claudecode` / `ph-briefcase`) at 32×32, color `--fg-icon-sheet`
+    (primary `--color-warm-icon` → #AEA7A0 light / #2B2722 dark).
+  - Sheet body section wrapper, 32px gap, prose typography.
+  - Stats group: TOP divider only, 3 equal-width cols (min-width:0,
+    symmetric padding), top-aligned (flex-start) so wrapped labels share
+    the baseline, centered text, label color `--text-accent` (#a67c42
+    light / #8e7a65 dark).
+
+**Commits in the locked surface:**
+- `47cf9b3` sheet title phosphor icon swap + icon color tokens
+- `50a028e` stat num + label centered
+- `0fe4cac` sheet icon color corrected (#AEA7A0 / #2B2722)
+- `bb012fd` stat columns top-aligned
+- `5aebbba` stat columns locked to equal widths
+- `1191295` stat label uses `--text-accent` (gold/warm)
+
+Plus all prior commits referenced in earlier sections of this spec.
+
+---
+
 ## PHASE 2 — GATE OUTPUT
 
 1. **Spacing changes found:** 16 (10 in primary tables §1.1–§1.4 + 6 in §1.6 tier-2/3 content).
