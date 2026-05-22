@@ -968,18 +968,18 @@ html, body { overflow-x: clip; }
     line-height: 16px;
     font-weight: var(--font-regular);
   }
-  /* Progress now owns the full toolbar row — label sits left, bar fills
-     the remaining horizontal space. */
+  /* Progress sits at the left of the toolbar (toolbar's flex
+     justify-content: space-between leaves the single visible child at
+     start). Bar stays at its natural width — owner direction 2026-05-22
+     wants the indicator anchored to the header column, not stretched. */
   .timeline__progress {
-    flex: 1;
     font-size: 11px;
     line-height: 14px;
     color: var(--fg-quiet);
     gap: var(--space-2);                          /* 8 between label + bar */
   }
   .timeline__progress-bar {
-    flex: 1;
-    width: auto;
+    width: 140px;
     height: 4px;
     border-radius: var(--radius-xs);
   }
