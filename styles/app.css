@@ -705,6 +705,10 @@ html, body { overflow-x: clip; }
     align-items: baseline;
     padding: 18px 20px;
     border-radius: 12px;
+    /* Override the desktop min-height: 220px @ max-width: 1023 rule. Figma
+       mobile card is 130px (or 111px for #04). Min-height was inflating
+       internal whitespace and pushing CTA away from body. */
+    min-height: 0;
   }
   /* Dark card surface (Figma 149:8751): solid #121110 fill, no border,
      overflow:clip. Applies to every card in the expanded stack — no
@@ -730,6 +734,9 @@ html, body { overflow-x: clip; }
     font-weight: 300;                                 /* Inter Light */
     letter-spacing: 0;
     color: var(--fg-muted);                           /* Figma semantic/text/quiet hex */
+    /* Override base "tnum" — Figma uses proportional figures so the "1"
+       reads as a narrow stroke instead of a fixed-width slot. */
+    font-feature-settings: "lnum", "pnum";
   }
   .card__title {
     grid-area: title;
