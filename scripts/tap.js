@@ -36,20 +36,31 @@
   var pm = window.popmotion;
   if (!pm || !pm.animate) return;
 
-  var SELECTOR = [
-    ".overview-row",
+  /* Buttons get a subtle scale + 2px yellow border on tap. Rows get only
+     a number-color flash (no scale, no border) — handled via CSS rule
+     against [data-tap-active="true"]. */
+  var BUTTON_SELECTORS = [
     ".card",
+    ".hero__skip",
+    ".timeline__btn",
+    ".timeline__show-all",
+    ".hiring__tab",
+    ".hiring__cta-link",
+    "[data-tap-scale]",
+  ];
+  var ROW_SELECTORS = [
+    ".overview-row",
     ".step__head",
     ".brain-row__head",
     ".tools-row__head",
-    ".hiring__tab",
-    ".hero__skip",
-    ".hiring__cta-link",
-    "[data-tap-scale]",
-  ].join(",");
+  ];
+  var SELECTOR = BUTTON_SELECTORS.concat(ROW_SELECTORS).join(",");
+  var BUTTON_SELECTOR = BUTTON_SELECTORS.join(",");
 
   var SPRING = { stiffness: 400, damping: 25 };
-  var SCALE_TAP = 0.92;
+  /* Scale halved from 0.92 → 0.96 per owner feedback — prior value read as
+     cartoony. Rows skip scale entirely (handled in onPointerDown). */
+  var SCALE_TAP = 0.96;
   var SCALE_REST = 1;
   var DURATION_CAP_MS = 220;
 
@@ -91,24 +102,21 @@
   function onPointerDown(e) {
     var el = e.currentTarget;
     if (!el) return;
-    /* Yellow flash via CSS attribute toggle (120ms). */
-    el.setAttribute("data-tap-flash", "");
-    el.setAttribute("data-tap-flash-active", "true");
-    /* Press scale via spring. */
-    springScale(el, SCALE_REST, SCALE_TAP);
+    var isButton = el.matches(BUTTON_SELECTOR);
+    /* Press scale via spring (buttons only — rows stay still). */
+    if (isButton) {
+      springScale(el, SCALE_REST, SCALE_TAP);
+    }
     el.setAttribute("data-tap-active", "true");
 
     function release() {
       el.removeEventListener("pointerup", release);
       el.removeEventListener("pointercancel", release);
       el.removeEventListener("pointerleave", release);
-      /* Flash fade-out. CSS transitions opacity 0 over 120ms. */
-      setTimeout(function () {
-        el.removeAttribute("data-tap-flash-active");
-      }, 120);
       el.removeAttribute("data-tap-active");
-      /* Release scale. */
-      springScale(el, SCALE_TAP, SCALE_REST);
+      if (isButton) {
+        springScale(el, SCALE_TAP, SCALE_REST);
+      }
     }
 
     el.addEventListener("pointerup", release);
