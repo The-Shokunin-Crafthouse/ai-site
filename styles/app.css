@@ -2438,11 +2438,14 @@ html, body { overflow-x: clip; }
 
 @media (max-width: 767px) {
   /* Audit reconciliation 2026-05-22 — Figma OverviewRow/Head py 22, gap 14.
-     Number: Inter Light(300) 18/24 quiet. Heading: Inter SemiBold 18/24
-     heading. Subcopy on expand: Inter Regular 13/19 body. */
+     Content column: flex-col gap 6 between heading + crumbs/lede. Subcopy
+     (.overview-row__lede) on expand: 13/19 body, 8px gap from heading. */
   .overview-row {
     column-gap: var(--space-3-5);            /* 14px */
     padding-block: 22px;
+  }
+  .overview-row__main {
+    gap: var(--space-1-5);                   /* 6 between heading + crumbs */
   }
   .overview-row__index {
     font-size: 18px;
@@ -2460,6 +2463,8 @@ html, body { overflow-x: clip; }
     font-size: 13px;
     line-height: 19px;
     color: var(--fg-secondary);
+    /* Parent gap = 6; add 2px margin so lede sits 8 below heading per Figma. */
+    margin-top: var(--space-0-5);            /* 2 + parent gap 6 = 8 */
   }
 }
 
