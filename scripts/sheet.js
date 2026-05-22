@@ -205,18 +205,32 @@
       sheet.appendChild(titleRow);
     }
 
-    if (bodyHTML) {
-      var body = document.createElement("div");
-      body.className = "sheet__body";
-      body.innerHTML = bodyHTML;
-      sheet.appendChild(body);
-    }
+    /* Body + stats grouped under .sheet__body-section per Figma
+       148:8260 / 148:7766. Section gap = 32 (Figma --space-8). Stats
+       sub-group gets only a top divider — Figma shows top + bottom but
+       owner direction 2026-05-22 removes the bottom horizontal line. */
+    if (bodyHTML || statsHTML) {
+      var section = document.createElement("div");
+      section.className = "sheet__body-section";
 
-    if (statsHTML) {
-      var stats = document.createElement("ul");
-      stats.className = "sheet__stats";
-      stats.innerHTML = statsHTML;
-      sheet.appendChild(stats);
+      if (bodyHTML) {
+        var body = document.createElement("div");
+        body.className = "sheet__body";
+        body.innerHTML = bodyHTML;
+        section.appendChild(body);
+      }
+
+      if (statsHTML) {
+        var statsGroup = document.createElement("div");
+        statsGroup.className = "sheet__stats-group";
+        var stats = document.createElement("ul");
+        stats.className = "sheet__stats";
+        stats.innerHTML = statsHTML;
+        statsGroup.appendChild(stats);
+        section.appendChild(statsGroup);
+      }
+
+      sheet.appendChild(section);
     }
 
     document.body.appendChild(sheet);
@@ -360,14 +374,22 @@
       });
       statsList.remove();
     }
-    /* d-media excluded from mobile sheet per resolution log 2026-05-21.
-       Desktop inline expansion only — no further action needed here. */
+    /* Extract the SVG illustration from the d-media block — Figma sheets
+       (148:7762 / 148:8253) render the brain SVG at 32px next to the title.
+       Take only the inner <svg> so the wrapper styling (positioning,
+       background) stays out of the sheet. */
     var media = scratch.querySelector("[data-tpl-media]");
-    if (media) media.remove();
+    var iconHTML = "";
+    if (media) {
+      var svg = media.querySelector("svg");
+      if (svg) iconHTML = svg.outerHTML;
+      media.remove();
+    }
     return {
       title: titleEl ? titleEl.textContent.trim() : "",
       bodyHTML: scratch.innerHTML.trim(),
       statsHTML: statsHTML,
+      iconHTML: iconHTML,
     };
   }
 
