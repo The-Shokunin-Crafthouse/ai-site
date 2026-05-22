@@ -51,15 +51,15 @@ Use SPEC.md as the authority on what content is correct and in scope. If any app
 
 ## STEP 3 — READ THE UPDATED MARKDOWN
 
-Read `content/site-content-audit.md`. This is the source of truth for what the site should say.
-
-Cross-reference the files listed under `## Files Modified` in the handoff against `content/site-content-audit.md` to confirm the approved changes match the audit. If the handoff diverges from the audit, flag the discrepancy before proceeding.
-
-For `site-content-audit`: the file is versioned as `site-content-audit-v[N].md` in `content/`. Always read the highest-numbered version (e.g. if `content/` contains `site-content-audit-v1.md`, `site-content-audit-v2.md`, `site-content-audit-v3.md`, read v3). The highest version is the current source of truth; older versions are historical.
+The site content audit is versioned as `content/site-content-audit-v[N].md`. Always read the highest-numbered version — that is the current source of truth. Older versions in `content/` and `_archive/` are historical.
 
 ```bash
 ls content/site-content-audit-v*.md | sort -V | tail -n 1
 ```
+
+Read that file. It is the source of truth for what the site should say.
+
+Cross-reference the files listed under `## Files Modified` in the handoff against the same `site-content-audit-v[N].md` to confirm the approved changes match the audit. The handoff should reference the new versioned filename in its `## Files Modified` list — if it still references an unversioned `site-content-audit.md`, or a lower version than the current highest, flag the discrepancy before proceeding.
 
 ---
 
