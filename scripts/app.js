@@ -39,30 +39,61 @@
       }
     }
 
-    // (2) Slide in 2.2s after load — last beat in the page-load cascade.
-    // Mirrors --load-toggle-delay in styles/tokens.css; keep in sync.
-    window.setTimeout(function () {
-      toggle.setAttribute("data-toggle-shown", "true");
-    }, 2200);
-
-    // (3) Past one viewport: collapse the "Dark Mode" label (pill slides over)
+    // (2) Reveal trigger — diverges by viewport.
+    //   Desktop: slide in 2.2s after load (page-load cascade beat).
+    //   Mobile:  slide in on first user interaction; 5s after that, collapse
+    //            the "Dark Mode" label. Avoids competing with hero on load.
+    //   Animation specs are owned by CSS (var(--dur-figma-slide), 1280ms)
+    //   and are untouched here — JS only flips the data attributes.
+    const mqMobile = window.matchMedia("(max-width: 767px)");
     let labelHidden = false;
-    const onScrollLabel = function () {
+    const collapseLabel = function () {
       if (labelHidden) return;
-      if (window.scrollY > window.innerHeight) {
-        labelHidden = true;
-        toggle.setAttribute("data-toggle-label-hidden", "true");
-        window.removeEventListener("scroll", onScrollLabel);
-      }
+      labelHidden = true;
+      toggle.setAttribute("data-toggle-label-hidden", "true");
     };
-    window.addEventListener("scroll", onScrollLabel, { passive: true });
 
-    // (4) Footer-aware bottom positioning. Mobile baseline lifts above the
-    // bottom tab bar (live site has no tab bar; ai-site mobile does).
+    if (mqMobile.matches) {
+      let shown = false;
+      const reveal = function () {
+        if (shown) return;
+        shown = true;
+        toggle.setAttribute("data-toggle-shown", "true");
+        // Collapse the text label 5s after first reveal.
+        window.setTimeout(collapseLabel, 5000);
+        // Detach all interaction listeners now that we've fired.
+        window.removeEventListener("scroll", reveal);
+        window.removeEventListener("touchstart", reveal);
+        window.removeEventListener("pointerdown", reveal);
+        window.removeEventListener("click", reveal);
+        window.removeEventListener("keydown", reveal);
+      };
+      window.addEventListener("scroll", reveal, { passive: true });
+      window.addEventListener("touchstart", reveal, { passive: true });
+      window.addEventListener("pointerdown", reveal, { passive: true });
+      window.addEventListener("click", reveal);
+      window.addEventListener("keydown", reveal);
+    } else {
+      window.setTimeout(function () {
+        toggle.setAttribute("data-toggle-shown", "true");
+      }, 2200);
+      // Desktop label-collapse heuristic preserved: past one viewport scrolled.
+      const onScrollLabel = function () {
+        if (labelHidden) return;
+        if (window.scrollY > window.innerHeight) {
+          collapseLabel();
+          window.removeEventListener("scroll", onScrollLabel);
+        }
+      };
+      window.addEventListener("scroll", onScrollLabel, { passive: true });
+    }
+
+    // (4) Footer-aware bottom positioning. Mobile + desktop both rest 24px
+    // above the viewport bottom; footer rect lift kept in case the toggle
+    // would otherwise overlap .page-footer. Tabbar is gone on mobile per
+    // §6.1, so the prior 88px mobile baseline is no longer needed.
     let rafId = 0;
-    const getBase = function () {
-      return window.matchMedia("(max-width: 767px)").matches ? 88 : 24;
-    };
+    const getBase = function () { return 24; };
     const updateBottom = function () {
       rafId = 0;
       const base = getBase();
