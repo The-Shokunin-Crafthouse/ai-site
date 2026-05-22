@@ -1,6 +1,10 @@
 function initGrain() {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
+  // Tag the canvas so CSS can target it (sheet open/dismiss path hides
+  // the grain to avoid the GPU-compositing artifact that flashes a much
+  // heavier noise layer mid-transition behind the sheet's backdrop blur).
+  canvas.setAttribute('data-grain', '');
 
   canvas.style.cssText = [
     'position: fixed',

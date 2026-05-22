@@ -135,6 +135,8 @@
     window.scrollTo(0, lockedScrollY);
     document.removeEventListener("keydown", onKey);
     document.removeEventListener("click", onOutsideClick, true);
+    /* Sheet is fully gone — let the grain canvas paint again. */
+    document.documentElement.removeAttribute("data-sheet-open");
   }
 
   function onKey(e) { if (e.key === "Escape") closeSheet(); }
@@ -263,6 +265,12 @@
         onComplete: function () { activeAnim = null; setSnapState("initial"); },
       });
     });
+
+    /* Tell the rest of the page a sheet is mounted so the grain canvas
+       (and anything else that would mis-render behind the sheet's
+       backdrop blur) can opt out of painting until the sheet is fully
+       gone. Cleared in finalizeClose. */
+    document.documentElement.setAttribute("data-sheet-open", "true");
 
     /* Lock background scroll while the sheet is open. iOS Safari ignores
        body { overflow: hidden } in many cases, so also pin position +

@@ -3250,6 +3250,15 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
    backdrop blur, plus z-stack high enough to cover the theme toggle
    (z-nav 20) and the grain canvas (z 9999). Replaces the prior
    "no overlay" decision from resolution log 2026-05-21. */
+
+/* Hide grain while a sheet is mounted. iOS Safari's GPU compositor
+   re-rasterizes the noise canvas with a much heavier alpha during the
+   overlay's backdrop-blur transition (mid-dismiss). Cleanest fix is to
+   take the grain out of paint for the sheet's full lifecycle — open
+   through finalize-close — and restore it after. */
+html[data-sheet-open="true"] canvas[data-grain] {
+  opacity: 0 !important;
+}
 .sheet-overlay {
   position: fixed;
   inset: 0;
