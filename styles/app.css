@@ -344,16 +344,26 @@ body {
    mobile per audit (Figma `Hero/CTAs gap: 0`). */
 .hero__copy { max-width: 600px; min-width: 0; }
 @media (max-width: 767px) {
+  /* Figma 142:5608 Hero/Copy spacing (mobile):
+       eyebrow → heading-group: 24
+       heading-group internal:    8
+       heading-group → CTAs:      24
+     Live markup is flat (no wrapping group), so the parent flex gap of
+     24 applies between all 4 children. Negative margin-top on .hero__subline
+     pulls it 16 closer to .hero__headline so the effective gap = 24 - 16 = 8. */
   .hero__copy {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
+    gap: var(--space-6);                                 /* 24 between sibling rows */
   }
   .hero__copy > .hero__eyebrow,
   .hero__copy > .hero__subline,
   .hero__copy > .hero__actions { margin-bottom: 0; }
+  .hero__copy > .hero__subline {
+    margin-top: calc(var(--space-2) - var(--space-6));   /* -16 → effective 8px */
+  }
   .hero__actions { gap: 0; }
-  /* Mobile headline + subtext typography reconciliation (Figma 142:4357).
+  /* Mobile headline + subtext typography (Figma 142:4357 / 142:5608).
      Heading 28/35 -0.28; subtext 16/24 -0.16. Desktop unchanged. */
   .hero__headline {
     font-size: 28px;
