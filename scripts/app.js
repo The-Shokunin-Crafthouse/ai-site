@@ -55,7 +55,10 @@
 
     if (mqMobile.matches) {
       let shown = false;
-      const reveal = function () {
+      const trustedReveal = function (e) {
+        // Require event.isTrusted — synthetic events (e.g. some browser
+        // gesture-handler stubs) shouldn't count.
+        if (e && e.isTrusted === false) return;
         if (shown) return;
         shown = true;
         toggle.setAttribute("data-toggle-shown", "true");
@@ -63,36 +66,39 @@
         window.setTimeout(collapseLabel, 5000);
         // Detach all interaction listeners now that we've fired.
         window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("touchstart", reveal);
-        window.removeEventListener("pointerdown", reveal);
-        window.removeEventListener("click", reveal);
-        window.removeEventListener("keydown", reveal);
+        window.removeEventListener("touchstart", trustedReveal);
+        window.removeEventListener("pointerdown", trustedReveal);
+        window.removeEventListener("click", trustedReveal);
+        window.removeEventListener("keydown", trustedReveal);
       };
-      // Filter spurious scroll events fired by Safari on layout settle /
-      // scroll restoration. Require an actual scroll delta of >= 8px from
-      // whatever Y position the page rests at when listeners attach.
+      // iOS Safari fires `scroll` events as the address bar slides during
+      // page load — easily 30-50px of delta. Require a much larger delta
+      // (60px) to count as user-initiated.
       let startY = window.scrollY;
-      const onScroll = function () {
-        if (Math.abs(window.scrollY - startY) < 8) return;
-        reveal();
+      const SCROLL_THRESHOLD = 60;
+      const onScroll = function (e) {
+        if (Math.abs(window.scrollY - startY) < SCROLL_THRESHOLD) return;
+        trustedReveal(e);
       };
-      // Defer listener attachment one frame past `load` so any browser-fired
-      // scroll-restore events have already settled and won't trigger reveal.
+      // Defer listener attachment 1s past `load` so the address-bar slide,
+      // layout-settle scroll-restore events, and any auto-fired pointer
+      // events have all flushed before we start listening.
       const attach = function () {
         // Re-baseline startY at attach time.
         startY = window.scrollY;
         window.addEventListener("scroll", onScroll, { passive: true });
-        window.addEventListener("touchstart", reveal, { passive: true });
-        window.addEventListener("pointerdown", reveal, { passive: true });
-        window.addEventListener("click", reveal);
-        window.addEventListener("keydown", reveal);
+        window.addEventListener("touchstart", trustedReveal, { passive: true });
+        window.addEventListener("pointerdown", trustedReveal, { passive: true });
+        window.addEventListener("click", trustedReveal);
+        window.addEventListener("keydown", trustedReveal);
+      };
+      const startAttachTimer = function () {
+        window.setTimeout(attach, 1000);
       };
       if (document.readyState === "complete") {
-        window.requestAnimationFrame(attach);
+        startAttachTimer();
       } else {
-        window.addEventListener("load", function () {
-          window.requestAnimationFrame(attach);
-        }, { once: true });
+        window.addEventListener("load", startAttachTimer, { once: true });
       }
     } else {
       window.setTimeout(function () {
