@@ -683,10 +683,10 @@ html, body { overflow-x: clip; }
   display: inline-block;
 }
 
-/* ===== Card mobile reconciliation (audit 2026-05-22) =====
-   Figma 142:5607 Card/Overview/01..04. Number + Title sit inline on the
-   same row (Figma `Frame 22` 287×24 with 21px gap), summary on row 2,
-   CTA on row 3. Achieved via CSS grid — no HTML change. */
+/* ===== Card mobile reconciliation (Figma 149:8751 Card/Overview/01) =====
+   Layout: grid with number+title inline on row 1, body on row 2, CTA on
+   row 3. Card body = flex column; outer gap 10 between content frame and
+   CTA; content frame gap 4 between title-row and body. */
 @media (max-width: 767px) {
   /* Cards/Stack mobile: pt 8 pb 24, px 24, gap 16 per Figma. */
   .overview-row__open > .cards {
@@ -700,41 +700,62 @@ html, body { overflow-x: clip; }
       "idx  title"
       "sum  sum"
       "cta  cta";
-    column-gap: 4px;                                  /* number ↔ title 21-17=4 visible */
-    row-gap: var(--space-1);                          /* 4 between head row and summary */
+    column-gap: 4px;                                  /* number ↔ title */
+    row-gap: 4px;                                     /* 4 inside content frame */
     align-items: baseline;
     padding: 18px 20px;
     border-radius: 12px;
   }
+  /* Dark card surface (Figma 149:8751): solid #121110 fill, no border,
+     overflow:clip. Applies to every card in the expanded stack — no
+     active/inactive distinction in this frame. Overrides the global
+     §4.6 state machine on mobile so all states (default, .is-open,
+     .is-tapping) stay filled. Tap state still wins the 2px yellow
+     border via the data-tap-active rule above. */
+  .dark .card,
+  .dark .card.is-open,
+  .dark .card.is-tapping,
+  .dark .card[data-tap-active="true"] {
+    background: var(--bg-card-dark);                  /* #121110 */
+    border-color: transparent;
+    overflow: clip;
+  }
+  .dark .card[data-tap-active="true"] {
+    border-color: var(--accent-primary);              /* 2px yellow on tap, set above */
+  }
   .card__index {
     grid-area: idx;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 18px;
     font-weight: 300;                                 /* Inter Light */
     letter-spacing: 0;
-    color: var(--fg-quiet);
+    color: var(--fg-muted);                           /* Figma semantic/text/quiet hex */
   }
   .card__title {
     grid-area: title;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 24px;
     font-weight: var(--font-semibold);
-    margin-left: 4px;                                 /* slight offset to match Figma 21-17 cursor */
+    margin-left: 0;
   }
   .card__summary {
     grid-area: sum;
     font-size: 13px;
     line-height: 19px;
-    margin-top: var(--space-1);                       /* 4 below head row */
+    margin-top: 0;                                    /* parent row-gap handles 4 */
   }
   .card__cta {
     grid-area: cta;
     gap: 6px;
-    margin-top: 10px;
+    margin-top: 6px;                                  /* outer gap 10 = 4 row + 6 mt */
     color: var(--text-accent);
     font-size: 13px;
     line-height: 18px;
+    overflow: clip;
   }
+  /* "Open" label = 13/Medium; arrow = 14/Regular per Figma. The base
+     .card__cta size 13 already covers "Open"; bump the arrow specifically. */
+  .card__cta svg,
   .card__cta .icon {
     width: 14px;
     height: 14px;
