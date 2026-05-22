@@ -61,13 +61,16 @@
   /* Color — light */
   --bg-base: #e0dfdc;
   --bg-nav: var(--bg-base);
-  --bg-subtle: #ebeae6;
+  /* Light bg-subtle aligns with Figma semantic/bg/card (#ebeae7). Used by
+     overview cards + gates panel in light mode. Audit pass 2026-05-22. */
+  --bg-subtle: #ebeae7;
   --bg-recessed: #ebeae6;
   --bg-surface-2: #edebe8;
   --bg-surface-3: #e4e1dd;
   --bg-inverse: #21201c;
   --fg-primary: #21201c;
-  --fg-secondary: #5b5957;
+  /* Figma semantic/text/body light = #595959. Audit pass 2026-05-22. */
+  --fg-secondary: #595959;
   --fg-tertiary: #7d7d77;
   --fg-quiet: #9c9997;
   --fg-muted: #9b9997;
@@ -76,12 +79,15 @@
   --fg-link: var(--accent-primary);
   --fg-tag: #c1b29c;
 
-  /* Workflow step badge colors — Figma 54:7438 step meta pills, mapped to
-     semantic/text/* variables (dark composite is canonical).
-     "You do" → body · "Prompt Claude" → link · "You + Claude" → accent. */
-  --badge-you: #595959;     /* light: text/body */
-  --badge-prompt: #8e7d65;  /* light: text/link */
-  --badge-mixed: #c8893f;   /* light: text/accent */
+  /* Workflow step badge colors — audit pass 2026-05-22 maps these to
+     Figma semantic/text/* values directly:
+       "You do"        → semantic/text/heading
+       "Prompt Claude" → semantic/text/accent
+       "You + Claude"  → semantic/text/accent (richer hue)
+     Light/dark swap via .dark scope below. */
+  --badge-you: #21201c;     /* light: text/heading */
+  --badge-prompt: #a67c42;  /* light: text/accent */
+  --badge-mixed: #c8893f;   /* light: text/accent (richer) */
 
   /* Prompt code body color — Figma 54:7438 / 55:9113 (CC Prompt). */
   --prompt-code-fg: #5b5b5a;
@@ -102,9 +108,9 @@
   --bg-callout: #ebeae6;
 
   /* Overview card surface (Section 1 — "The system, in 90 seconds" 4 cards).
-     Light: warm light surface above --bg-base. Dark: transparent so the
+     Light: matches Figma semantic/bg/card #ebeae7. Dark: transparent so the
      card reads against --bg-base without a separate plane. */
-  --bg-card: #ebeae6;
+  --bg-card: #ebeae7;
   --fg-on-accent: #21201c;
   --border-subtle: #d4d0ca;
   --border-button: var(--border-subtle);
@@ -271,6 +277,17 @@
 
   /* Active/tapped card dark surface — §4.6 resolved, cascades to desktop. */
   --bg-card-dark: #121110;
+
+  /* Gates container dark fill — audit resolution 2026-05-22. Reuses the
+     same hex as --bg-card-dark; kept as a distinct semantic alias so a
+     future divergence doesn't have to fan-out across both components. */
+  --bg-gates-dark: var(--bg-card-dark);
+
+  /* Semantic text/accent — distinct from --fg-accent (#ca4541, the warm-red
+     used for required tags). text/accent is the warm-brown highlight used
+     on hiring eyebrow, prompt badge, card CTA, etc.
+     Light: Figma semantic/text/accent #a67c42. Dark: #8e7d65. */
+  --text-accent: #a67c42;
 }
 
 @media (min-width: 768px) {
@@ -305,26 +322,30 @@
    text/heading: #d0ceca · text/body: #98938d · text/quiet, text/muted: #545352
    action/primary: #daff60 */
 .dark {
-  --bg-base: #0e0c0b;
-  --bg-nav: #0e0c0b;
-  --bg-subtle: #0e0c0b;
+  /* Figma semantic/bg/page dark = #0d0c0b. Audit pass 2026-05-22 corrects
+     all dark surfaces that previously sat at #0e0c0b to the canonical value. */
+  --bg-base: #0d0c0b;
+  --bg-nav: #0d0c0b;
+  --bg-subtle: #0d0c0b;
   --bg-recessed: #080707;
   --bg-callout: #121110;
-  --bg-surface-2: #0e0c0b;
-  --bg-surface-3: #0e0c0b;
+  --bg-surface-2: #0d0c0b;
+  --bg-surface-3: #0d0c0b;
   --bg-inverse: #fdfdfc;
   --fg-primary: #d0ceca;
   --fg-secondary: #98938d;
   --fg-tertiary: #545352;
-  --fg-quiet: #545352;
+  /* Figma semantic/text/quiet dark = #3d3c3b — distinct from text/muted. */
+  --fg-quiet: #3d3c3b;
   --fg-muted: #545352;
   --fg-footer: #98938d;
   --fg-link: var(--accent-primary);
   --fg-tag: #8e7d65;
-  /* Per Figma 54:7438 semantic/text/* variables (dark composite). */
-  --badge-you: #98938d;     /* text/body */
-  --badge-prompt: #c1b29c;  /* text/link */
-  --badge-mixed: #8e7d65;   /* text/accent */
+  /* Audit pass 2026-05-22 — badges follow Figma semantic/text/* dark values.
+     "You do" → heading · "Prompt Claude" → accent · "You + Claude" → link. */
+  --badge-you: #d0ceca;     /* text/heading */
+  --badge-prompt: #8e7d65;  /* text/accent */
+  --badge-mixed: #c1b29c;   /* text/link */
   --prompt-code-fg: #5b5b5a;
   --fg-on-accent: #0e0c0b;
   --border-subtle: #1c1a18;
@@ -356,4 +377,7 @@
   --sheet-handle-color: var(--fg-secondary); /* #98938d */
   --sheet-stats-divider: #1c1a18;            /* dark */
   --sheet-stats-label: var(--fg-tertiary);
+
+  /* Semantic text/accent dark — Figma #8e7d65. */
+  --text-accent: #8e7d65;
 }
