@@ -17,6 +17,11 @@
   <script>
     (function () {
       try {
+        // Disable browser scroll restoration so every reload starts at the
+        // top of the page. Unrelated to the HTTP cache headers in .htaccess;
+        // this controls history.scrollRestoration, not file freshness.
+        if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
         var params = new URLSearchParams(window.location.search);
         var modeParam = params.get("mode");
         if (modeParam === "light" || modeParam === "dark") {
