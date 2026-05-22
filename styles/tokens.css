@@ -280,7 +280,7 @@
      the dark scale across both modes (design choice, preserve). */
   --sheet-stats-divider: var(--border-subtle); /* light: #d4d0ca */
   --sheet-stats-num: #d0ceca;                  /* both modes */
-  --sheet-stats-label: var(--fg-tertiary);
+  --sheet-stats-label: var(--text-accent);     /* gold/warm — Figma semantic/text/accent */
 
   /* Active/tapped card dark surface — §4.6 resolved, cascades to desktop. */
   --bg-card-dark: #121110;
@@ -381,7 +381,7 @@
      sheet has no scrim — resolution log 2026-05-21). */
   --sheet-handle-color: var(--fg-secondary); /* #98938d */
   --sheet-stats-divider: #1c1a18;            /* dark */
-  --sheet-stats-label: var(--fg-tertiary);
+  --sheet-stats-label: var(--text-accent);   /* gold/warm dark — #8e7a65 */
 
   /* Sheet title icon — Figma 150:11123 dark. Primary overrides to
      #2B2722 (deep warm brown). Semantic --fg-icon-sheet alias inherits. */
