@@ -2372,17 +2372,23 @@ html, body { overflow-x: clip; }
 }
 
 /* ===== Page footer (Figma 57:11700) — centered breadcrumb + © year.
-   Figma spec: full width, py 24, gap 32 between crumb and copy, no h-padding,
-   crumb segments separated by → at fg-quiet, body-sm tracking. */
+   Audit pass 2026-05-22:
+   - padding: 24 all sides (was 24/0)
+   - gap: 16 (was 32)
+   - font: 11/14 (was --text-body-sm 12/19.5)
+   - crumb color: --fg-tertiary (= Figma text/muted)
+   - arrows: --fg-quiet (unchanged)
+   - copyright: --fg-quiet
+   Mobile + desktop both follow Figma footer spec — applied globally. */
 .page-footer {
-  padding: var(--space-6) 0;
+  padding: var(--space-6);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: var(--space-8);
+  gap: var(--space-4);
   margin: 0 auto;
-  color: var(--fg-secondary);
+  color: var(--fg-tertiary);
 }
 .page-footer__crumb {
   margin: 0;
@@ -2390,16 +2396,15 @@ html, body { overflow-x: clip; }
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-2);
-  font-size: var(--text-body-sm-size);
-  line-height: var(--text-body-sm-line);
-  letter-spacing: var(--tracking-body-sm);
+  font-size: 11px;
+  line-height: 14px;
 }
 .page-footer__sep { color: var(--fg-quiet); }
 .page-footer__copy {
   margin: 0;
-  font-size: var(--text-body-sm-size);
-  line-height: var(--text-body-sm-line);
-  color: var(--fg-secondary);
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--fg-quiet);
   font-feature-settings: "tnum";
 }
 
