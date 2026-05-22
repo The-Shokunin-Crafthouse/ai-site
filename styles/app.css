@@ -3400,6 +3400,7 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   color: var(--fg-primary);                         /* heading, both modes */
   letter-spacing: -0.34px;
   width: 100%;
+  text-align: center;
 }
 .sheet__stat-label {
   font-family: var(--font-body);
@@ -3409,6 +3410,7 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   letter-spacing: -0.12px;
   color: var(--sheet-stats-label);                  /* text/muted */
   width: 100%;
+  text-align: center;
 }
 
 /* Sheet body — audit pass 2026-05-22 supersedes the earlier two-state
