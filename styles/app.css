@@ -676,6 +676,13 @@ html, body { overflow-x: clip; }
    Figma 142:4375–142:4396 — Card/Overview/01..04. Mobile-only overrides;
    desktop card spec untouched. */
 @media (max-width: 767px) {
+  /* Cards/Stack mobile: pt 8 pb 24, px 24, gap 16 per Figma. The parent
+     .overview-row__open already supplies px 24 + pb 48 — override here
+     to land the per-Figma values on the cards container specifically. */
+  .overview-row__open > .cards {
+    padding-block: var(--space-2) var(--space-6);    /* 8 / 24 */
+    gap: var(--space-4);                              /* 16 — matches existing default but explicit on mobile */
+  }
   .card {
     padding: 18px 20px;
     gap: 10px;
