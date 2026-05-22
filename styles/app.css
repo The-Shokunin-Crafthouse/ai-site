@@ -729,14 +729,22 @@ html, body { overflow-x: clip; }
   }
   .card__index {
     grid-area: idx;
+    /* Explicit font-family — defends against inheritance from a stale
+       class chain (some elements default to system-ui via font: inherit). */
+    font-family: "Inter", system-ui, sans-serif;
     font-size: 16px;
     line-height: 18px;
     font-weight: 300;                                 /* Inter Light */
+    /* Pin the variable font's wght axis explicitly so Safari iOS picks
+     the same interpolation Figma renders (rather than synthesising
+     bold from a heavier master). */
+    font-variation-settings: "wght" 300;
     letter-spacing: 0;
     color: var(--fg-muted);                           /* Figma semantic/text/quiet hex */
-    /* Override base "tnum" — Figma uses proportional figures so the "1"
-       reads as a narrow stroke instead of a fixed-width slot. */
-    font-feature-settings: "lnum", "pnum";
+    /* Disable all OpenType features inherited from desktop (tnum etc).
+     Default Inter is proportional + lining — what Figma uses. */
+    font-feature-settings: normal;
+    font-variant-numeric: normal;
   }
   .card__title {
     grid-area: title;
