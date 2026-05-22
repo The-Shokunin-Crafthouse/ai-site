@@ -796,18 +796,14 @@ html, body { overflow-x: clip; }
 }
 .timeline__toolbar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: var(--space-4);
   margin-bottom: var(--space-4);
   padding-bottom: 0;
-  /* Single divider on .steps top-border handles the visual rule. */
-}
-@media (min-width: 768px) {
-  .timeline__toolbar {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
+  /* Single divider on .steps top-border handles the visual rule.
+     Mobile + desktop both use a single-row layout per Figma 150:10319. */
 }
 .timeline__actions { display: flex; gap: var(--space-3); }
 .timeline__btn,
@@ -973,8 +969,13 @@ html, body { overflow-x: clip; }
     font-size: 11px;
     line-height: 14px;
     color: var(--fg-quiet);
+    gap: var(--space-2);                          /* 8 between label + bar */
   }
-  .timeline__progress-bar { height: 4px; border-radius: var(--radius-xs); }
+  .timeline__progress-bar {
+    width: 80px;                                  /* shrink on mobile per owner */
+    height: 4px;
+    border-radius: var(--radius-xs);
+  }
   /* Mobile step row — Figma:
      - top divider 1px var(--border-subtle), padding-block 18
      - flex row: num (left, top-aligned) + main (flex-col gap 8)
