@@ -315,9 +315,9 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  /* Mobile py-40 per Figma 142:4357 (MOBILE-UPDATE-SPEC §1.1, approved 6.4).
-     Desktop keeps space-16 (64px) via the min-width:768px override below. */
-  padding-block: var(--space-10);
+  /* Mobile py-56 — Figma 40 + 16 owner-requested breathing room above
+     eyebrow and below CTA. Desktop keeps space-16 (64px). */
+  padding-block: calc(var(--space-10) + var(--space-4));
   position: relative;
 }
 @media (min-width: 768px) {
