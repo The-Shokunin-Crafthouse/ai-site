@@ -1814,6 +1814,46 @@ html, body { overflow-x: clip; }
   text-decoration-thickness: 1px;
 }
 
+/* ===== Hiring mobile reconciliation (audit 2026-05-22) =====
+   Figma 142:4698+ Section/Hiring. Mobile-only overrides; desktop spec
+   unchanged. */
+@media (max-width: 767px) {
+  .section--hiring {
+    padding-block: var(--space-12);             /* 48 */
+  }
+  .section--hiring .section__header {
+    margin-bottom: 28px;
+  }
+  .hiring__eyebrow {
+    font-size: 10px;
+    line-height: 14px;
+    font-weight: var(--font-semibold);
+    letter-spacing: 1.2px;
+    color: var(--text-accent);
+    margin-bottom: var(--space-3);              /* 12 */
+  }
+  .section--hiring .section__title {
+    font-size: 28px;
+    line-height: 34px;
+    letter-spacing: -1.12px;
+  }
+  .hiring__tab {
+    padding: 10px 16px;
+  }
+  .hiring__tab-size {
+    font-size: 11px;
+    line-height: 14px;
+    letter-spacing: 0.4px;
+    color: var(--fg-quiet);
+  }
+  .hiring__tab-label {
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: var(--font-semibold);
+    color: var(--fg-primary);
+  }
+}
+
 .hiring__role {
   font-family: var(--font-body);
   font-weight: var(--font-medium);
