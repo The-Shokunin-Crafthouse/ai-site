@@ -2915,9 +2915,10 @@ html, body { overflow-x: clip; }
    Eyebrow + lede use CSS transitions so the close fade can run before the
    drawer drops — driven by the .is-closing class set in JS.
    ============================================================ */
-.overview-row[aria-expanded="true"] .overview-row__title {
-  animation: overview-title-slide 720ms var(--ease-out-strong) both;
-}
+/* Title stays put on expand — owner direction 2026-05-22. Only the
+   new revealed content (lede + cards / step list / brain list / tools list)
+   animates in. Collapse path (.is-closing) is untouched and still uses
+   its own transition rules further down this file. */
 .overview-row[aria-expanded="true"] .overview-row__lede {
   animation: overview-lede-slide 720ms var(--ease-out-strong) 160ms both;
 }
