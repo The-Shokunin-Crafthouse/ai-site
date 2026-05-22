@@ -49,9 +49,11 @@
   if (!pm || !pm.animate) return;
 
   var activeSheet = null;
+  var activeOverlay = null;
   var activeAnim = null;
   var currentY = 0;
   var snapState = "initial";
+  var lockedScrollY = 0;
   /* Card-trigger element gets .is-open while its sheet is mounted. Cleared
      in finalizeClose. Resolution log 2026-05-21 §4.6 correction. */
   var activeTriggerCard = null;
@@ -109,13 +111,24 @@
 
   function finalizeClose() {
     if (activeSheet) activeSheet.remove();
+    if (activeOverlay) activeOverlay.remove();
     activeSheet = null;
+    activeOverlay = null;
     activeAnim = null;
     if (activeTriggerCard) {
       activeTriggerCard.classList.remove("is-open");
       activeTriggerCard = null;
     }
+    /* Restore scroll lock — clear all the pinning styles and re-anchor
+       scrollY where the user was before the sheet opened. */
+    document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    window.scrollTo(0, lockedScrollY);
     document.removeEventListener("keydown", onKey);
     document.removeEventListener("click", onOutsideClick, true);
   }
@@ -137,6 +150,20 @@
     var bodyHTML = opts.bodyHTML || "";
     var statsHTML = opts.statsHTML || "";
     var iconHTML = opts.iconHTML || "";
+
+    /* Full-viewport scrim under the sheet — site bg at 80% + 12px blur.
+       Created first so it sits below the sheet in DOM order; z-index in
+       CSS still establishes stacking. Activated next frame so the
+       opacity transition runs from 0 → 1. */
+    var overlay = document.createElement("div");
+    overlay.className = "sheet-overlay";
+    overlay.setAttribute("data-sheet-overlay", "");
+    document.body.appendChild(overlay);
+    activeOverlay = overlay;
+    requestAnimationFrame(function () {
+      if (activeOverlay) activeOverlay.setAttribute("data-active", "true");
+    });
+    overlay.addEventListener("click", closeSheet);
 
     var sheet = document.createElement("aside");
     sheet.className = "sheet";
@@ -209,7 +236,18 @@
       });
     });
 
+    /* Lock background scroll while the sheet is open. iOS Safari ignores
+       body { overflow: hidden } in many cases, so also pin position +
+       preserve scrollTop so the page doesn't jump to 0 on lock. */
+    lockedScrollY = window.scrollY;
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = -lockedScrollY + "px";
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+
     bindDrag(handleArea);
     bindDrag(sheet);
     document.addEventListener("keydown", onKey);

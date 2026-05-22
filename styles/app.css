@@ -3226,16 +3226,35 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
    transform animation happens via popmotion in JS (spring + inertia); CSS
    here covers static surface + initial off-screen state.
    ============================================================ */
-/* No overlay — Figma sheet frames have no scrim. Resolution log 2026-05-21.
-   Sheet slides directly over page content; outside-tap dismissal handled
-   by a transparent document-level click listener in sheet.js. */
+/* Sheet activation overlay — owner spec 2026-05-22.
+   Full-viewport scrim under the sheet at site bg / 80% opacity + 12px
+   backdrop blur, plus z-stack high enough to cover the theme toggle
+   (z-nav 20) and the grain canvas (z 9999). Replaces the prior
+   "no overlay" decision from resolution log 2026-05-21. */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: color-mix(in srgb, var(--bg-base) 80%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+.sheet-overlay[data-active="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
 
 .sheet {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: var(--z-overlay);
+  /* Sit above grain canvas (z 9999) and theme toggle (z-nav 20) — owner
+     spec 2026-05-22: sheet is always the topmost surface. */
+  z-index: 10001;
   width: 100vw;
   /* Max height = max snap visible-from-bottom value (660px per resolution log). */
   max-height: var(--sheet-snap-max);
