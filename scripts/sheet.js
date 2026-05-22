@@ -210,7 +210,6 @@
       }
       var h = document.createElement("h2");
       h.className = "sheet__title";
-      if (numberText) h.classList.add("sheet__title--compact");
       h.textContent = title;
       titleRow.appendChild(h);
       sheet.appendChild(titleRow);

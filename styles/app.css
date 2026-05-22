@@ -3358,29 +3358,18 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   flex-shrink: 0;
   color: var(--fg-icon-sheet);                        /* swaps via .dark */
 }
-/* Step-sheet variant — Figma 150:13513 / 150:13975. Number + title in
-   place of icon + title. No divider, no padding-bottom, smaller title. */
-.sheet__title-row--with-num {
-  border-bottom: 0;
-  padding-bottom: 0;
-  gap: var(--space-3);                                /* 12 between num + title */
-}
+/* Step-sheet variant — number takes the place of the icon. Owner
+   direction 2026-05-22: match the card-sheet title treatment exactly
+   (divider underneath, same display-scale type) with the number sized
+   to the title. */
 .sheet__num {
   font-family: var(--font-body);
-  font-weight: 300;                                   /* Inter Light, matches step head */
-  font-size: 18px;
-  line-height: 24px;
-  color: var(--fg-quiet);
-  letter-spacing: 0;
-  flex-shrink: 0;
-}
-.sheet__title--compact {
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: var(--font-semibold);
-  letter-spacing: 0;
+  font-weight: var(--font-regular);
+  font-size: 28px;
+  line-height: 38.8px;
+  letter-spacing: -0.28px;
   color: var(--fg-primary);
-  align-self: center;
+  flex-shrink: 0;
 }
 .sheet__title-icon svg {
   width: 100%;
