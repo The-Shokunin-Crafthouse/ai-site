@@ -979,14 +979,18 @@ Commit the updated file and push.</code></pre>
             </button>
           </div>
 
-          <!-- Approval gates table — standalone callout -->
+          <!-- Approval gates — desktop renders as a 3-col table, mobile as a
+               flat stacked list. The two trees are mutually-exclusive via
+               .gates__scroll[data-desktop-only] / .gates__list[data-mobile-only]
+               so each viewport sees the Figma-spec'd structure, not a
+               responsive reformat of a single tree. -->
           <aside id="gates" class="gates" aria-labelledby="gates-title">
             <header class="gates__head">
               <p class="gates__eyebrow">Four approval gates</p>
               <h3 id="gates-title" class="gates__title">Every gate is human. AI waits at each one.</h3>
-              <p class="gates__lede">From <code>studio-memory.md</code> §7. Gate failures stop the sprint. No exceptions.</p>
+              <p class="gates__lede" data-desktop-only>From <code>studio-memory.md</code> §7. Gate failures stop the sprint. No exceptions.</p>
             </header>
-            <div class="gates__scroll">
+            <div class="gates__scroll" data-desktop-only>
               <table class="gates__table">
                 <thead>
                   <tr>
@@ -1019,6 +1023,49 @@ Commit the updated file and push.</code></pre>
                 </tbody>
               </table>
             </div>
+            <!-- Mobile-only flat list — matches Figma 142:4522 Gates/Stack. -->
+            <ul class="gates__list" data-mobile-only>
+              <li class="gates__item">
+                <div class="gates__item-head">
+                  <span class="gates__item-num">01</span>
+                  <span class="gates__item-name">Concept</span>
+                </div>
+                <div class="gates__item-text">
+                  <p class="gates__item-after"><span class="gates__item-after-label">After:</span> Planner</p>
+                  <p class="gates__item-desc">Direction agreed, references aligned, scope written down.</p>
+                </div>
+              </li>
+              <li class="gates__item">
+                <div class="gates__item-head">
+                  <span class="gates__item-num">02</span>
+                  <span class="gates__item-name">Design</span>
+                </div>
+                <div class="gates__item-text">
+                  <p class="gates__item-after"><span class="gates__item-after-label">After:</span> Brand system in Figma</p>
+                  <p class="gates__item-desc">Type system resolved, tokens defined, responsive behavior specified at every breakpoint, motion principles stated.</p>
+                </div>
+              </li>
+              <li class="gates__item">
+                <div class="gates__item-head">
+                  <span class="gates__item-num">03</span>
+                  <span class="gates__item-name">Development</span>
+                </div>
+                <div class="gates__item-text">
+                  <p class="gates__item-after"><span class="gates__item-after-label">After:</span> Evaluator pass</p>
+                  <p class="gates__item-desc">All interaction states implemented, Core Web Vitals met, keyboard and screen-reader verified.</p>
+                </div>
+              </li>
+              <li class="gates__item">
+                <div class="gates__item-head">
+                  <span class="gates__item-num">04</span>
+                  <span class="gates__item-name">Delivery</span>
+                </div>
+                <div class="gates__item-text">
+                  <p class="gates__item-after"><span class="gates__item-after-label">After:</span> Production deploy</p>
+                  <p class="gates__item-desc">Staging review signed off, analytics live, error monitoring on, metadata and redirects confirmed.</p>
+                </div>
+              </li>
+            </ul>
           </aside>
         </div>
       </div>

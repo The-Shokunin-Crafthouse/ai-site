@@ -1100,15 +1100,89 @@ html, body { overflow-x: clip; }
 }
 .gates__table td { color: var(--fg-secondary); }
 
-/* ===== Gates mobile reconciliation (audit 2026-05-22) =====
-   Figma 142:4517+. Mobile-only overrides; desktop gates spec unchanged. */
+/* ===== Mobile-only flat gates list (Figma 142:4522 Gates/Stack) =====
+   Mutually exclusive with the desktop .gates__scroll table. Layout +
+   typography match Figma exactly; padding, gaps, borders, fonts all
+   spec-locked. */
+.gates__list { display: none; }                /* hidden on desktop */
+[data-mobile-only] { display: none; }          /* generic mobile-only opt-in */
 @media (max-width: 767px) {
+  [data-desktop-only] { display: none !important; }
+  [data-mobile-only] { display: block; }
+  .gates__list {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .gates__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);                       /* 8 between head and text */
+    padding-block: var(--space-4);             /* 16 */
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .gates__item:last-child { border-bottom: 0; }
+  .gates__item-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);                       /* 4 */
+  }
+  .gates__item-num {
+    font-weight: 300;                          /* Inter Light */
+    font-size: 16px;
+    line-height: 18px;
+    color: var(--fg-secondary);                /* text/body */
+  }
+  .gates__item-name {
+    font-weight: var(--font-semibold);
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--fg-primary);                  /* text/heading */
+  }
+  .gates__item-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);                       /* 4 between after + desc */
+  }
+  .gates__item-after,
+  .gates__item-desc {
+    margin: 0;
+    font-size: 12px;
+    line-height: 19.5px;
+  }
+  .gates__item-after {
+    color: var(--fg-secondary);                /* text/body for "Planner" etc */
+  }
+  .gates__item-after-label {
+    color: var(--fg-tertiary);                 /* text/muted for "After:" prefix */
+  }
+  .gates__item-desc {
+    color: var(--fg-secondary);                /* text/body */
+  }
+  /* Mobile gates container: 8 gap between label, heading, list */
+  .gates {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-4);
+  }
+  .gates__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: 0;
+  }
+  .gates__eyebrow,
+  .gates__title { margin-bottom: 0; }
   .gates__eyebrow {
     font-size: 10px;
-    line-height: 14px;
+    line-height: 19.5px;
     font-weight: var(--font-semibold);
     letter-spacing: 0.8px;
-    color: var(--fg-tertiary);                /* = Figma text/muted in light */
+    color: var(--fg-tertiary);                 /* = Figma text/muted in light */
   }
   .gates__title {
     font-weight: var(--font-semibold);
@@ -1116,16 +1190,6 @@ html, body { overflow-x: clip; }
     line-height: 24px;
     letter-spacing: 0;
   }
-  .gates__table th,
-  .gates__table td {
-    padding: var(--space-4) var(--space-4);
-  }
-  .gates__num {
-    margin-right: var(--space-1);
-    font-weight: 300;                          /* Inter Light */
-    color: var(--fg-secondary);
-  }
-  .gates__table tbody th { font-weight: var(--font-semibold); }
 }
 
 /* ===== Section 3 — Studio Brain rows (Figma 55:9391) =====
