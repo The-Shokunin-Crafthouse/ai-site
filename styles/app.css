@@ -18,27 +18,6 @@
   src: url("../fonts/Gentona_Light.woff2") format("woff2");
 }
 
-/* DIAGNOSTIC v2 — confirm Safari now sees fresh CSS post-.htaccess.
-   Tag the hero with a magenta border. Remove after sighting. */
-@media (max-width: 767px) {
-  .hero {
-    outline: 4px solid magenta !important;
-  }
-  .hero::before {
-    content: "FRESH CSS ✓";
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: magenta;
-    color: white;
-    font: 11px/1.4 system-ui;
-    padding: 2px 6px;
-    z-index: 99999;
-    border-radius: 4px;
-    pointer-events: none;
-  }
-}
-
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; }
 html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote { margin: 0; padding: 0; }
@@ -694,38 +673,51 @@ html, body { overflow-x: clip; }
 }
 
 /* ===== Card mobile reconciliation (audit 2026-05-22) =====
-   Figma 142:4375–142:4396 — Card/Overview/01..04. Mobile-only overrides;
-   desktop card spec untouched. */
+   Figma 142:5607 Card/Overview/01..04. Number + Title sit inline on the
+   same row (Figma `Frame 22` 287×24 with 21px gap), summary on row 2,
+   CTA on row 3. Achieved via CSS grid — no HTML change. */
 @media (max-width: 767px) {
-  /* Cards/Stack mobile: pt 8 pb 24, px 24, gap 16 per Figma. The parent
-     .overview-row__open already supplies px 24 + pb 48 — override here
-     to land the per-Figma values on the cards container specifically. */
+  /* Cards/Stack mobile: pt 8 pb 24, px 24, gap 16 per Figma. */
   .overview-row__open > .cards {
     padding-block: var(--space-2) var(--space-6);    /* 8 / 24 */
-    gap: var(--space-4);                              /* 16 — matches existing default but explicit on mobile */
+    gap: var(--space-4);                              /* 16 */
   }
   .card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "idx  title"
+      "sum  sum"
+      "cta  cta";
+    column-gap: 4px;                                  /* number ↔ title 21-17=4 visible */
+    row-gap: var(--space-1);                          /* 4 between head row and summary */
+    align-items: baseline;
     padding: 18px 20px;
-    gap: 10px;
     border-radius: 12px;
   }
   .card__index {
+    grid-area: idx;
     font-size: 14px;
     line-height: 18px;
-    font-weight: 300;            /* Inter Light */
+    font-weight: 300;                                 /* Inter Light */
     letter-spacing: 0;
     color: var(--fg-quiet);
   }
   .card__title {
+    grid-area: title;
     font-size: 18px;
     line-height: 24px;
     font-weight: var(--font-semibold);
+    margin-left: 4px;                                 /* slight offset to match Figma 21-17 cursor */
   }
   .card__summary {
+    grid-area: sum;
     font-size: 13px;
     line-height: 19px;
+    margin-top: var(--space-1);                       /* 4 below head row */
   }
   .card__cta {
+    grid-area: cta;
     gap: 6px;
     margin-top: 10px;
     color: var(--text-accent);
@@ -2465,15 +2457,22 @@ html, body { overflow-x: clip; }
    title midpoint — matches Figma 52:5535. */
 
 @media (max-width: 767px) {
-  /* Audit reconciliation 2026-05-22 — Figma OverviewRow/Head py 22, gap 14.
-     Content column: flex-col gap 6 between heading + crumbs/lede. Subcopy
-     (.overview-row__lede) on expand: 13/19 body, 8px gap from heading. */
+  /* Audit reconciliation 2026-05-22 — Figma 142:5607 (Dark expanded
+     mobile) OverviewRow/Head py 22, gap 14. NO crumbs in mobile
+     expanded state. Subcopy (.overview-row__lede) on expand: 13/19
+     body, 8px gap from heading. */
   .overview-row {
     column-gap: var(--space-3-5);            /* 14px */
     padding-block: 22px;
   }
   .overview-row__main {
-    gap: var(--space-1-5);                   /* 6 between heading + crumbs */
+    gap: var(--space-2);                     /* 8 between heading + lede */
+  }
+  /* Hide crumbs entirely on mobile (Figma 142:5610 expanded shows
+     no crumbs above heading — desktop continues to render them). */
+  .overview-row__crumbs,
+  .overview-row[aria-expanded="true"] .overview-row__crumbs {
+    display: none !important;
   }
   .overview-row__index {
     font-size: 18px;
@@ -2491,8 +2490,7 @@ html, body { overflow-x: clip; }
     font-size: 13px;
     line-height: 19px;
     color: var(--fg-secondary);
-    /* Parent gap = 6; add 2px margin so lede sits 8 below heading per Figma. */
-    margin-top: var(--space-0-5);            /* 2 + parent gap 6 = 8 */
+    margin-top: 0;
   }
 }
 
