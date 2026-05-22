@@ -58,23 +58,23 @@
   --tracking-eyebrow-strong: 0.96px;
   --tracking-body-sm: 0.5px;
 
-  /* Color — light */
-  --bg-base: #e0dfdc;
+  /* Color — light. Primary tokens reconciled with Figma color table
+     2026-05-22. Tokens not present in Figma table (--bg-recessed,
+     --bg-callout, --bg-card, --bg-prompt, --fg-quiet, etc.) kept at
+     prior values; only Figma-named primitives updated below. */
+  --bg-base: #e0ddda;
   --bg-nav: var(--bg-base);
-  /* Light bg-subtle aligns with Figma semantic/bg/card (#ebeae7). Used by
-     overview cards + gates panel in light mode. Audit pass 2026-05-22. */
-  --bg-subtle: #ebeae7;
+  --bg-subtle: #f5f1ee;
   --bg-recessed: #ebeae6;
-  --bg-surface-2: #edebe8;
-  --bg-surface-3: #e4e1dd;
-  --bg-inverse: #21201c;
+  --bg-surface-2: #ebe9e6;
+  --bg-surface-3: #e2e0dd;
+  --bg-inverse: #211f1c;
   --fg-primary: #21201c;
-  /* Figma semantic/text/body light = #595959. Audit pass 2026-05-22. */
-  --fg-secondary: #595959;
-  --fg-tertiary: #7d7d77;
+  --fg-secondary: #595856;
+  --fg-tertiary: #7d7a77;
   --fg-quiet: #9c9997;
-  --fg-muted: #9b9997;
-  --fg-footer: #62615a;
+  --fg-muted: #999794;
+  --fg-footer: #625e5a;
   /* Inline body-copy link color = the studio accent, not the platform blue. */
   --fg-link: var(--accent-primary);
   --fg-tag: #c1b29c;
@@ -120,7 +120,7 @@
   --hover-accent: #daff60;
   --hover-mint: #58f5d2;
   --hover-row: #f7f4f1;
-  --bg-tooltip: var(--bg-base);
+  --bg-tooltip: #fffefc;
   --fg-tooltip: #21201c;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.07);
   --decoration-fg-primary: rgba(33, 32, 28, 0.4);
@@ -322,23 +322,21 @@
    text/heading: #d0ceca · text/body: #98938d · text/quiet, text/muted: #545352
    action/primary: #daff60 */
 .dark {
-  /* Figma semantic/bg/page dark = #0d0c0b. Audit pass 2026-05-22 corrects
-     all dark surfaces that previously sat at #0e0c0b to the canonical value. */
+  /* Dark — primary tokens reconciled with Figma color table 2026-05-22. */
   --bg-base: #0d0c0b;
   --bg-nav: #0d0c0b;
-  --bg-subtle: #0d0c0b;
+  --bg-subtle: #1b1a18;
   --bg-recessed: #080707;
   --bg-callout: #121110;
-  --bg-surface-2: #0d0c0b;
-  --bg-surface-3: #0d0c0b;
-  --bg-inverse: #fdfdfc;
-  --fg-primary: #d0ceca;
+  --bg-surface-2: #23211f;
+  --bg-surface-3: #161513;
+  --bg-inverse: #fdfaf8;
+  --fg-primary: #d0cdca;
   --fg-secondary: #98938d;
-  --fg-tertiary: #545352;
-  /* Figma semantic/text/quiet dark = #3d3c3b — distinct from text/muted. */
+  --fg-tertiary: #545351;
   --fg-quiet: #3d3c3b;
-  --fg-muted: #545352;
-  --fg-footer: #98938d;
+  --fg-muted: #3d3c3b;
+  --fg-footer: #a09e9b;
   --fg-link: var(--accent-primary);
   --fg-tag: #8e7d65;
   /* Audit pass 2026-05-22 — badges follow Figma semantic/text/* dark values.
@@ -347,7 +345,7 @@
   --badge-prompt: #8e7d65;  /* text/accent */
   --badge-mixed: #c1b29c;   /* text/link */
   --prompt-code-fg: #5b5b5a;
-  --fg-on-accent: #0e0c0b;
+  --fg-on-accent: #100f0e;
   --border-subtle: #1c1a18;
   --border-strong: #d0ceca;
   --accent-primary: #daff60;
@@ -355,8 +353,8 @@
   --hover-mint: #58f5d2;
   --hover-row: #2a2522;
   --fg-accent: #ca4541;
-  --bg-tooltip: #d0ceca;
-  --fg-tooltip: #0e0c0b;
+  --bg-tooltip: #23211f;
+  --fg-tooltip: #eae9e8;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.35);
   --shadow-elevated: 0 16px 32px rgba(0, 0, 0, 0.45);
   --decoration-fg-primary: rgba(208, 206, 202, 0.4);
@@ -378,6 +376,6 @@
   --sheet-stats-divider: #1c1a18;            /* dark */
   --sheet-stats-label: var(--fg-tertiary);
 
-  /* Semantic text/accent dark — Figma #8e7d65. */
-  --text-accent: #8e7d65;
+  /* Semantic text/accent dark — Figma #8e7a65. */
+  --text-accent: #8e7a65;
 }
