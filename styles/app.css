@@ -1218,6 +1218,28 @@ html, body { overflow-x: clip; }
   letter-spacing: -0.005em;
   transition: color var(--dur-fast) var(--ease-out-strong);
 }
+
+/* ===== Brain rows mobile reconciliation (audit 2026-05-22) =====
+   Figma BrainRow 142:4570+. Mobile-only overrides; desktop spec unchanged. */
+@media (max-width: 767px) {
+  .brain-row__head {
+    padding: 18px 0;
+    column-gap: var(--space-3-5);              /* 14 */
+  }
+  .brain-row__num {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 300;                          /* Inter Light */
+    letter-spacing: 0;
+    color: var(--fg-quiet);
+  }
+  .brain-row__title {
+    font-weight: var(--font-semibold);
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: 0;
+  }
+}
 /* Open state: number + title turn accent (Figma 55:9391 "Brain/Panel" active style). */
 .brain-row__head[aria-expanded="true"] .brain-row__num,
 .brain-row__head[aria-expanded="true"] .brain-row__title {
