@@ -102,6 +102,13 @@
      (#21201C in light). Override in .dark for visibility. */
   --fg-icon-primary: #21201c;
 
+  /* Sheet title icon — Figma 148:7762 / 150:11123 (mobile sheet header).
+     Primary token holds the raw hex pulled from the Figma frame; the
+     semantic --fg-icon-sheet aliases it so consumers don't reference the
+     primary directly. Light = warm gray-700. Dark override below. */
+  --color-warm-700: #595550;
+  --fg-icon-sheet: var(--color-warm-700);
+
   /* Inset callout surface — used by the "What I build first" card in
      Section 06. Sinks deeper than --bg-recessed in dark so the card
      reads as a separate plane against bg-base #0e0c0b. */
@@ -375,6 +382,12 @@
   --sheet-handle-color: var(--fg-secondary); /* #98938d */
   --sheet-stats-divider: #1c1a18;            /* dark */
   --sheet-stats-label: var(--fg-tertiary);
+
+  /* Sheet title icon — Figma 150:11123 dark. Primary warm-gray-400
+     (#989089) pulled from semantic/text/body dark. Semantic alias
+     reused. */
+  --color-warm-400: #989089;
+  --fg-icon-sheet: var(--color-warm-400);
 
   /* Semantic text/accent dark — Figma #8e7a65. */
   --text-accent: #8e7a65;

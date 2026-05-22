@@ -3338,7 +3338,7 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   width: 32px;
   height: 32px;
   flex-shrink: 0;
-  color: var(--fg-primary);                           /* swaps via .dark */
+  color: var(--fg-icon-sheet);                        /* swaps via .dark */
 }
 .sheet__title-icon svg {
   width: 100%;

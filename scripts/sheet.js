@@ -351,6 +351,17 @@
      Mobile-only capture-phase click listener that maps tier-2/3 elements
      to openSheet calls and stops the default inline expansion. */
 
+  /* Sheet title icon mapping — mirrors app.js CARD_ICONS so mobile sheet
+     and desktop inline-panel render the same phosphor symbol per card.
+     Drives the 32×32 icon shown left of the title in Figma 148:7762 /
+     150:11123. Color comes from CSS (--fg-icon-sheet). */
+  var SHEET_CARD_ICONS = {
+    brain:    "ph-brain",
+    workflow: "ph-kanban",
+    agents:   "ph-claudecode",
+    stack:    "ph-briefcase"
+  };
+
   function extractCardSheet(cardBtn) {
     var key = cardBtn.getAttribute("data-card");
     var titleEl = cardBtn.querySelector(".card__title");
@@ -374,17 +385,14 @@
       });
       statsList.remove();
     }
-    /* Extract the SVG illustration from the d-media block — Figma sheets
-       (148:7762 / 148:8253) render the brain SVG at 32px next to the title.
-       Take only the inner <svg> so the wrapper styling (positioning,
-       background) stays out of the sheet. */
+    /* Drop the d-media block — sheet title uses the same phosphor icon as
+       the desktop inline panel, NOT the large 3D card illustration. */
     var media = scratch.querySelector("[data-tpl-media]");
-    var iconHTML = "";
-    if (media) {
-      var svg = media.querySelector("svg");
-      if (svg) iconHTML = svg.outerHTML;
-      media.remove();
-    }
+    if (media) media.remove();
+    var iconId = SHEET_CARD_ICONS[key];
+    var iconHTML = iconId
+      ? '<svg viewBox="0 0 256 256" aria-hidden="true"><use href="#' + iconId + '"/></svg>'
+      : "";
     return {
       title: titleEl ? titleEl.textContent.trim() : "",
       bodyHTML: scratch.innerHTML.trim(),
