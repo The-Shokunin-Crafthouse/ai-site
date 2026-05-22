@@ -2167,15 +2167,30 @@ html, body { overflow-x: clip; }
    title midpoint — matches Figma 52:5535. */
 
 @media (max-width: 767px) {
-  /* MOBILE-UPDATE-SPEC §1.2 + §6.5 — Figma 142:4361/4403/4417/4431
-     show 68/68/92/68 row heights with 20px head padding. Title at 20/24
-     matches Figma 142:4372 (size/title-section variants on mobile). */
+  /* Audit reconciliation 2026-05-22 — Figma OverviewRow/Head py 22, gap 14.
+     Number: Inter Light(300) 18/24 quiet. Heading: Inter SemiBold 18/24
+     heading. Subcopy on expand: Inter Regular 13/19 body. */
   .overview-row {
-    column-gap: var(--space-4);
-    padding-block: var(--space-5);
+    column-gap: var(--space-3-5);            /* 14px */
+    padding-block: 22px;
   }
-  .overview-row__index { font-size: 24px; min-width: 32px; }
-  .overview-row__title { font-size: 20px; line-height: 24px; }
+  .overview-row__index {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 300;                        /* Inter Light, not --font-light (=100/Thin) */
+    color: var(--fg-quiet);
+    min-width: 24px;
+  }
+  .overview-row__title {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: var(--font-semibold);
+  }
+  .overview-row[aria-expanded="true"] .overview-row__lede {
+    font-size: 13px;
+    line-height: 19px;
+    color: var(--fg-secondary);
+  }
 }
 
 /* ===== Page footer (Figma 57:11700) — centered breadcrumb + © year.
