@@ -18,6 +18,27 @@
   src: url("../fonts/Gentona_Light.woff2") format("woff2");
 }
 
+/* DIAGNOSTIC v2 — confirm Safari now sees fresh CSS post-.htaccess.
+   Tag the hero with a magenta border. Remove after sighting. */
+@media (max-width: 767px) {
+  .hero {
+    outline: 4px solid magenta !important;
+  }
+  .hero::before {
+    content: "FRESH CSS ✓";
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: magenta;
+    color: white;
+    font: 11px/1.4 system-ui;
+    padding: 2px 6px;
+    z-index: 99999;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+}
+
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; }
 html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote { margin: 0; padding: 0; }
