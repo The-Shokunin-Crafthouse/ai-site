@@ -3240,11 +3240,20 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   -webkit-backdrop-filter: blur(12px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--dur-fast) var(--ease-standard);
+  /* Open: --dur-fast (180ms). Close: --dur-micro (120ms) so the scrim +
+     blur clear faster than the sheet's spring return, removing the
+     lingering haze owner reported 2026-05-22. backdrop-filter is on a
+     parallel transition so the blur unwinds together with the opacity. */
+  transition: opacity var(--dur-micro) var(--ease-out-strong),
+              backdrop-filter var(--dur-micro) var(--ease-out-strong),
+              -webkit-backdrop-filter var(--dur-micro) var(--ease-out-strong);
 }
 .sheet-overlay[data-active="true"] {
   opacity: 1;
   pointer-events: auto;
+  transition: opacity var(--dur-fast) var(--ease-standard),
+              backdrop-filter var(--dur-fast) var(--ease-standard),
+              -webkit-backdrop-filter var(--dur-fast) var(--ease-standard);
 }
 
 .sheet {

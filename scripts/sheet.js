@@ -97,6 +97,10 @@
 
   function dismissWith(velocity) {
     if (activeAnim && activeAnim.stop) activeAnim.stop();
+    // Start the overlay fade-out the moment dismissal begins (covers
+    // both drag-to-dismiss and closeSheet paths). 120ms transition vs
+    // the sheet's longer spring travel.
+    if (activeOverlay) activeOverlay.removeAttribute("data-active");
     activeAnim = pm.animate({
       from: currentY,
       to: snapMaxPx(),
@@ -261,6 +265,10 @@
   function closeSheet() {
     if (!activeSheet) return;
     setSnapState("closing");
+    // Flip the overlay's data-active immediately so the scrim + blur
+    // start clearing on the close-side transition (var(--dur-micro)
+    // 120ms) without waiting for the sheet's spring to finish.
+    if (activeOverlay) activeOverlay.removeAttribute("data-active");
     dismissWith(0);
   }
 
