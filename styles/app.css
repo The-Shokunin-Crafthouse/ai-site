@@ -874,8 +874,11 @@ html, body { overflow-x: clip; }
 }
 
 /* ===== Steps mobile reconciliation (audit 2026-05-22) =====
-   Figma Step row 142:4469+. Mobile-only overrides; desktop step spec
-   unchanged. */
+   Figma Step row 142:4469+. Structural change vs desktop:
+   - Desktop: grid auto/1fr/auto with meta in its own right column
+   - Mobile:  grid auto/1fr with main column holding meta below title+desc
+   No HTML change — grid-template-areas swap moves .step__meta into the
+   main column visually. */
 @media (max-width: 767px) {
   .timeline__actions { gap: var(--space-4); }
   .timeline__btn,
@@ -891,9 +894,32 @@ html, body { overflow-x: clip; }
     color: var(--fg-quiet);
   }
   .timeline__progress-bar { height: 4px; border-radius: var(--radius-xs); }
+  /* Mobile step row — Figma:
+     - top divider 1px var(--border-subtle), padding-block 18
+     - flex row: num (left, top-aligned) + main (flex-col gap 8)
+       main = title-block (flex-col gap 4) + meta row (flex gap 8) */
   .step__head {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "num main"
+      "num meta";
+    align-items: start;
     padding: 18px 0;
     column-gap: var(--space-3);                    /* 12 */
+    row-gap: var(--space-2);                       /* 8 between main + meta */
+  }
+  .step__main {
+    /* Title + summary already inside .step__main; the existing
+       margin-bottom:4 on .step__title preserves the 4px title→desc gap. */
+    display: flex;
+    flex-direction: column;
+  }
+  .step__meta {
+    grid-area: meta;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);                           /* 8 */
+    min-width: 0;
   }
   .step__num {
     font-size: 18px;
@@ -901,11 +927,13 @@ html, body { overflow-x: clip; }
     font-weight: 300;                              /* Inter Light */
     letter-spacing: 0;
     color: var(--fg-quiet);
+    padding-top: 0;
   }
   .step__title {
     font-size: 15px;
     line-height: 20px;
     font-weight: var(--font-semibold);
+    margin-bottom: var(--space-1);                 /* 4 */
   }
   .step__summary {
     font-size: 12px;
