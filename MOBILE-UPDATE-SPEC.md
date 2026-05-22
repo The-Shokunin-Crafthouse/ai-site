@@ -1,5 +1,49 @@
 # MOBILE-UPDATE-SPEC.md
 
+## RESOLUTION LOG — 2026-05-21 (Phase 3 follow-up)
+
+Final deferred-item resolution from owner. All TODO markers in `scripts/sheet.js`
+closed or re-tagged with section-specific identifiers.
+
+**Sheet snap positions — definitive (px, not %):**
+- Initial: `282px` visible from bottom (Figma `top:562` on 844 viewport).
+- Max:     `660px` visible from bottom (Figma `top:184` on 844 — hard max).
+- Tokens updated: `--sheet-snap-initial: 282px`, `--sheet-snap-max: 660px`.
+- 85vh / 33vh approximations from the original spec are obsolete — sheet.js reads the tokens via `getComputedStyle`.
+
+**Sheet body typography — two states:**
+- Initial snap (Sheet1): `16px / 24px`.
+- Max snap   (Sheet2): `13px / 19.5px`.
+- Implementation: `.sheet--expanded` class added by sheet.js when sheet reaches max; CSS transitions `font-size` + `line-height` over `150ms ease-out`.
+
+**Overlay — RESOLVED: NO OVERLAY.**
+- No scrim in any Figma sheet frame. `--surface-sheet-overlay` token removed from `styles/tokens.css`. `.sheet-overlay` CSS block removed from `styles/app.css`. Sheet slides directly over page content. Outside-tap dismissal handled by document-level click listener in sheet.js.
+
+**Sheet stats — light vs dark dividers:**
+- Light dividers: `var(--border-subtle)` = `#d4d0ca`.
+- Dark dividers: `#1c1a18`.
+- Numerals: `#d0ceca` (both modes — intentional dark palette, preserved).
+- Labels: `--fg-tertiary` (`#7d7d77` light / `#545352` dark).
+- Tokens: `--sheet-stats-divider` swaps via `.dark` override; `--sheet-stats-num` constant.
+
+**Sheet trigger wiring (sheet.js capture-phase click):**
+- Section 01 cards (`.card[data-card]`) → openSheet with content cloned from `template[data-drawer-tpl="<key>"]` (re-skinned `drawer__stats` → `sheet__stats`).
+- Section 02 steps (`.step__head`) → openSheet with title from `.step__title` + body from sibling `.step__body` innerHTML.
+- Section 03 brain rows (`.brain-row__head`) → openSheet with title from `.brain-row__title` + body from sibling `.brain-row__body` innerHTML.
+- Section 04 tools rows (`.tools-row__head`) → openSheet with title from `.tools-row__title` + body from sibling `.tools-row__body` innerHTML.
+- Trigger fires only when `matchMedia("(max-width: 767px)")` matches. Desktop keeps inline expansion intact.
+
+**Section 03 inline subcopy:**
+- Markup already carries `.overview-row__lede` for all four rows. CSS already renders it on `aria-expanded="true"`. No new code needed — pattern confirmed correct.
+
+**Card-template `d-media` schematic:**
+- Removed from mobile sheet payload (desktop drawer pattern only). Flagged in code as `TODO(sheet-content-section01)` — owner to confirm whether the schematic should also render in the sheet.
+
+**Status of original deferred items:**
+- §4.1 step-badge · §4.2 criteria-weight · §4.3 gates · §4.4 learning · §4.5 criteria/defaults dark border→fill — **still deferred**; awaiting separate frame IDs. TODO markers remain in `styles/app.css`.
+
+---
+
 ## DECISIONS LOG — 2026-05-21 (Phase 2 → Phase 3)
 
 Approvals received from owner. Implementation proceeds with these locked.

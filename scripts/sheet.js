@@ -1,78 +1,57 @@
 /* Tier-3 bottom sheet — mobile only.
-   MOBILE-UPDATE-SPEC §3.1 — definitive sheet spec from owner 2026-05-21.
+   MOBILE-UPDATE-SPEC §3.1 — definitive sheet spec + resolution log
+   from owner 2026-05-21.
 
-   Behavior:
-   - Triggered on mobile (matchMedia max-width: 767px) when a tier-2 element
-     that would expand inline on desktop is tapped.
-   - Slides up from translateY(100%) to initial snap (33vh from bottom) via
-     popmotion spring({ stiffness: 300, damping: 30 }).
-   - Drag the handle (or sheet body when not at max) to:
-     - Snap up to max (85vh) if released with upward velocity past threshold.
-     - Snap back to last stable position if released with low velocity.
-     - Dismiss if released with downward velocity past threshold.
-   - Tap overlay or drag-to-dismiss → spring out via translateY(100%) and
-     remove from DOM.
-   - Scroll inside the sheet only enabled at max snap.
+   Snap values (absolute px from bottom of viewport — Figma reference
+   viewport 844px tall):
+   - initial: 282px visible (top:562 on 844)
+   - max:    660px visible (top:184 on 844 — hard max)
 
-   TODO(sheet-content): per-section sheet content templates not yet wired.
-   This file handles the container + drag/snap physics only. When section
-   frame IDs (148:7358–151:18015) land, hook each tier-2 trigger to its
-   matching template via openSheet(trigger, contentHTML, title, stats).
+   Physics:
+   - Open / snap: spring({ stiffness: 300, damping: 30 }) on translateY.
+   - Drag-to-dismiss: release velocity > 0.5 px/ms → spring out + unmount.
+   - Snap-to-max on upward release velocity > 0.5 px/ms.
+   - .sheet--expanded class toggled at max snap; CSS swaps body font
+     16/24 → 13/19.5 with 150ms ease-out.
 
-   TODO(sheet-trigger): currently no element has data-sheet-trigger. Phase
-   3 follow-up: wire it onto card buttons inside the open overview-row__open
-   panel + onto workflow-step / brain-row / tools-row heads so tapping any
-   tier-2/3 element on mobile fires openSheet().
+   No overlay (no scrim in Figma). Outside-tap closes via a transparent
+   document click listener.
+
+   Trigger interception (mobile only — capture-phase click listener):
+   - .card[data-card]            → template[data-drawer-tpl="<card>"]
+   - .step__head                 → sibling .step__body innerHTML
+   - .brain-row__head            → sibling .brain-row__body innerHTML
+   - .tools-row__head            → sibling .tools-row__body innerHTML
+
+   Public API: window.AiSiteSheet.open({ title, bodyHTML, statsHTML }).
 */
 (function () {
   "use strict";
 
   if (typeof window === "undefined") return;
 
-  /* Spec constants. */
-  var SNAP_INITIAL_VH = 33; /* % of viewport from bottom. */
-  var SNAP_MAX_VH = 85;
+  /* Helpers to read px tokens from :root so we stay in lockstep with CSS. */
+  function readPxToken(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    var n = parseFloat(v);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function snapInitialPx() { return readPxToken("--sheet-snap-initial", 282); }
+  function snapMaxPx()     { return readPxToken("--sheet-snap-max",     660); }
+
   var SPRING_OPEN = { stiffness: 300, damping: 30 };
   var SPRING_SNAP = { stiffness: 300, damping: 30 };
-  var DISMISS_VELOCITY = 0.5; /* px/ms — release velocity threshold. */
+  var DISMISS_VELOCITY = 0.5; /* px/ms */
 
   var mq = window.matchMedia("(max-width: 767px)");
   var pm = window.popmotion;
-
-  if (!pm || !pm.animate) {
-    /* Popmotion not loaded — sheet would fail to spring. Bail silently;
-       desktop pattern (inline expansion) still works. */
-    return;
-  }
+  if (!pm || !pm.animate) return;
 
   var activeSheet = null;
-  var activeOverlay = null;
   var activeAnim = null;
-  var currentY = 0; /* px from bottom; 0 = fully shown at max snap. */
-  var snapState = "initial"; /* "initial" | "max" | "closing" */
-  var dragState = null;
-
-  /* px values for the two snap points, computed at open time so they
-     respect the current viewport height (vh != vvh in mobile Safari with
-     URL bar). Stored as translateY values: 0 = top of sheet at top of
-     its allowed range. Sheet's actual translateY = vh - snapPx. */
-  var snapInitialPx = 0;
-  var snapMaxPx = 0;
-
-  function vh() { return window.innerHeight; }
-
-  function computeSnaps() {
-    snapInitialPx = Math.round(vh() * (SNAP_INITIAL_VH / 100));
-    snapMaxPx = Math.round(vh() * (SNAP_MAX_VH / 100));
-  }
-
-  /* translateY value to render the sheet at a given visible height. */
-  function translateForSnap(visibleHeightPx) {
-    /* Sheet's natural origin is bottom of viewport; we set max-height to
-       snap-max-vh via CSS. translateY(visibleHeightPx == max → 0).
-       translateY(visibleHeightPx == 0   → snapMaxPx) (fully hidden). */
-    return Math.max(0, snapMaxPx - visibleHeightPx);
-  }
+  var currentY = 0;
+  var snapState = "initial";
 
   function setSheetY(yPx) {
     if (!activeSheet) return;
@@ -84,6 +63,15 @@
     if (!activeSheet) return;
     snapState = next;
     activeSheet.setAttribute("data-sheet-snap", next);
+    /* .sheet--expanded triggers body font swap (13/19.5) + scroll unlock. */
+    if (next === "max") activeSheet.classList.add("sheet--expanded");
+    else activeSheet.classList.remove("sheet--expanded");
+  }
+
+  /* translateY for a given visible height (sheet anchored to bottom of viewport,
+     max-height = snapMax). 0 visible → translateY(snapMax). snapMax visible → 0. */
+  function translateFor(visibleHeightPx) {
+    return Math.max(0, snapMaxPx() - visibleHeightPx);
   }
 
   function springTo(targetY, onComplete) {
@@ -102,34 +90,45 @@
     });
   }
 
-  function inertiaDismiss(velocity) {
+  function dismissWith(velocity) {
     if (activeAnim && activeAnim.stop) activeAnim.stop();
     activeAnim = pm.animate({
       from: currentY,
-      to: snapMaxPx, /* fully off-screen */
-      velocity: velocity * 1000, /* popmotion uses px/sec */
+      to: snapMaxPx(),
+      velocity: (velocity || 0) * 1000, /* popmotion uses px/sec */
       type: "spring",
       stiffness: SPRING_SNAP.stiffness,
       damping: SPRING_SNAP.damping,
       onUpdate: function (v) { setSheetY(v); },
-      onComplete: function () { activeAnim = null; closeSheet(); },
+      onComplete: function () { activeAnim = null; finalizeClose(); },
     });
   }
 
+  function finalizeClose() {
+    if (activeSheet) activeSheet.remove();
+    activeSheet = null;
+    activeAnim = null;
+    document.body.style.overflow = "";
+    document.removeEventListener("keydown", onKey);
+    document.removeEventListener("click", onOutsideClick, true);
+  }
+
+  function onKey(e) { if (e.key === "Escape") closeSheet(); }
+
+  function onOutsideClick(e) {
+    if (!activeSheet) return;
+    if (e.target === activeSheet || activeSheet.contains(e.target)) return;
+    closeSheet();
+  }
+
   function openSheet(opts) {
-    if (!mq.matches) return; /* desktop ignores */
+    if (!mq.matches) return;
     if (activeSheet) closeSheet();
 
     opts = opts || {};
     var title = opts.title || "";
     var bodyHTML = opts.bodyHTML || "";
     var statsHTML = opts.statsHTML || "";
-
-    /* Build markup. */
-    var overlay = document.createElement("div");
-    overlay.className = "sheet-overlay";
-    overlay.setAttribute("data-sheet-overlay", "");
-    document.body.appendChild(overlay);
 
     var sheet = document.createElement("aside");
     sheet.className = "sheet";
@@ -171,17 +170,17 @@
 
     document.body.appendChild(sheet);
     activeSheet = sheet;
-    activeOverlay = overlay;
 
-    computeSnaps();
-    /* Start fully off-screen (translateY = snapMaxPx). */
-    setSheetY(snapMaxPx);
-    /* Force a paint then spring to initial snap. */
+    var maxPx = snapMaxPx();
+    var initPx = snapInitialPx();
+
+    /* Start fully hidden. */
+    setSheetY(maxPx);
+
     requestAnimationFrame(function () {
-      overlay.setAttribute("data-active", "true");
       activeAnim = pm.animate({
-        from: snapMaxPx,
-        to: translateForSnap(snapInitialPx),
+        from: maxPx,
+        to: translateFor(initPx),
         type: "spring",
         stiffness: SPRING_OPEN.stiffness,
         damping: SPRING_OPEN.damping,
@@ -191,52 +190,34 @@
     });
 
     document.body.style.overflow = "hidden";
-    overlay.addEventListener("click", closeSheet);
     bindDrag(handleArea);
-    bindDrag(sheet); /* drag from sheet body too, but only when not scrolled */
+    bindDrag(sheet);
     document.addEventListener("keydown", onKey);
+    /* Defer outside-click binding by one frame so the trigger click that
+       opened the sheet doesn't immediately close it. */
+    requestAnimationFrame(function () {
+      document.addEventListener("click", onOutsideClick, true);
+    });
   }
 
   function closeSheet() {
     if (!activeSheet) return;
     setSnapState("closing");
-    document.removeEventListener("keydown", onKey);
-    /* Spring out then unmount. */
-    if (activeAnim && activeAnim.stop) activeAnim.stop();
-    activeAnim = pm.animate({
-      from: currentY,
-      to: snapMaxPx,
-      type: "spring",
-      stiffness: SPRING_SNAP.stiffness,
-      damping: SPRING_SNAP.damping,
-      onUpdate: function (v) { setSheetY(v); },
-      onComplete: function () {
-        if (activeOverlay) activeOverlay.remove();
-        if (activeSheet) activeSheet.remove();
-        activeSheet = null;
-        activeOverlay = null;
-        activeAnim = null;
-        document.body.style.overflow = "";
-      },
-    });
+    dismissWith(0);
   }
 
-  function onKey(e) {
-    if (e.key === "Escape") closeSheet();
-  }
-
-  /* Drag tracking — pointer events with velocity sample. */
+  /* Drag tracking. */
   function bindDrag(el) {
     el.addEventListener("pointerdown", onPointerDown);
   }
 
   function onPointerDown(e) {
     if (!activeSheet) return;
-    /* If at max snap and the user is touching sheet body (not handle),
-       let native scroll handle it — only initiate drag from the handle. */
-    if (snapState === "max" && e.currentTarget !== activeSheet.querySelector("[data-sheet-handle]")) {
-      return;
-    }
+    /* If expanded and the user touches the body (not the handle), let
+       native scroll handle the gesture. */
+    var handleArea = activeSheet.querySelector("[data-sheet-handle]");
+    if (snapState === "max" && e.currentTarget !== handleArea) return;
+
     if (activeAnim && activeAnim.stop) activeAnim.stop();
     activeAnim = null;
     e.preventDefault();
@@ -245,49 +226,40 @@
     var lastY = startY;
     var lastT = e.timeStamp;
     var velocity = 0;
+    var maxPx = snapMaxPx();
 
     function onMove(ev) {
       var dy = ev.clientY - startY;
       var nextY = startTranslate + dy;
-      /* Clamp to [translateForSnap(snapMaxPx), snapMaxPx] — i.e. between
-         fully-open and fully-hidden. */
-      nextY = Math.max(translateForSnap(snapMaxPx), Math.min(snapMaxPx, nextY));
+      nextY = Math.max(0, Math.min(maxPx, nextY));
       setSheetY(nextY);
       var dt = ev.timeStamp - lastT;
-      if (dt > 0) velocity = (ev.clientY - lastY) / dt; /* px/ms */
+      if (dt > 0) velocity = (ev.clientY - lastY) / dt;
       lastY = ev.clientY;
       lastT = ev.timeStamp;
     }
 
-    function onUp(ev) {
+    function onUp() {
       document.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerup", onUp);
       document.removeEventListener("pointercancel", onUp);
 
-      /* Decide outcome based on velocity + position. */
-      if (velocity > DISMISS_VELOCITY) {
-        /* Fast downward release → dismiss. */
-        inertiaDismiss(velocity);
-        return;
-      }
+      var initY = translateFor(snapInitialPx());
+      var maxY  = translateFor(maxPx);
+      var hidden = maxPx;
+
+      if (velocity > DISMISS_VELOCITY)  { dismissWith(velocity); return; }
       if (velocity < -DISMISS_VELOCITY) {
-        /* Fast upward release → snap to max. */
-        springTo(translateForSnap(snapMaxPx), function () { setSnapState("max"); });
+        springTo(maxY, function () { setSnapState("max"); });
         return;
       }
-      /* Low velocity — snap to whichever is closer. */
-      var initialY = translateForSnap(snapInitialPx);
-      var maxY = translateForSnap(snapMaxPx);
-      var distInit = Math.abs(currentY - initialY);
-      var distMax = Math.abs(currentY - maxY);
-      var distHidden = Math.abs(currentY - snapMaxPx);
-      if (distHidden < distInit && distHidden < distMax) {
-        inertiaDismiss(0.6);
-      } else if (distMax < distInit) {
-        springTo(maxY, function () { setSnapState("max"); });
-      } else {
-        springTo(initialY, function () { setSnapState("initial"); });
-      }
+      /* Low-velocity release — snap to nearest stable. */
+      var dInit = Math.abs(currentY - initY);
+      var dMax  = Math.abs(currentY - maxY);
+      var dHide = Math.abs(currentY - hidden);
+      if (dHide < dInit && dHide < dMax) { dismissWith(0.6); return; }
+      if (dMax < dInit) springTo(maxY,  function () { setSnapState("max"); });
+      else              springTo(initY, function () { setSnapState("initial"); });
     }
 
     document.addEventListener("pointermove", onMove);
@@ -295,15 +267,101 @@
     document.addEventListener("pointercancel", onUp);
   }
 
-  /* Public API — opener function for other scripts to call. */
+  /* ======================== Trigger interception ========================
+     Mobile-only capture-phase click listener that maps tier-2/3 elements
+     to openSheet calls and stops the default inline expansion. */
+
+  function extractCardSheet(cardBtn) {
+    var key = cardBtn.getAttribute("data-card");
+    var titleEl = cardBtn.querySelector(".card__title");
+    var tpl = document.querySelector('template[data-drawer-tpl="' + key + '"]');
+    if (!tpl) return null;
+    /* Clone template contents into a scratch wrapper to extract pieces. */
+    var scratch = document.createElement("div");
+    scratch.appendChild(tpl.content.cloneNode(true));
+    /* Stats live inside .drawer__stats — extract + remove from body. */
+    var statsList = scratch.querySelector(".drawer__stats");
+    var statsHTML = "";
+    if (statsList) {
+      /* Re-skin drawer stats into sheet-stats markup. */
+      Array.prototype.forEach.call(statsList.children, function (li) {
+        var num = li.querySelector(".drawer__stat-num");
+        var lbl = li.querySelector(".drawer__stat-label");
+        statsHTML += "<li>" +
+          (num ? '<span class="sheet__stat-num">' + num.textContent + "</span>" : "") +
+          (lbl ? '<span class="sheet__stat-label">' + lbl.textContent + "</span>" : "") +
+          "</li>";
+      });
+      statsList.remove();
+    }
+    /* Drop the d-media block (mobile sheet shows text + stats, not the
+       desktop schematic). TODO(sheet-content-section01): owner to confirm
+       whether the schematic should render in the sheet. */
+    var media = scratch.querySelector("[data-tpl-media]");
+    if (media) media.remove();
+    return {
+      title: titleEl ? titleEl.textContent.trim() : "",
+      bodyHTML: scratch.innerHTML.trim(),
+      statsHTML: statsHTML,
+    };
+  }
+
+  function extractRowSheet(headBtn, bodySelector, titleSelector) {
+    var titleEl = headBtn.querySelector(titleSelector);
+    var body = headBtn.nextElementSibling;
+    /* Walk forward to find the matching body element if it's not directly
+       next (some markups insert a divider between head and body). */
+    while (body && !body.matches(bodySelector)) body = body.nextElementSibling;
+    return {
+      title: titleEl ? titleEl.textContent.trim() : "",
+      bodyHTML: body ? body.innerHTML : "",
+      statsHTML: "",
+    };
+  }
+
+  function findTrigger(target) {
+    /* Walk up — return the nearest matching trigger element or null. */
+    var el = target;
+    while (el && el !== document.body) {
+      if (el.matches) {
+        if (el.matches(".card[data-card]"))     return { type: "card",  el: el };
+        if (el.matches(".step__head"))          return { type: "step",  el: el };
+        if (el.matches(".brain-row__head"))     return { type: "brain", el: el };
+        if (el.matches(".tools-row__head"))     return { type: "tools", el: el };
+      }
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  function onCapturedClick(e) {
+    if (!mq.matches) return;
+    /* Don't intercept clicks inside an open sheet. */
+    if (activeSheet && activeSheet.contains(e.target)) return;
+
+    var trig = findTrigger(e.target);
+    if (!trig) return;
+
+    var payload = null;
+    if      (trig.type === "card")  payload = extractCardSheet(trig.el);
+    else if (trig.type === "step")  payload = extractRowSheet(trig.el, ".step__body",       ".step__title");
+    else if (trig.type === "brain") payload = extractRowSheet(trig.el, ".brain-row__body",  ".brain-row__title");
+    else if (trig.type === "tools") payload = extractRowSheet(trig.el, ".tools-row__body",  ".tools-row__title");
+
+    if (!payload || !payload.bodyHTML) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    openSheet(payload);
+  }
+
+  /* Capture-phase so the interception fires before the desktop inline
+     expansion handlers in scripts/app.js. */
+  document.addEventListener("click", onCapturedClick, true);
+
+  /* Public API. */
   window.AiSiteSheet = {
     open: openSheet,
     close: closeSheet,
   };
-
-  /* Re-compute snaps on resize. */
-  window.addEventListener("resize", function () {
-    if (!activeSheet) return;
-    computeSnaps();
-  });
 })();

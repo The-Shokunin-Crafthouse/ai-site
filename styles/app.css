@@ -2818,28 +2818,20 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
    transform animation happens via popmotion in JS (spring + inertia); CSS
    here covers static surface + initial off-screen state.
    ============================================================ */
-.sheet-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-overlay);
-  background: var(--surface-sheet-overlay);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur-fast) var(--ease-standard);
-}
-.sheet-overlay[data-active="true"] {
-  opacity: 1;
-  pointer-events: auto;
-}
+/* No overlay — Figma sheet frames have no scrim. Resolution log 2026-05-21.
+   Sheet slides directly over page content; outside-tap dismissal handled
+   by a transparent document-level click listener in sheet.js. */
 
 .sheet {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: calc(var(--z-overlay) + 1);
+  z-index: var(--z-overlay);
   width: 100vw;
+  /* Max height = max snap visible-from-bottom value (660px per resolution log). */
   max-height: var(--sheet-snap-max);
+  height: var(--sheet-snap-max);
   background: var(--surface-sheet-bg);
   border-top-left-radius: var(--sheet-radius);
   border-top-right-radius: var(--sheet-radius);
@@ -2853,11 +2845,11 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   /* Start fully below the viewport. sheet.js spring-animates translateY
      to the snap point on open. */
   transform: translateY(100%);
-  /* Scroll lock until max snap reached (set by sheet.js). */
+  /* Scroll lock until .sheet--expanded (max snap reached, set by sheet.js). */
   overflow: hidden;
   touch-action: none;
 }
-.sheet[data-sheet-snap="max"] {
+.sheet.sheet--expanded {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
@@ -2932,14 +2924,24 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   color: var(--sheet-stats-label);
 }
 
-/* Sheet body inherits color from page; scroll bounces inside sheet at max snap. */
+/* Sheet body inherits color from page; scroll bounces inside sheet at max snap.
+   Two-state typography per resolution log 2026-05-21:
+   - Initial snap (Sheet1): 16px / 24px
+   - Max snap   (Sheet2):  13px / 19.5px
+   .sheet--expanded class added by sheet.js when max snap reached. */
 .sheet__body {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
   color: var(--fg-secondary);
-  font-size: var(--text-body-base-size);
-  line-height: var(--text-body-base-line);
+  font-size: 16px;
+  line-height: 24px;
+  transition: font-size 150ms var(--ease-out-strong),
+              line-height 150ms var(--ease-out-strong);
+}
+.sheet.sheet--expanded .sheet__body {
+  font-size: 13px;
+  line-height: 19.5px;
 }
 .sheet__body p { margin: 0; }
 .sheet__body code {
@@ -2955,8 +2957,7 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
 /* Sheet is mobile-only — desktop keeps the inline tier-2 expansion pattern.
    Forcing display:none in case sheet.js misfires on a resized window. */
 @media (min-width: 768px) {
-  .sheet,
-  .sheet-overlay { display: none !important; }
+  .sheet { display: none !important; }
 }
 
 /* ============================================================
