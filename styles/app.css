@@ -570,11 +570,12 @@ html, body { overflow-x: clip; }
               box-shadow var(--dur-fast) var(--ease-out-strong),
               transform var(--dur-fast) var(--ease-out-strong);
 }
-/* Light mode: card sits flush with page bg by default (1px --border-subtle
-   from base rule), swaps to the lighter --bg-card surface on hover/active.
-   No font color shifts. */
+/* Light mode card (audit pass 2026-05-22): fill --bg-card (#ebeae7),
+   no border (Figma). Dark default keeps the 1px border with no fill via
+   the .dark scope below. */
 .card:not(.dark *) {
-  background: var(--bg-base);
+  background: var(--bg-card);
+  border-color: transparent;
 }
 
 /* MOBILE-UPDATE-SPEC §4.6 — CORRECTION via resolution log 2026-05-21.
@@ -669,6 +670,44 @@ html, body { overflow-x: clip; }
 .card__arrow {
   transition: transform var(--dur-fast) var(--ease-out-strong);
   display: inline-block;
+}
+
+/* ===== Card mobile reconciliation (audit 2026-05-22) =====
+   Figma 142:4375–142:4396 — Card/Overview/01..04. Mobile-only overrides;
+   desktop card spec untouched. */
+@media (max-width: 767px) {
+  .card {
+    padding: 18px 20px;
+    gap: 10px;
+    border-radius: 12px;
+  }
+  .card__index {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 300;            /* Inter Light */
+    letter-spacing: 0;
+    color: var(--fg-quiet);
+  }
+  .card__title {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: var(--font-semibold);
+  }
+  .card__summary {
+    font-size: 13px;
+    line-height: 19px;
+  }
+  .card__cta {
+    gap: 6px;
+    margin-top: 10px;
+    color: var(--text-accent);
+    font-size: 13px;
+    line-height: 18px;
+  }
+  .card__cta .icon {
+    width: 14px;
+    height: 14px;
+  }
 }
 /* ===== Section 3 — Timeline / steps ===== */
 .timeline {
