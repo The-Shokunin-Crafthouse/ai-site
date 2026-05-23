@@ -1973,12 +1973,18 @@ html, body { overflow-x: clip; }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
 /* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero.
    Tighter tracking than base display via --tracking-hiring-title;
-   applies in both modes (logged in decisions/decisions.md). */
+   applies in both modes (logged in decisions/decisions.md). Slant axis
+   carries the emphasis Figma marks with an italic font face — owner
+   direction 2026-05-22: use --text-emphasis-slant (Inter Variable slnt)
+   instead of switching to Inter Italic so the variable font stays as
+   the single weight + axis source. */
 .section--hiring .section__title {
   color: var(--fg-primary);
   font-family: var(--font-body);
   font-weight: 200;
   letter-spacing: var(--tracking-hiring-title);
+  font-style: normal;
+  font-variation-settings: "slnt" var(--text-emphasis-slant);
 }
 .section--hiring .section__lede { color: var(--fg-secondary); }
 
