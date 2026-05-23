@@ -1600,14 +1600,14 @@ html, body { overflow-x: clip; }
 
 /* Accumulated learnings list */
 .learnings { display: flex; flex-direction: column; gap: var(--space-5); }
-/* TODO(dark-fill-pending §4.4): MOBILE-UPDATE-SPEC §4.4 — owner to confirm
-   dark learning-card fill treatment vs border. Current: border + transparent
-   bg. Expected: filled card (likely --bg-callout). Awaiting frame IDs. */
+/* Filled-card treatment confirmed 2026-05-22. Match the overview cards'
+   surface in both modes via --bg-callout (#ebeae6 light / #121110 dark);
+   border dropped so the card reads as a flat plane. */
 .learning {
   padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--border-subtle);
+  border: 0;
   border-radius: var(--radius-md);
-  background: transparent;
+  background: var(--bg-callout);
 }
 .learning__head {
   font-family: var(--font-body);
