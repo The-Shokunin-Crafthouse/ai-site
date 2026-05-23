@@ -3314,7 +3314,11 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
 .overview-row__panel-icon {
   width: 32px;
   height: 32px;
-  color: var(--fg-icon-primary);
+  /* Desktop card-expanded panel icon shares the mobile sheet icon token
+     (--fg-icon-sheet → --color-warm-icon: #AEA7A0 light / #2B2722 dark)
+     so the same brain/kanban/etc glyph reads the same in both surfaces.
+     Owner direction 2026-05-22. */
+  color: var(--fg-icon-sheet);
   flex-shrink: 0;
 }
 .overview-row__panel-title {
