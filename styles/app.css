@@ -2317,6 +2317,11 @@ html, body { overflow-x: clip; }
 @media (min-width: 768px) {
   .hiring__cta { flex-direction: row; justify-content: space-between; align-items: center; }
 }
+/* Mobile: 24px above the CTA copy so it doesn't sit flush against the
+   last bullet. Owner direction 2026-05-22. */
+@media (max-width: 767px) {
+  .hiring__cta { margin-top: var(--space-6); }
+}
 .hiring__cta-text {
   color: var(--fg-secondary);
   font-size: var(--text-body-base-size);
