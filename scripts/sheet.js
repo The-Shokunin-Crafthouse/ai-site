@@ -260,6 +260,19 @@
     document.body.appendChild(sheet);
     activeSheet = sheet;
 
+    /* Title row alignment: center the num/icon vertically when the title
+       fits on a single line; switch to top-align only when it wraps to 2+
+       lines so a 1-line title doesn't leave the glyph floating above the
+       cap height. Measured after the sheet is in the DOM. */
+    var titleRowEl = sheet.querySelector(".sheet__title-row");
+    var titleEl = sheet.querySelector(".sheet__title");
+    if (titleRowEl && titleEl) {
+      var lh = parseFloat(getComputedStyle(titleEl).lineHeight);
+      if (Number.isFinite(lh) && titleEl.offsetHeight > lh * 1.4) {
+        titleRowEl.classList.add("sheet__title-row--multi");
+      }
+    }
+
     /* Cap the sheet's height at its natural content height when that
        comes in under the token max. Lets the sheet hug short content at
        max snap instead of leaving blank space below.

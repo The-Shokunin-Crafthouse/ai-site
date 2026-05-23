@@ -3527,13 +3527,19 @@ html[data-sheet-open="true"] canvas[data-grain] {
    Achieved with padding-bottom 8 + border-bottom 1px on the row. */
 .sheet__title-row {
   display: flex;
-  align-items: flex-start;                            /* top-align num/icon when title wraps */
+  /* Default: center-align num/icon against a single-line title so the
+     glyph optical-centers with the cap height. When sheet.js detects the
+     title has wrapped to 2+ lines, .sheet__title-row--multi flips this
+     to flex-start so the glyph hugs the first line instead of floating
+     to the vertical middle of the wrapped block. */
+  align-items: center;
   gap: var(--space-2);                                /* 8 — Figma */
   padding-bottom: var(--space-2);                     /* 8 — Figma */
   border-bottom: 1px solid var(--border-subtle);
   margin: 0;
   width: 100%;
 }
+.sheet__title-row--multi { align-items: flex-start; }
 .sheet__title-icon {
   width: 32px;
   height: 32px;
