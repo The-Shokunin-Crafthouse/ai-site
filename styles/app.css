@@ -1984,6 +1984,11 @@ html, body { overflow-x: clip; }
   letter-spacing: var(--tracking-eyebrow);
   color: var(--fg-tertiary);
 }
+.hiring__tab-size--mobile { display: none; }
+@media (max-width: 767px) {
+  .hiring__tab-size--desktop { display: none; }
+  .hiring__tab-size--mobile { display: inline; }
+}
 .hiring__tab-label {
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
