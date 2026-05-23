@@ -2417,6 +2417,10 @@ html, body { overflow-x: clip; }
 
 .overview-row {
   width: 100%;
+  /* Suppress the default iOS Safari tap highlight (semi-transparent grey
+     overlay) — owner direction 2026-05-22: rows should not flash a bg
+     fill on tap in either mode. */
+  -webkit-tap-highlight-color: transparent;
   display: grid;
   grid-template-columns: auto 1fr;
   /* Figma 52:5710-5716 uses gap 24 across rows 02-04; row 01 shows 32 (likely
@@ -3373,11 +3377,11 @@ html[data-sheet-open="true"] canvas[data-grain] {
    to the title. */
 .sheet__num {
   font-family: var(--font-body);
-  font-weight: var(--font-regular);
+  font-weight: 300;                                   /* Inter Light, matches expanded step head */
   font-size: 28px;
   line-height: 38.8px;
   letter-spacing: -0.28px;
-  color: var(--fg-primary);
+  color: var(--fg-quiet);                             /* matches expanded step head contrast */
   flex-shrink: 0;
 }
 .sheet__title-icon svg {
