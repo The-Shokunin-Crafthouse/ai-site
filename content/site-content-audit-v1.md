@@ -3,6 +3,7 @@
 **Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-05-23 including ICM layered context loading.
 
 **Change log:**
+- 2026-05-23 — `claude agents --json` (v2.1.145+) scripting note added to Tools Row 02 Agent View row. Audit promoted from unversioned to v1.
 - 2026-05-23 — ICM layered context loading applied. Five-layer chain (CLAUDE.md → WORKSPACE.md → sprint CONTEXT.md → references/ → output/) replaces "read studio-memory.md before anything else" across Card 01, Card 03 Generator, Brain Row 01, Tools Row 01, Step 09 prompt, Step 10 prompt. Card 01 stats updated 3 → 5 memory layers. Brain Row 02 stages tree expanded to show per-stage CONTEXT.md / references/ / output/ structure. Step 13 split into build-log.md (every sprint) + studio-memory.md (standing standards only). Sprint contract now a versioned file at `stages/03-build/[sprint-name]/CONTEXT.md` — Step 09 summary/body/prompt/goal note and Step 10 prompt updated accordingly. Step 02 clarified that claude.ai project knowledge is the only surface where studio-memory.md loads as a single file.
 - 2026-05-21 — Added user testing tooling (Maze / Lyssna / Dscout) across Tools Row 02, Step 10, Studio Brain Row 03, Approval Gates Gate 03, and all three For Hiring Managers tabs. Added derivative update to Card 02.
 
@@ -588,7 +589,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 | Sync Figma tokens into the repo | `/sync-figma-token` | Reads the Sandbox page, extracts tokens, syncs to `_config/design-system/token-map.md`. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting. |
 | Get a live preview on every PR | GitHub Actions preview workflow | Real URL per PR plus snapshot screenshots in the PR body. |
 | Run unattended within a phase | `/goal` after contract approval | Claude Code 2.1.139+. Sets a session-scoped completion condition; Haiku checks every turn. Use for Step 4 scaffold and Step 9 sprints. Never on the Evaluator. Always cap with *or stop after N turns*. |
-| Monitor multiple sprints at once | Agent View (`claude agents`) | Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. I cap parallel sessions at 2–3. |
+| Monitor multiple sprints at once | Agent View (`claude agents`) | Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. `claude agents --json` (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. |
 | Grade a sprint | Evaluator — fresh Claude Code session | Single-pass audit. Never put `/goal` on it. |
 | Validate decisions with real users | Maze / Lyssna / Dscout | The AI Evaluator grades Functionality from code and snapshots. It cannot replace a real user. Tool scales to company stage — see For Hiring Managers. |
 
