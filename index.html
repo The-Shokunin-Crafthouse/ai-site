@@ -318,7 +318,6 @@
         <li><span class="drawer__stat-num">7</span><span class="drawer__stat-label">design principles</span></li>
         <li><span class="drawer__stat-num">∞</span><span class="drawer__stat-label">accumulated learnings</span></li>
       </ul>
-      <p class="drawer__link"><a href="#brain" data-drawer-jump>See the full Studio Brain <span data-arrow>→</span></a></p>
     </template>
 
     <template data-drawer-tpl="workflow">
@@ -347,7 +346,6 @@
         <li><span class="drawer__stat-num">4</span><span class="drawer__stat-label">approval gates</span></li>
         <li><span class="drawer__stat-num">5</span><span class="drawer__stat-label">tools touched</span></li>
       </ul>
-      <p class="drawer__link"><a href="#workflow" data-drawer-jump>Open the 13 steps <span data-arrow>→</span></a></p>
     </template>
 
     <template data-drawer-tpl="agents">
@@ -380,7 +378,6 @@
         <li><span class="drawer__stat-num">1</span><span class="drawer__stat-label">human approver</span></li>
         <li><span class="drawer__stat-num">0</span><span class="drawer__stat-label">merges without me</span></li>
       </ul>
-      <p class="drawer__link"><a href="#brain" data-drawer-jump>See where each agent reads from <span data-arrow>→</span></a></p>
     </template>
 
     <template data-drawer-tpl="stack">
@@ -413,7 +410,6 @@
         <li><span class="drawer__stat-num">~$120</span><span class="drawer__stat-label">per month</span></li>
         <li><span class="drawer__stat-num">1</span><span class="drawer__stat-label">token pool</span></li>
       </ul>
-      <p class="drawer__link"><a href="#tools" data-drawer-jump>See the full tool tables <span data-arrow>→</span></a></p>
     </template>
 
     <!-- ============================================================
@@ -454,7 +450,7 @@
             </div>
           </div>
 
-          <ol class="steps" data-steps>
+          <ol class="steps" id="step-rows-hidden" data-steps>
             <li class="step" data-row-hover data-step="1">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-1-body">
                 <span class="step__num" data-row-accent>01</span>
@@ -1598,6 +1594,10 @@ Commit the updated file and push.</code></pre>
   <!-- Mobile bottom tab bar removed per MOBILE-UPDATE-SPEC §6.1 (approved 2026-05-21).
        Tabbar was mobile-only (display:none ≥ 768px), so desktop layout unaffected. -->
 
+  <!-- Shared viewport helper. Non-defer so it executes before grain.js
+       (also non-defer) and exposes window.AiSiteViewport ahead of every
+       consumer in this script block. -->
+  <script src="./scripts/viewport.js"></script>
   <!-- Popmotion (vendored UMD, MIT) — used by sheet.js for tier-3 spring physics.
        MOBILE-UPDATE-SPEC §2.4 — approved import method. -->
   <script src="./scripts/popmotion.min.js" defer></script>

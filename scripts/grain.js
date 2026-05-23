@@ -16,17 +16,17 @@ function initGrain() {
     'filter: blur(0.6px)',
   ].join(';');
 
-  // Mobile breakpoint matches CSS @media (max-width: 767px). matchMedia
-  // is live — re-applies opacity on resize so a desktop window narrowed
-  // to a phone-sized viewport gets the mobile value too.
-  const mqMobile = window.matchMedia('(max-width: 767px)');
+  // Mobile breakpoint via shared viewport helper. matchMedia is live —
+  // re-applies opacity on resize so a desktop window narrowed to a phone-
+  // sized viewport gets the mobile value too.
+  const viewport = window.AiSiteViewport;
 
   function applyColorMode() {
     const dark = document.documentElement.classList.contains('dark');
     canvas.style.mixBlendMode = dark ? 'screen' : 'soft-light';
     // Light mode: 0.10 on mobile, 0.12 on desktop. Dark locked at 0.01
     // per prior preservation note.
-    const lightOpacity = mqMobile.matches ? '0.1' : '0.12';
+    const lightOpacity = viewport && viewport.isMobile() ? '0.1' : '0.12';
     canvas.style.opacity = dark ? '0.01' : lightOpacity;
   }
 
@@ -38,31 +38,33 @@ function initGrain() {
     { attributes: true, attributeFilter: ['class'] }
   );
   // Re-apply on breakpoint cross.
-  if (mqMobile.addEventListener) mqMobile.addEventListener('change', applyColorMode);
-  else if (mqMobile.addListener) mqMobile.addListener(applyColorMode);
+  if (viewport) viewport.onMobileChange(applyColorMode);
 
   document.body.appendChild(canvas);
 
   let frame = 0;
+  let imageData = null;
+  let data = null;
   const SCALE = 2;
 
   function resize() {
     canvas.width  = Math.ceil(window.innerWidth  / SCALE);
     canvas.height = Math.ceil(window.innerHeight / SCALE);
+    // Allocate the noise buffer once per resize. The per-frame draw loop
+    // re-randomizes the channels in place — no per-frame allocation.
+    imageData = ctx.createImageData(canvas.width, canvas.height);
+    data = imageData.data;
+    // Pre-fill alpha=255 so the per-frame loop only has to touch RGB.
+    for (let i = 3; i < data.length; i += 4) data[i] = 255;
   }
 
   function drawGrain() {
-    if (frame++ % 5 === 0) {
-      const { width, height } = canvas;
-      const imageData = ctx.createImageData(width, height);
-      const data = imageData.data;
-
+    if (frame++ % 5 === 0 && data) {
       for (let i = 0; i < data.length; i += 4) {
         const v = (Math.random() * 255) | 0;
         data[i]     = v;
         data[i + 1] = v;
         data[i + 2] = v;
-        data[i + 3] = 255;
       }
 
       ctx.putImageData(imageData, 0, 0);

@@ -1,4 +1,4 @@
-/* ai.levibahn.com — Sprint 1: nav, tab bar, theme toggle, hero schematic. */
+/* ai.levibahn.com — main app behaviors: nav, theme toggle, overview/timeline accordions, hiring tabs. */
 (function () {
   "use strict";
 
@@ -45,7 +45,8 @@
     //            the "Dark Mode" label. Avoids competing with hero on load.
     //   Animation specs are owned by CSS (var(--dur-figma-slide), 1280ms)
     //   and are untouched here — JS only flips the data attributes.
-    const mqMobile = window.matchMedia("(max-width: 767px)");
+    const viewport = window.AiSiteViewport;
+    const isMobileView = viewport ? viewport.isMobile() : false;
     let labelHidden = false;
     const collapseLabel = function () {
       if (labelHidden) return;
@@ -53,7 +54,7 @@
       toggle.setAttribute("data-toggle-label-hidden", "true");
     };
 
-    if (mqMobile.matches) {
+    if (isMobileView) {
       let shown = false;
       const trustedReveal = function (e) {
         // Require event.isTrusted — synthetic events (e.g. some browser
@@ -64,32 +65,16 @@
         toggle.setAttribute("data-toggle-shown", "true");
         // Collapse the text label 5s after first reveal.
         window.setTimeout(collapseLabel, 5000);
-        // Detach all interaction listeners now that we've fired.
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("touchstart", trustedReveal);
+        // Detach the two interaction listeners now that we've fired.
+        // pointerdown covers mouse + touch + pen; keydown covers a11y.
         window.removeEventListener("pointerdown", trustedReveal);
-        window.removeEventListener("click", trustedReveal);
         window.removeEventListener("keydown", trustedReveal);
-      };
-      // iOS Safari fires `scroll` events as the address bar slides during
-      // page load — easily 30-50px of delta. Require a much larger delta
-      // (60px) to count as user-initiated.
-      let startY = window.scrollY;
-      const SCROLL_THRESHOLD = 60;
-      const onScroll = function (e) {
-        if (Math.abs(window.scrollY - startY) < SCROLL_THRESHOLD) return;
-        trustedReveal(e);
       };
       // Defer listener attachment 1s past `load` so the address-bar slide,
       // layout-settle scroll-restore events, and any auto-fired pointer
       // events have all flushed before we start listening.
       const attach = function () {
-        // Re-baseline startY at attach time.
-        startY = window.scrollY;
-        window.addEventListener("scroll", onScroll, { passive: true });
-        window.addEventListener("touchstart", trustedReveal, { passive: true });
         window.addEventListener("pointerdown", trustedReveal, { passive: true });
-        window.addEventListener("click", trustedReveal);
         window.addEventListener("keydown", trustedReveal);
       };
       const startAttachTimer = function () {
@@ -120,21 +105,19 @@
     // would otherwise overlap .page-footer. Tabbar is gone on mobile per
     // §6.1, so the prior 88px mobile baseline is no longer needed.
     let rafId = 0;
-    const getBase = function () { return 24; };
+    const BASE_BOTTOM = 24;
+    // Footer ref captured once. A plain `footer` selector would grab the
+    // first <footer> (the hidden .hiring__cta one, rect (0,0)) and lift
+    // the toggle far above the viewport — query .page-footer explicitly.
+    const pageFooter = document.querySelector(".page-footer");
     const updateBottom = function () {
       rafId = 0;
-      const base = getBase();
-      // Target the page footer specifically. A plain `footer` selector grabs
-      // the first <footer> in the DOM — which is the hidden `.hiring__cta`
-      // footer, whose rect is (0,0). That zero-top makes the math here lift
-      // the toggle far above the viewport.
-      const footer = document.querySelector(".page-footer");
-      if (!footer) {
-        toggle.style.bottom = base + "px";
+      if (!pageFooter) {
+        toggle.style.bottom = BASE_BOTTOM + "px";
         return;
       }
-      const rect = footer.getBoundingClientRect();
-      toggle.style.bottom = Math.max(base, window.innerHeight - rect.top + base) + "px";
+      const rect = pageFooter.getBoundingClientRect();
+      toggle.style.bottom = Math.max(BASE_BOTTOM, window.innerHeight - rect.top + BASE_BOTTOM) + "px";
     };
     const requestUpdate = function () {
       if (!rafId) rafId = window.requestAnimationFrame(updateBottom);
@@ -167,28 +150,6 @@
   }
 
   /* ===== Sticky nav — visible on load (CSS handles fixed positioning). ===== */
-
-  /* ===== Active section tracking =====
-     Tabbar removed per MOBILE-UPDATE-SPEC §6.1, so no tab-link state to
-     update. Section observer remains in case future code re-attaches a
-     hash-tracking UI to it. */
-  const sections = Array.from(document.querySelectorAll("[data-section]"));
-
-  if (sections.length) {
-    let visible = new Map();
-    const sectionObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) visible.set(e.target.id, e.intersectionRatio);
-        else visible.delete(e.target.id);
-      });
-    }, { rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] });
-    sections.forEach(function (s) { sectionObserver.observe(s); });
-    // Expose so the structural fold-in (later in this IIFE) can re-observe the
-    // <li> nodes that inherited the folded sections' ids.
-    window.__sectionObserver = sectionObserver;
-  }
-
-  /* Bottom tab bar removed — no scroll-hide/show handler needed. */
 
   /* ===== Structural fold-in =====
      Lift the workflow/brain/tools sections out of the page and into their
@@ -240,11 +201,6 @@
       const oldId = section.id;
       section.removeAttribute("id");
       if (!li.id) li.id = oldId;
-    }
-    // Mark the li as a tracked section so scroll-spy continues to work
-    li.setAttribute("data-section", "");
-    if (window.__sectionObserver) {
-      window.__sectionObserver.observe(li);
     }
     section.remove();
 
@@ -334,28 +290,6 @@
     });
   });
 
-  /* Sticky-nav anchor links auto-expand the matching row. Targets can be either
-     the overview LI itself (e.g. #workflow) or a deep element inside a folded
-     section (e.g. #gates inside the workflow row body) — walk up to the LI in
-     either case. */
-  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-    a.addEventListener("click", function (e) {
-      const href = a.getAttribute("href");
-      if (!href || href === "#") return;
-      const id = href.slice(1);
-      const target = document.getElementById(id);
-      if (!target) return;
-      let rowBtn = target.querySelector(":scope > .overview-row");
-      if (!rowBtn) {
-        const rowLi = target.closest(".overview > li");
-        rowBtn = rowLi && rowLi.querySelector(":scope > .overview-row");
-      }
-      if (rowBtn && rowBtn.getAttribute("aria-expanded") === "false") {
-        rowBtn.setAttribute("aria-expanded", "true");
-      }
-    });
-  });
-
   /* ===== Section 1 — Card click → inline panel swap (Figma 57:10767) =====
      Click a card → clone its template into [data-card-panel], swap active state,
      hide panel if same card is clicked again. */
@@ -431,10 +365,6 @@
       body.className = "overview-row__panel-body";
       body.appendChild(frag);
 
-      // Drop the .drawer__link bottom CTA — per spec, no link in expanded card.
-      const linkWrap = body.querySelector(".drawer__link");
-      if (linkWrap) linkWrap.parentNode.removeChild(linkWrap);
-
       grid.appendChild(body);
 
       // Side column: top divider + stats + bottom divider (Figma 57:10929–10950).
@@ -508,11 +438,15 @@
          reads from `explored`; closing or re-opening never moves the number. */
     let expanded = readSet(STEPS_KEY);
     let explored = readSet(EXPLORED_KEY);
+    let lastProgressSize = -1;
     function updateProgress() {
+      if (explored.size === lastProgressSize) return;
+      lastProgressSize = explored.size;
       if (countEl) countEl.textContent = String(explored.size);
       if (fillEl) fillEl.style.width = (explored.size / totalSteps * 100) + "%";
     }
 
+    const timelineViewport = window.AiSiteViewport;
     /* Match prompt panel height to the left description column at 768+.
        Driven by a ResizeObserver on every step__body-text so the panel updates
        on initial open, window resize, and font-load reflows. The observer
@@ -523,7 +457,7 @@
       if (!step) return;
       const prompt = step.querySelector(".step__prompt:not(.step__prompt--empty)");
       if (!prompt) return;
-      if (!window.matchMedia("(min-width: 768px)").matches) {
+      if (!timelineViewport || !timelineViewport.isDesktop()) {
         prompt.style.removeProperty("--prompt-max-h");
         return;
       }
@@ -652,36 +586,27 @@
     };
   }
 
-  /* ===== Section 3 — Studio Brain row accordion =====
-     Delegated click on .brain-row__head toggles aria-expanded + body[hidden].
-     Section 3 folds into the overview accordion via foldSectionIntoRow, so this
-     handler scans the whole document (the [data-brain-list] node has moved). */
-  document.addEventListener("click", function (e) {
-    const head = e.target.closest(".brain-row__head");
-    if (!head) return;
-    const row = head.closest(".brain-row");
-    if (!row) return;
-    const body = row.querySelector(".brain-row__body");
-    if (!body) return;
-    const isOpen = head.getAttribute("aria-expanded") === "true";
-    head.setAttribute("aria-expanded", isOpen ? "false" : "true");
-    body.hidden = isOpen;
-  });
-
-  /* ===== Section 4 — Tools row accordion =====
-     Multi-open: each row toggles independently. Opening one leaves others
-     untouched. Clicking the open row closes it. */
-  document.addEventListener("click", function (e) {
-    const head = e.target.closest(".tools-row__head");
-    if (!head) return;
-    const row = head.closest(".tools-row");
-    if (!row || !row.closest("[data-tools-list]")) return;
-    const body = row.querySelector(".tools-row__body");
-    if (!body) return;
-    const isOpen = head.getAttribute("aria-expanded") === "true";
-    head.setAttribute("aria-expanded", isOpen ? "false" : "true");
-    body.hidden = isOpen;
-  });
+  /* ===== Section 3 / 4 — Brain + Tools row accordions =====
+     Delegated click. Multi-open: rows toggle independently. The optional
+     ancestor selector lets the tools handler scope to [data-tools-list] —
+     brain section uses no scope guard because folding leaves the brain-list
+     node moved but uniquely identifiable by .brain-row alone. */
+  function bindAccordion(headSel, rowSel, bodySel, requiredAncestorSel) {
+    document.addEventListener("click", function (e) {
+      const head = e.target.closest(headSel);
+      if (!head) return;
+      const row = head.closest(rowSel);
+      if (!row) return;
+      if (requiredAncestorSel && !row.closest(requiredAncestorSel)) return;
+      const body = row.querySelector(bodySel);
+      if (!body) return;
+      const isOpen = head.getAttribute("aria-expanded") === "true";
+      head.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      body.hidden = isOpen;
+    });
+  }
+  bindAccordion(".brain-row__head", ".brain-row", ".brain-row__body");
+  bindAccordion(".tools-row__head", ".tools-row", ".tools-row__body", "[data-tools-list]");
 
   /* ===== Section 6 — Hiring tabs =====
      On Load: no tab selected, all panels hidden, CTA hidden.
@@ -760,7 +685,11 @@
     });
   }
 
-  /* ===== Smooth scroll for in-page anchors (manual to account for nav offset) ===== */
+  /* ===== In-page anchor handler — auto-expand matching overview row, then
+     smooth-scroll to target with nav offset. Targets can be either the
+     overview LI itself (e.g. #workflow) or a deep element inside a folded
+     section (e.g. #gates inside the workflow row body) — walk up to the LI
+     in either case. ===== */
   document.addEventListener("click", function (e) {
     const link = e.target.closest("a[href^=\"#\"]");
     if (!link) return;
@@ -768,11 +697,19 @@
     if (!id) return;
     const target = document.getElementById(id);
     if (!target) return;
+    let rowBtn = target.querySelector(":scope > .overview-row");
+    if (!rowBtn) {
+      const rowLi = target.closest(".overview > li");
+      rowBtn = rowLi && rowLi.querySelector(":scope > .overview-row");
+    }
+    if (rowBtn && rowBtn.getAttribute("aria-expanded") === "false") {
+      rowBtn.setAttribute("aria-expanded", "true");
+    }
     e.preventDefault();
-    const navH = window.matchMedia("(min-width: 768px)").matches ? 64 : 0;
+    const anchorViewport = window.AiSiteViewport;
+    const navH = anchorViewport && anchorViewport.isDesktop() ? 64 : 0;
     const top = target.getBoundingClientRect().top + window.scrollY - navH - 12;
     window.scrollTo({ top: top, behavior: "smooth" });
-    // Update hash without jumping
     history.pushState(null, "", "#" + id);
   });
 

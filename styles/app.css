@@ -79,28 +79,9 @@ body {
 /* Light mode: bump display weight one step up (100 → 200). Inter Variable
    serves the in-between weight from the wght axis. Dark stays at 100. */
 .t-display:not(.dark *) { font-weight: var(--font-extralight); }
-.t-title {
-  font-family: var(--font-body);
-  font-weight: var(--font-medium);
-  font-size: var(--text-title-project-size);
-  line-height: var(--text-title-project-line);
-}
 .t-body-lg {
   font-size: var(--text-body-lg-size);
   line-height: var(--text-body-lg-line);
-}
-.t-body-sm {
-  font-size: var(--text-body-sm-size);
-  line-height: var(--text-body-sm-line);
-  letter-spacing: var(--tracking-body-sm);
-}
-.t-link-sm {
-  font-size: var(--text-link-sm-size);
-  line-height: var(--text-link-sm-line);
-  font-weight: var(--font-medium);
-}
-.t-mono {
-  font-family: var(--font-mono);
 }
 
 /* Layout containers */
@@ -543,25 +524,6 @@ html, body { overflow-x: clip; }
   max-width: 56ch;
 }
 
-/* Placeholder fallback for sections still in flight */
-.placeholder {
-  min-height: 60vh;
-  padding-block: var(--space-20);
-  border-top: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-}
-.placeholder .container > p:first-child {
-  margin-bottom: var(--space-3);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.placeholder h2 { margin-bottom: var(--space-6); }
-.placeholder:last-child { padding-bottom: var(--space-20); }
-@media (min-width: 768px) {
-  .placeholder:last-child { padding-bottom: var(--space-20); }
-}
-
 /* ===== Section 2 — Cards ===== */
 .cards {
   display: grid;
@@ -611,12 +573,10 @@ html, body { overflow-x: clip; }
    Dark Sheet2 frame shows ALL 4 cards with border-only, including the card
    that triggered the sheet. The bg-fill (#121110) is the transient
    tap/spring state, NOT a sticky open-state. State machine:
-     - default          → border (no fill)
-     - .is-tapping      → fill #121110, no border (during press spring)
-     - .is-open         → border (re-asserts default; tracked for future hooks)
-   Mapped to existing tap.js attribute: [data-tap-active="true"] = is-tapping. */
-.dark .card[data-tap-active="true"],
-.dark .card.is-tapping {
+     - default                     → border (no fill)
+     - [data-tap-active="true"]    → fill #121110, no border (during press spring)
+     - .is-open                    → border (re-asserts default; tracked for future hooks) */
+.dark .card[data-tap-active="true"] {
   background: var(--bg-card-dark);
   border-color: transparent;
 }
@@ -741,11 +701,10 @@ html, body { overflow-x: clip; }
      overflow:clip. Applies to every card in the expanded stack — no
      active/inactive distinction in this frame. Overrides the global
      §4.6 state machine on mobile so all states (default, .is-open,
-     .is-tapping) stay filled. Tap state still wins the 2px yellow
+     [data-tap-active]) stay filled. Tap state still wins the 2px yellow
      border via the data-tap-active rule above. */
   .dark .card,
   .dark .card.is-open,
-  .dark .card.is-tapping,
   .dark .card[data-tap-active="true"] {
     background: var(--bg-card-dark);                  /* #121110 */
     border-color: transparent;
@@ -942,9 +901,6 @@ html, body { overflow-x: clip; }
   gap: var(--space-2);
   min-width: 120px;
 }
-/* TODO(dark-fill-pending §4.1): MOBILE-UPDATE-SPEC §4.1 — owner to confirm
-   dark-mode fill treatment via frame IDs 148:7358–151:18015. Current dark
-   = 1px border only; expected dark = filled chip. Implementation deferred. */
 .step__badge {
   display: inline-flex;
   align-items: center;
@@ -1048,9 +1004,6 @@ html, body { overflow-x: clip; }
     letter-spacing: 0;
     color: var(--fg-quiet);
     padding-top: 0;
-    font-feature-settings: normal;
-    font-variant-numeric: normal;
-    text-rendering: auto;
     justify-self: end;
     text-align: right;
   }
@@ -1075,17 +1028,6 @@ html, body { overflow-x: clip; }
     line-height: 14px;
     color: var(--fg-quiet);
   }
-}
-.step__chev {
-  grid-area: chev;
-  font-size: 16px;
-  color: var(--fg-tertiary);
-  transition: transform var(--dur-standard) var(--ease-out-strong),
-              color var(--dur-fast) var(--ease-out-strong);
-}
-.step__head[aria-expanded="true"] .step__chev {
-  transform: rotate(180deg);
-  color: var(--fg-primary);
 }
 /* Open row: number + title hold accent (matches Figma 54:7438 step 09 open). */
 .step__head[aria-expanded="true"] .step__num,
@@ -1126,11 +1068,24 @@ html, body { overflow-x: clip; }
 }
 .step__body-text p + p { margin-top: var(--space-3); }
 /* Inline .md filenames carry the body color, only the bg distinguishes them. */
-.step__body-text code {
+/* Inline <code> chip — shared base. Background + color vary per context;
+   declared via :where() (0 specificity) so per-context selectors below
+   still win for bg/color without cascade gymnastics. */
+:where(
+  .step__body-text code,
+  .gates__lede code,
+  .brain-row__desc code,
+  .brain-row__prompt code,
+  .tool-table__scroll table code,
+  .hiring__brain-text code,
+  .sheet__body code
+) {
   font-family: var(--font-mono);
   font-size: 0.92em;
   padding: 1px 6px;
   border-radius: var(--radius-sm);
+}
+.step__body-text code {
   background: var(--bg-surface-2);
   color: var(--fg-secondary);
 }
@@ -1142,7 +1097,6 @@ html, body { overflow-x: clip; }
 }
 @media (prefers-reduced-motion: reduce) {
   .step__body { animation: none; }
-  .step__chev { transition: none; }
 }
 
 /* Rows 4–13 collapse out of layout until [data-show-all="true"] flips on the
@@ -1209,10 +1163,6 @@ html, body { overflow-x: clip; }
   font-size: var(--text-body-base-size);
 }
 .gates__lede code {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
   background: transparent;
   color: inherit;
 }
@@ -1435,10 +1385,10 @@ html, body { overflow-x: clip; }
   display: block;
   font-family: var(--font-body);
   font-weight: var(--font-medium);
-  font-size: 22px;
-  line-height: 28px;
+  font-size: var(--text-row-title-size);
+  line-height: var(--text-row-title-lh);
   color: var(--fg-primary);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--text-row-title-tracking);
   transition: color var(--dur-fast) var(--ease-out-strong);
 }
 
@@ -1463,9 +1413,6 @@ html, body { overflow-x: clip; }
     letter-spacing: 0;
     color: var(--fg-quiet);
     padding-top: 0;
-    font-feature-settings: normal;
-    font-variant-numeric: normal;
-    text-rendering: auto;
     justify-self: end;
     text-align: right;
   }
@@ -1534,10 +1481,6 @@ html, body { overflow-x: clip; }
   }
 }
 .brain-row__desc code {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
   background: var(--bg-subtle);
   color: inherit;
 }
@@ -1570,10 +1513,6 @@ html, body { overflow-x: clip; }
 .brain-row__prompt > :first-child { margin-top: 0; }
 .brain-row__prompt > :last-child { margin-bottom: 0; }
 .brain-row__prompt code {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
   background: var(--bg-subtle);
   color: inherit;
 }
@@ -1634,8 +1573,6 @@ html, body { overflow-x: clip; }
   flex-direction: column;
   gap: var(--space-4);
 }
-/* TODO(dark-fill-pending §4.5): MOBILE-UPDATE-SPEC §4.5 — owner to confirm
-   dark criteria/defaults fill treatment vs border. Same heuristic as §4.4. */
 .criteria > li, .defaults > li {
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--border-subtle);
@@ -1652,8 +1589,6 @@ html, body { overflow-x: clip; }
   font-family: var(--font-body);
 }
 .criteria__head strong, .defaults__head strong { color: var(--fg-primary); font-size: var(--text-body-lg-size); }
-/* TODO(dark-fill-pending §4.2): MOBILE-UPDATE-SPEC §4.2 — owner to confirm
-   dark criteria-weight chip fill treatment vs border. Same heuristic as §4.1. */
 .criteria__weight {
   display: inline-flex;
   align-items: center;
@@ -1698,7 +1633,6 @@ html, body { overflow-x: clip; }
   color: var(--fg-tertiary);
   transition: transform var(--dur-fast) var(--ease-out-strong);
 }
-.tree__node[open] > summary .tree__icon { transform: rotate(0); content: "▾"; }
 .tree__node[open] > summary .tree__icon::before { content: "▾"; }
 .tree__name {
   color: var(--fg-primary);
@@ -1784,10 +1718,10 @@ html, body { overflow-x: clip; }
   display: block;
   font-family: var(--font-body);
   font-weight: var(--font-medium);
-  font-size: 22px;
-  line-height: 28px;
+  font-size: var(--text-row-title-size);
+  line-height: var(--text-row-title-lh);
   color: var(--fg-primary);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--text-row-title-tracking);
   transition: color var(--dur-fast) var(--ease-out-strong);
 }
 /* Tools row mobile — same 24px num column + 12 gap as section 2 / 3
@@ -1808,9 +1742,6 @@ html, body { overflow-x: clip; }
     font-weight: 300;                          /* Inter Light */
     letter-spacing: 0;
     color: var(--fg-quiet);
-    font-feature-settings: normal;
-    font-variant-numeric: normal;
-    text-rendering: auto;
     justify-self: end;
     text-align: right;
   }
@@ -1823,6 +1754,16 @@ html, body { overflow-x: clip; }
     line-height: 22px;
     letter-spacing: 0;
     color: var(--fg-primary);
+  }
+  /* iOS tnum-swap reset — shared across the three row-number columns so the
+     "1" doesn't render as a different glyph family on mobile. .card__index
+     has its own variant with additional smoothing resets. */
+  .step__num,
+  .brain-row__num,
+  .tools-row__num {
+    font-feature-settings: normal;
+    font-variant-numeric: normal;
+    text-rendering: auto;
   }
 }
 .tools-row__head[aria-expanded="true"] .tools-row__num,
@@ -1877,10 +1818,6 @@ html, body { overflow-x: clip; }
 .tool-table__scroll { width: 100%; }
 .tool-table__scroll table { width: 100%; border-collapse: collapse; }
 .tool-table__scroll table code {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
   background: var(--bg-subtle);
   color: inherit;
 }
@@ -2136,9 +2073,11 @@ html, body { overflow-x: clip; }
 .hiring__role {
   font-family: var(--font-body);
   font-weight: var(--font-medium);
-  font-size: 22px;
+  font-size: var(--text-row-title-size);
+  /* Distinct from --text-row-title-lh (28px) — hiring role uses tighter
+     25.6px per Figma "Hiring" frame. Kept inline to preserve the variant. */
   line-height: 25.6px;
-  letter-spacing: -0.005em;
+  letter-spacing: var(--text-row-title-tracking);
   color: var(--fg-primary);
   margin-bottom: var(--space-6);
 }
@@ -2205,14 +2144,9 @@ html, body { overflow-x: clip; }
   color: var(--fg-primary);
 }
 .hiring__brain-text code {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-code-inline);
   color: inherit;
 }
-.section--hiring:not(.dark *) .hiring__brain-text code { background: rgba(0, 0, 0, 0.04); }
 
 /* Bullet table — → marker + body copy. Desktop keeps dividers + heavier
    padding; mobile (rule further down) drops dividers + tightens spacing. */
@@ -2344,12 +2278,6 @@ html, body { overflow-x: clip; }
 .dark .hiring__cta-link[data-btn-state="hot"] {
   color: var(--accent-primary);
 }
-/* Press scale — explicit so the press/release feedback is visible even if
-   the shared .btn-press rule changes. Uses the studio --press-scale-button
-   token so the value matches other CTAs. */
-.hiring__cta-link:active {
-  transform: scale(var(--press-scale-button));
-}
 .hiring__cta-arrow {
   display: inline-block;
 }
@@ -2389,59 +2317,6 @@ html, body { overflow-x: clip; }
   .back-to-top { bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
 }
 .back-to-top svg { width: 16px; height: 16px; }
-
-/* ===== Hero schematic ===== */
-.schematic {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  max-width: 560px;
-  margin-inline: auto;
-  position: relative;
-}
-.schematic svg { width: 100%; height: 100%; overflow: visible; }
-
-.schematic__node {
-  opacity: 0;
-  transform: translateY(-12px);
-  animation: schematic-node-in var(--dur-reveal) var(--ease-spring) forwards;
-}
-.schematic__node:nth-child(1) { animation-delay: calc(var(--stagger-section) * 1); }
-.schematic__node:nth-child(2) { animation-delay: calc(var(--stagger-section) * 2); }
-.schematic__node:nth-child(3) { animation-delay: calc(var(--stagger-section) * 3); }
-.schematic__node:nth-child(4) { animation-delay: calc(var(--stagger-section) * 4); }
-.schematic__node:nth-child(5) { animation-delay: calc(var(--stagger-section) * 5); }
-.schematic__node:nth-child(6) { animation-delay: calc(var(--stagger-section) * 6); }
-
-.schematic__edge {
-  stroke-dasharray: 200;
-  stroke-dashoffset: 200;
-  animation: schematic-edge-in var(--dur-orchestrated) var(--ease-out-strong) forwards;
-}
-.schematic__edge:nth-of-type(1) { animation-delay: calc(var(--stagger-section) * 1.5); }
-.schematic__edge:nth-of-type(2) { animation-delay: calc(var(--stagger-section) * 2.5); }
-.schematic__edge:nth-of-type(3) { animation-delay: calc(var(--stagger-section) * 3.5); }
-.schematic__edge:nth-of-type(4) { animation-delay: calc(var(--stagger-section) * 4.5); }
-.schematic__edge:nth-of-type(5) { animation-delay: calc(var(--stagger-section) * 5.5); }
-.schematic__edge:nth-of-type(6) { animation-delay: calc(var(--stagger-section) * 6.5); }
-
-.schematic__pulse {
-  opacity: 0;
-  animation: schematic-pulse 4s linear infinite;
-  animation-delay: 1.4s;
-}
-
-@keyframes schematic-node-in {
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes schematic-edge-in {
-  to { stroke-dashoffset: 0; }
-}
-@keyframes schematic-pulse {
-  0%   { opacity: 0;   offset-distance: 0%; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { opacity: 0;   offset-distance: 100%; }
-}
 
 /* Reveal-on-mount for hero copy */
 /* Reveal pattern — opacity 0 + 8px lift, settles via spring overshoot.
@@ -2508,16 +2383,10 @@ html, body { overflow-x: clip; }
     scroll-behavior: auto;
   }
   .reveal,
-  .schematic__node,
   .nav,
   .overview > li {
     transform: none !important;
   }
-  .schematic__edge {
-    stroke-dasharray: none !important;
-    stroke-dashoffset: 0 !important;
-  }
-  .schematic__pulse { display: none; }
 }
 
 /* Hover-only states — fire only on devices with a real pointer.
@@ -2527,9 +2396,7 @@ html, body { overflow-x: clip; }
   .nav__link:hover { color: var(--accent-primary); }
   .hero__skip:hover .hero__arrow { transform: translateX(4px); }
   .card:hover .card__arrow { transform: translateX(4px); }
-  .drawer__link a:hover [data-arrow] { transform: translateX(4px); }
   .hiring__cta-link:hover .hiring__cta-arrow { transform: translateX(4px); }
-  .section__next a:hover [data-arrow] { transform: translateX(6px); }
   /* Hiring tab hover — border-color fades to accent. Selected state still wins
      via [aria-selected="true"] rules earlier. */
   .hiring__tab:not([aria-selected="true"]):hover {
@@ -2834,7 +2701,7 @@ html, body { overflow-x: clip; }
   height: 1px;
   width: 200px;
   transform: translateX(-100vw);
-  background: linear-gradient(90deg, rgba(218, 255, 96, 0) 0%, var(--accent-primary) 100%);
+  background: linear-gradient(90deg, rgba(var(--accent-primary-rgb), 0) 0%, var(--accent-primary) 100%);
 }
 .hover-trace--divider .hover-trace__head {
   position: absolute;
@@ -2865,7 +2732,7 @@ html, body { overflow-x: clip; }
   overflow: visible;
 }
 .hover-trace--button-orbit .orbit-trail {
-  filter: drop-shadow(0 0 4px rgba(218, 255, 96, 0.6));
+  filter: drop-shadow(0 0 4px rgba(var(--accent-primary-rgb), 0.6));
 }
 .hover-trace--button-orbit .orbit-head {
   filter: drop-shadow(0 0 4px var(--accent-primary));
@@ -2933,7 +2800,6 @@ html, body { overflow-x: clip; }
 .copy-btn:active {
   transform: scale(var(--press-scale-button));
 }
-.btn-tap:active,
 [data-tap]:active {
   transform: scale(var(--press-scale-tap));
 }
@@ -2941,7 +2807,6 @@ html, body { overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) {
   .btn-press:active,
   .btn-trace:active,
-  .btn-tap:active,
   .copy-btn:active,
   [data-tap]:active {
     transform: none;
@@ -2960,10 +2825,7 @@ html, body { overflow-x: clip; }
   fill: none;
   stroke: currentColor;
 }
-.icon--sm { width: 14px; height: 14px; }
 .icon--md { width: 16px; height: 16px; }
-.icon--lg { width: 20px; height: 20px; }
-.icon--xl { width: 24px; height: 24px; }
 
 /* ============================================================
    Step prompt panel — Figma 54:7438 step 09 open state.
@@ -3235,14 +3097,6 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   from { opacity: 0; }
   to { opacity: 1; }
 }
-@keyframes overview-title-slide {
-  from { transform: translateY(-40px); }
-  to { transform: translateY(0); }
-}
-@keyframes overview-title-slide-up {
-  from { transform: translateY(0); }
-  to { transform: translateY(-40px); }
-}
 @keyframes overview-lede-slide {
   from { opacity: 0; transform: translateY(-12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -3394,18 +3248,6 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
   letter-spacing: -0.01em;
   color: var(--fg-tertiary);
 }
-
-.overview-row__panel-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-link-sm-size);
-  font-weight: var(--font-medium);
-  color: var(--fg-primary);
-  margin-top: var(--space-4);
-}
-.overview-row__panel-link:hover [data-arrow] { transform: translateX(4px); }
-.overview-row__panel-link .icon { transition: transform var(--dur-fast) var(--ease-out-strong); }
 
 @media (prefers-reduced-motion: reduce) {
   .overview-row__open { animation: none; }
@@ -3649,10 +3491,6 @@ html[data-sheet-open="true"] canvas[data-grain] {
 }
 .sheet__body p { margin: 0; }
 .sheet__body code {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
   background: var(--bg-subtle);
   color: inherit;
 }
@@ -3703,8 +3541,7 @@ html[data-sheet-open="true"] canvas[data-grain] {
   /* Dark overview cards previously got a #121110 bg fill on tap via the
      §4.6 state machine. On mobile, override that — tap = 2px yellow
      border only, no fill. Desktop §4.6 cascade unchanged. */
-  .dark .card[data-tap-active="true"],
-  .dark .card.is-tapping {
+  .dark .card[data-tap-active="true"] {
     background: transparent;
     border-color: var(--accent-primary);
   }

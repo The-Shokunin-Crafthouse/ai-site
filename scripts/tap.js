@@ -19,10 +19,7 @@
    - [data-tap-scale] opt-in
 
    If new tier elements appear later, add data-tap-scale to opt them in
-   without modifying this selector list.
-   TODO(tap-coverage): re-audit selector list once expanded-frame node IDs
-   (148:7358–151:18015) land, in case Figma reveals additional tap targets.
-*/
+   without modifying this selector list. */
 (function () {
   "use strict";
   if (typeof window === "undefined") return;
@@ -141,6 +138,4 @@
 
   /* Re-bind after structural fold-in (app.js moves nodes around). */
   window.addEventListener("load", bindAll);
-  /* Expose so app.js (or future code) can re-bind after dynamic inserts. */
-  window.AiSiteTap = { bindAll: bindAll };
 })();

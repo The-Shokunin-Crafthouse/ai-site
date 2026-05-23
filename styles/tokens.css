@@ -41,6 +41,13 @@
   --text-overview-num-size: 34px;
   --text-overview-num-line: 1.1;
 
+  /* Typography — row title shared scale (Studio Brain rows + Tools rows).
+     22/28 -0.005em. The hiring__role selector uses 22px + -0.005em from
+     these tokens but a different line-height (25.6px) — kept inline. */
+  --text-row-title-size: 22px;
+  --text-row-title-lh: 28px;
+  --text-row-title-tracking: -0.005em;
+
   /* Typography — Studio Brain description (Figma 55:9704 "Step/Summary" 14/21).
      Snapped to nearest existing tokens: size = --text-link-sm-size (14px),
      line = --text-body-sm-line (19.5px, vs Figma 21px). */
@@ -67,17 +74,13 @@
   --bg-subtle: #f5f1ee;
   --bg-recessed: #ebeae6;
   --bg-surface-2: #ebe9e6;
-  --bg-surface-3: #e2e0dd;
-  --bg-inverse: #211f1c;
   --fg-primary: #21201c;
   --fg-secondary: #595550;
   --fg-tertiary: #7d7a77;
   --fg-quiet: #9c9997;
   --fg-muted: #999794;
-  --fg-footer: #625e5a;
   /* Inline body-copy link color = the studio accent, not the platform blue. */
   --fg-link: var(--accent-primary);
-  --fg-tag: #c1b29c;
 
   /* Workflow step badge colors — audit pass 2026-05-22 maps these to
      Figma semantic/text/* values directly:
@@ -123,10 +126,13 @@
   --border-button: var(--border-subtle);
   --border-strong: #0d0c0a;
   --accent-primary: #daff60;
+  /* Channel-only triplet for rgba()/rgb() expansions — keeps gradient stops
+     and shadow alphas in sync with --accent-primary. Comma-separated so it
+     plugs into the legacy rgba(r, g, b, a) syntax. */
+  --accent-primary-rgb: 218, 255, 96;
   --fg-accent: #ca4541;
   --hover-accent: #daff60;
   --hover-mint: #58f5d2;
-  --hover-row: #f7f4f1;
   --bg-tooltip: #fffefc;
   --fg-tooltip: #21201c;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.07);
@@ -187,6 +193,11 @@
   --bg-prompt: #ebeae6;
   --radius-prompt: var(--radius-md);
 
+  /* Inline <code> chip bg for the hiring brain-text callout — translucent
+     foreground so the chip reads as a subtle tint over the callout surface
+     in both modes. Light: 4% black. Dark override below: 6% white. */
+  --bg-code-inline: rgba(0, 0, 0, 0.04);
+
   /* Toggle knob — both modes (Figma DarkModeToggle component). Hard
      white, intentionally constant across modes. */
   --surface-toggle-knob: #ffffff;
@@ -214,11 +225,10 @@
   /* Motion — durations (toggle slide) */
   --dur-figma-slide: 1280ms;
 
-  /* Hover comet — 6s edge-to-edge at 1440px = 240 px/s linear (per Figma proto 57:10951/57:11158). */
-  --hover-comet-speed: 240;
-  --hover-comet-trail: 200px;
+  /* Hover comet — 6s edge-to-edge at 1440px = 240 px/s linear (per Figma proto 57:10951/57:11158).
+     Speed + trail length live in scripts/hover.js. Glow + head dimension are still consumed by CSS. */
   --hover-comet-head: 4px;
-  --hover-comet-glow: 0 0 4px rgba(218, 255, 96, 0.9);
+  --hover-comet-glow: 0 0 4px rgba(var(--accent-primary-rgb), 0.9);
 
   /* Press scale — matches levibahn.com convention from studio-memory.md §Motion. */
   --press-scale-button: 0.985;
@@ -346,16 +356,12 @@
   --bg-recessed: #080707;
   --bg-callout: #121110;
   --bg-surface-2: #23211f;
-  --bg-surface-3: #161513;
-  --bg-inverse: #fdfaf8;
   --fg-primary: #d0cdca;
   --fg-secondary: #989089;
   --fg-tertiary: #545351;
   --fg-quiet: #3d3c3b;
   --fg-muted: #3d3c3b;
-  --fg-footer: #a09e9b;
   --fg-link: var(--accent-primary);
-  --fg-tag: #8e7d65;
   /* Audit pass 2026-05-22 — badges follow Figma semantic/text/* dark values.
      "You do" → heading · "Prompt Claude" → accent · "You + Claude" → link. */
   --badge-you: #d0ceca;     /* text/heading */
@@ -368,7 +374,6 @@
   --accent-primary: #daff60;
   --hover-accent: #daff60;
   --hover-mint: #58f5d2;
-  --hover-row: #2a2522;
   --fg-accent: #ca4541;
   --bg-tooltip: #23211f;
   --fg-tooltip: #eae9e8;
@@ -385,6 +390,10 @@
 
   /* Dark-mode card surface stays transparent — cards read against bg-base. */
   --bg-card: transparent;
+
+  /* Inline <code> chip bg — dark scope uses translucent white instead of
+     translucent black so the chip stays visible on the dark callout. */
+  --bg-code-inline: rgba(255, 255, 255, 0.06);
 
   /* Pin the brain icon to its original Figma value in dark; light gets a
      softer warm gray via :root above. */
