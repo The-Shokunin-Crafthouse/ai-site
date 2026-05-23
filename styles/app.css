@@ -1821,10 +1821,14 @@ html, body { overflow-x: clip; }
     text-align: right;
   }
   .tools-row__title {
+    /* Explicit 1:1 mirror of .brain-row__title mobile — owner direction
+       2026-05-22. font-family kept on the body sans-serif. */
+    font-family: var(--font-body);
     font-weight: var(--font-semibold);
     font-size: 16px;
     line-height: 22px;
     letter-spacing: 0;
+    color: var(--fg-primary);
   }
 }
 .tools-row__head[aria-expanded="true"] .tools-row__num,
