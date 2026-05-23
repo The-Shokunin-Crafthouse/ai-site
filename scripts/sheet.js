@@ -496,8 +496,8 @@
     var payload = null;
     if      (trig.type === "card")  payload = extractCardSheet(trig.el);
     else if (trig.type === "step")  payload = extractRowSheet(trig.el, ".step__body",       ".step__title",       ".step__num");
-    else if (trig.type === "brain") payload = extractRowSheet(trig.el, ".brain-row__body",  ".brain-row__title");
-    else if (trig.type === "tools") payload = extractRowSheet(trig.el, ".tools-row__body",  ".tools-row__title");
+    else if (trig.type === "brain") payload = extractRowSheet(trig.el, ".brain-row__body",  ".brain-row__title",  ".brain-row__num");
+    else if (trig.type === "tools") payload = extractRowSheet(trig.el, ".tools-row__body",  ".tools-row__title",  ".tools-row__num");
 
     if (!payload || !payload.bodyHTML) return;
 

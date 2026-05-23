@@ -1445,16 +1445,29 @@ html, body { overflow-x: clip; }
 /* ===== Brain rows mobile reconciliation (audit 2026-05-22) =====
    Figma BrainRow 142:4570+. Mobile-only overrides; desktop spec unchanged. */
 @media (max-width: 767px) {
+  /* Lock brain row to the same 24px num column + 12 gap as the section 2
+     step rows so all expanded-row numbers right-align and all titles
+     share one left edge. Owner direction 2026-05-22. */
   .brain-row__head {
+    grid-template-columns: 24px 1fr;
     padding: 18px 0;
-    column-gap: var(--space-3-5);              /* 14 */
+    column-gap: var(--space-3);                /* 12 */
   }
   .brain-row__num {
+    /* Inter Light + feature reset kills the "tnum" glyph swap that made
+       the "1" read as a different family on mobile. */
+    font-family: var(--font-body);
     font-size: 16px;
     line-height: 24px;
     font-weight: 300;                          /* Inter Light */
     letter-spacing: 0;
     color: var(--fg-quiet);
+    padding-top: 0;
+    font-feature-settings: normal;
+    font-variant-numeric: normal;
+    text-rendering: auto;
+    justify-self: end;
+    text-align: right;
   }
   .brain-row__title {
     font-weight: var(--font-semibold);
@@ -1782,6 +1795,37 @@ html, body { overflow-x: clip; }
   color: var(--fg-primary);
   letter-spacing: -0.005em;
   transition: color var(--dur-fast) var(--ease-out-strong);
+}
+/* Tools row mobile — same 24px num column + 12 gap as section 2 / 3
+   so the expanded-row number stacks right-aligned and the title shares
+   one left edge across all expanded sections. Owner direction
+   2026-05-22. */
+@media (max-width: 767px) {
+  .tools-row__head {
+    grid-template-columns: 24px 1fr;
+    padding: 18px 0;
+    column-gap: var(--space-3);                /* 12 */
+    min-height: 0;
+  }
+  .tools-row__num {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 300;                          /* Inter Light */
+    letter-spacing: 0;
+    color: var(--fg-quiet);
+    font-feature-settings: normal;
+    font-variant-numeric: normal;
+    text-rendering: auto;
+    justify-self: end;
+    text-align: right;
+  }
+  .tools-row__title {
+    font-weight: var(--font-semibold);
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: 0;
+  }
 }
 .tools-row__head[aria-expanded="true"] .tools-row__num,
 .tools-row__head[aria-expanded="true"] .tools-row__title {
