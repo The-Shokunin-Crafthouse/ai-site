@@ -400,7 +400,7 @@ html, body { overflow-x: clip; }
   font-family: var(--font-body);
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
-  color: var(--fg-tertiary);
+  color: var(--text-accent);                          /* semantic/text/accent — swaps via .dark */
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
   margin-bottom: var(--space-4);
