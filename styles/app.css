@@ -3444,7 +3444,7 @@ html[data-sheet-open="true"] canvas[data-grain] {
    Achieved with padding-bottom 8 + border-bottom 1px on the row. */
 .sheet__title-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;                            /* top-align num/icon when title wraps */
   gap: var(--space-2);                                /* 8 — Figma */
   padding-bottom: var(--space-2);                     /* 8 — Figma */
   border-bottom: 1px solid var(--border-subtle);
