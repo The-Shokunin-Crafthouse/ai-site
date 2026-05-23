@@ -262,13 +262,24 @@
 
     /* Cap the sheet's height at its natural content height when that
        comes in under the token max. Lets the sheet hug short content at
-       max snap instead of leaving blank space below. Measure with
-       height:auto temporarily so scrollHeight reflects the natural
-       intrinsic size. */
+       max snap instead of leaving blank space below.
+
+       Measure by summing children offsetHeights + flex gap + sheet's own
+       vertical padding. Avoids the prior temporary height:auto swap,
+       which let long unwrapped <pre> content stretch the sheet wider
+       than 100vw during the measurement frame and corrupted the
+       horizontal padding. */
     var tokenMax = snapMaxPx();
-    sheet.style.height = "auto";
-    sheet.style.maxHeight = tokenMax + "px";
-    var natural = sheet.scrollHeight;
+    var gap = readPxToken("--sheet-gap", 24);
+    var padT = readPxToken("--sheet-pad-top", 12);
+    var padB = readPxToken("--sheet-pad-bottom", 32);
+    var sumChildren = 0;
+    var n = 0;
+    Array.prototype.forEach.call(sheet.children, function (c) {
+      sumChildren += c.offsetHeight;
+      n++;
+    });
+    var natural = sumChildren + Math.max(0, n - 1) * gap + padT + padB;
     activeSheetMaxPx = Math.min(natural, tokenMax);
     sheet.style.height = activeSheetMaxPx + "px";
     sheet.style.maxHeight = activeSheetMaxPx + "px";
