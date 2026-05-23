@@ -2199,6 +2199,12 @@ html, body { overflow-x: clip; }
    correctly instead of being sheared. Font color is unchanged. */
 .hiring__role-mark {
   position: relative;
+  /* Belt-and-suspenders: `font-style: oblique 5deg` matches the standard
+     CSS syntax iOS Safari honors reliably; font-variation-settings
+     drives Inter's slnt axis where supported. With both declared, modern
+     browsers use the variation-settings value while Safari falls back to
+     the oblique angle so the slant renders on mobile. */
+  font-style: oblique 5deg;
   font-variation-settings: "slnt" var(--text-emphasis-slant);
 }
 .hiring__role-mark::after {
