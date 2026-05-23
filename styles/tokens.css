@@ -178,7 +178,7 @@
   /* Text emphasis slant — italic-style lean. Driven by the Inter Variable
      `slnt` axis (range -10..0, negative leans forward). Unitless because
      font-variation-settings takes a raw axis value, not an angle. */
-  --text-emphasis-slant: -5;
+  --text-emphasis-slant: -4;
 
   /* Radius */
   --radius-xs: 1px;
