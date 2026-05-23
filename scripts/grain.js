@@ -1,6 +1,10 @@
 function initGrain() {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
+  // Tag the canvas so CSS can target it (sheet open/dismiss path hides
+  // the grain to avoid the GPU-compositing artifact that flashes a much
+  // heavier noise layer mid-transition behind the sheet's backdrop blur).
+  canvas.setAttribute('data-grain', '');
 
   canvas.style.cssText = [
     'position: fixed',
@@ -12,10 +16,18 @@ function initGrain() {
     'filter: blur(0.6px)',
   ].join(';');
 
+  // Mobile breakpoint matches CSS @media (max-width: 767px). matchMedia
+  // is live — re-applies opacity on resize so a desktop window narrowed
+  // to a phone-sized viewport gets the mobile value too.
+  const mqMobile = window.matchMedia('(max-width: 767px)');
+
   function applyColorMode() {
     const dark = document.documentElement.classList.contains('dark');
     canvas.style.mixBlendMode = dark ? 'screen' : 'soft-light';
-    canvas.style.opacity = dark ? '0.01' : '0.12';
+    // Light mode: 0.10 on mobile, 0.12 on desktop. Dark locked at 0.01
+    // per prior preservation note.
+    const lightOpacity = mqMobile.matches ? '0.1' : '0.12';
+    canvas.style.opacity = dark ? '0.01' : lightOpacity;
   }
 
   applyColorMode();
@@ -25,6 +37,9 @@ function initGrain() {
     document.documentElement,
     { attributes: true, attributeFilter: ['class'] }
   );
+  // Re-apply on breakpoint cross.
+  if (mqMobile.addEventListener) mqMobile.addEventListener('change', applyColorMode);
+  else if (mqMobile.addListener) mqMobile.addListener(applyColorMode);
 
   document.body.appendChild(canvas);
 

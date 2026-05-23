@@ -1,0 +1,14 @@
+# ai.levibahn.com — cache policy for source artifacts.
+# HTML/CSS/JS forced no-cache so Safari + intermediate CDNs revalidate on every
+# request. Required because Hostinger's default Cache-Control on these files is
+# `public, max-age=604800` (7d), which keeps mobile Safari serving stale CSS for
+# a week after a deploy. Fonts/images/woff2 keep default caching — they rarely
+# change and the cost of a stale font is zero compared to a stale stylesheet.
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|htm|css|js)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>

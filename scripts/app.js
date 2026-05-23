@@ -39,30 +39,88 @@
       }
     }
 
-    // (2) Slide in 2.2s after load — last beat in the page-load cascade.
-    // Mirrors --load-toggle-delay in styles/tokens.css; keep in sync.
-    window.setTimeout(function () {
-      toggle.setAttribute("data-toggle-shown", "true");
-    }, 2200);
-
-    // (3) Past one viewport: collapse the "Dark Mode" label (pill slides over)
+    // (2) Reveal trigger — diverges by viewport.
+    //   Desktop: slide in 2.2s after load (page-load cascade beat).
+    //   Mobile:  slide in on first user interaction; 5s after that, collapse
+    //            the "Dark Mode" label. Avoids competing with hero on load.
+    //   Animation specs are owned by CSS (var(--dur-figma-slide), 1280ms)
+    //   and are untouched here — JS only flips the data attributes.
+    const mqMobile = window.matchMedia("(max-width: 767px)");
     let labelHidden = false;
-    const onScrollLabel = function () {
+    const collapseLabel = function () {
       if (labelHidden) return;
-      if (window.scrollY > window.innerHeight) {
-        labelHidden = true;
-        toggle.setAttribute("data-toggle-label-hidden", "true");
-        window.removeEventListener("scroll", onScrollLabel);
-      }
+      labelHidden = true;
+      toggle.setAttribute("data-toggle-label-hidden", "true");
     };
-    window.addEventListener("scroll", onScrollLabel, { passive: true });
 
-    // (4) Footer-aware bottom positioning. Mobile baseline lifts above the
-    // bottom tab bar (live site has no tab bar; ai-site mobile does).
+    if (mqMobile.matches) {
+      let shown = false;
+      const trustedReveal = function (e) {
+        // Require event.isTrusted — synthetic events (e.g. some browser
+        // gesture-handler stubs) shouldn't count.
+        if (e && e.isTrusted === false) return;
+        if (shown) return;
+        shown = true;
+        toggle.setAttribute("data-toggle-shown", "true");
+        // Collapse the text label 5s after first reveal.
+        window.setTimeout(collapseLabel, 5000);
+        // Detach all interaction listeners now that we've fired.
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("touchstart", trustedReveal);
+        window.removeEventListener("pointerdown", trustedReveal);
+        window.removeEventListener("click", trustedReveal);
+        window.removeEventListener("keydown", trustedReveal);
+      };
+      // iOS Safari fires `scroll` events as the address bar slides during
+      // page load — easily 30-50px of delta. Require a much larger delta
+      // (60px) to count as user-initiated.
+      let startY = window.scrollY;
+      const SCROLL_THRESHOLD = 60;
+      const onScroll = function (e) {
+        if (Math.abs(window.scrollY - startY) < SCROLL_THRESHOLD) return;
+        trustedReveal(e);
+      };
+      // Defer listener attachment 1s past `load` so the address-bar slide,
+      // layout-settle scroll-restore events, and any auto-fired pointer
+      // events have all flushed before we start listening.
+      const attach = function () {
+        // Re-baseline startY at attach time.
+        startY = window.scrollY;
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("touchstart", trustedReveal, { passive: true });
+        window.addEventListener("pointerdown", trustedReveal, { passive: true });
+        window.addEventListener("click", trustedReveal);
+        window.addEventListener("keydown", trustedReveal);
+      };
+      const startAttachTimer = function () {
+        window.setTimeout(attach, 1000);
+      };
+      if (document.readyState === "complete") {
+        startAttachTimer();
+      } else {
+        window.addEventListener("load", startAttachTimer, { once: true });
+      }
+    } else {
+      window.setTimeout(function () {
+        toggle.setAttribute("data-toggle-shown", "true");
+      }, 2200);
+      // Desktop label-collapse heuristic preserved: past one viewport scrolled.
+      const onScrollLabel = function () {
+        if (labelHidden) return;
+        if (window.scrollY > window.innerHeight) {
+          collapseLabel();
+          window.removeEventListener("scroll", onScrollLabel);
+        }
+      };
+      window.addEventListener("scroll", onScrollLabel, { passive: true });
+    }
+
+    // (4) Footer-aware bottom positioning. Mobile + desktop both rest 24px
+    // above the viewport bottom; footer rect lift kept in case the toggle
+    // would otherwise overlap .page-footer. Tabbar is gone on mobile per
+    // §6.1, so the prior 88px mobile baseline is no longer needed.
     let rafId = 0;
-    const getBase = function () {
-      return window.matchMedia("(max-width: 767px)").matches ? 88 : 24;
-    };
+    const getBase = function () { return 24; };
     const updateBottom = function () {
       rafId = 0;
       const base = getBase();
@@ -110,37 +168,11 @@
 
   /* ===== Sticky nav — visible on load (CSS handles fixed positioning). ===== */
 
-  /* ===== Active section tracking — feeds both nav + tabbar ===== */
+  /* ===== Active section tracking =====
+     Tabbar removed per MOBILE-UPDATE-SPEC §6.1, so no tab-link state to
+     update. Section observer remains in case future code re-attaches a
+     hash-tracking UI to it. */
   const sections = Array.from(document.querySelectorAll("[data-section]"));
-  const tabLinks = Array.from(document.querySelectorAll("[data-tab-link]"));
-
-  function clearActive() {
-    // Nav links are no longer auto-highlighted on scroll. Hover is the only
-    // way they turn yellow. Mobile tab bar still tracks active section.
-    tabLinks.forEach(function (link) {
-      link.classList.remove("is-active");
-      link.removeAttribute("aria-current");
-    });
-  }
-
-  function setActive(id) {
-    if (window.scrollY === 0) {
-      clearActive();
-      return;
-    }
-    tabLinks.forEach(function (link) {
-      const match = link.getAttribute("href") === "#" + id;
-      link.classList.toggle("is-active", match);
-      if (match) link.setAttribute("aria-current", "true");
-      else link.removeAttribute("aria-current");
-    });
-  }
-
-  // Scroll back to the top → clear all nav highlights (observer may not fire
-  // again once we're already at 0, so we listen explicitly).
-  window.addEventListener("scroll", function () {
-    if (window.scrollY === 0) clearActive();
-  }, { passive: true });
 
   if (sections.length) {
     let visible = new Map();
@@ -149,13 +181,6 @@
         if (e.isIntersecting) visible.set(e.target.id, e.intersectionRatio);
         else visible.delete(e.target.id);
       });
-      if (visible.size) {
-        let bestId = null, bestRatio = -1;
-        visible.forEach(function (ratio, id) {
-          if (ratio > bestRatio) { bestRatio = ratio; bestId = id; }
-        });
-        if (bestId) setActive(bestId);
-      }
     }, { rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] });
     sections.forEach(function (s) { sectionObserver.observe(s); });
     // Expose so the structural fold-in (later in this IIFE) can re-observe the
@@ -163,25 +188,7 @@
     window.__sectionObserver = sectionObserver;
   }
 
-  /* ===== Bottom tab bar — hide on scroll-down past 200, reveal on scroll-up ===== */
-  const tabbar = document.querySelector("[data-tabbar]");
-  if (tabbar) {
-    let lastY = window.scrollY;
-    let ticking = false;
-    function onScroll() {
-      const y = window.scrollY;
-      if (y > 200 && y > lastY + 4) tabbar.classList.add("is-hidden");
-      else if (y < lastY - 4 || y <= 200) tabbar.classList.remove("is-hidden");
-      lastY = y;
-      ticking = false;
-    }
-    window.addEventListener("scroll", function () {
-      if (!ticking) {
-        window.requestAnimationFrame(onScroll);
-        ticking = true;
-      }
-    }, { passive: true });
-  }
+  /* Bottom tab bar removed — no scroll-hide/show handler needed. */
 
   /* ===== Structural fold-in =====
      Lift the workflow/brain/tools sections out of the page and into their
@@ -629,6 +636,20 @@
         if (t) syncPromptHeight(t);
       });
     });
+
+    /* Public hook so the mobile sheet (scripts/sheet.js) can increment the
+       explored counter when a step opens in a tier-3 sheet instead of an
+       inline body. Same monotonic semantics as desktop: once a step is
+       marked explored, closing the sheet or re-opening doesn't move it. */
+    window.AiSiteTimeline = {
+      markExplored: function (stepId) {
+        if (!stepId) return;
+        if (explored.has(stepId)) return;
+        explored.add(stepId);
+        writeSet(EXPLORED_KEY, explored);
+        updateProgress();
+      }
+    };
   }
 
   /* ===== Section 3 — Studio Brain row accordion =====
@@ -757,43 +778,49 @@
 
   /* ===== Copy-to-clipboard for [data-copy] buttons.
      Reads the textContent of #[data-copy-target] and writes it to the clipboard.
-     Swaps the icon + label to a "Copied" affordance for 1.6s. */
-  const copyButtons = document.querySelectorAll("[data-copy]");
-  copyButtons.forEach(function (btn) {
+     Swaps the icon + label to a "Copied" affordance for 1.6s.
+     Delegated at the document level so buttons cloned into the mobile
+     bottom sheet (scripts/sheet.js) get the same behavior without
+     re-binding per instance. */
+  const copyResetTimers = new WeakMap();
+  document.addEventListener("click", async function (e) {
+    const btn = e.target.closest("[data-copy]");
+    if (!btn) return;
     const targetId = btn.getAttribute("data-copy-target");
+    if (!targetId) return;
+    /* Original (unhidden) element is the source of truth even when a
+       clone of the same content lives inside the sheet — getElementById
+       returns the first match, which is what we want. */
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    const text = target.textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "absolute";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (_) {}
+      document.body.removeChild(ta);
+    }
     const labelEl = btn.querySelector("[data-copy-label]");
     const iconUse = btn.querySelector(".icon use");
-    let resetTimer = null;
-
-    btn.addEventListener("click", async function () {
-      const target = document.getElementById(targetId);
-      if (!target) return;
-      const text = target.textContent;
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch (e) {
-        // Fallback for non-secure contexts
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.setAttribute("readonly", "");
-        ta.style.position = "absolute";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.select();
-        try { document.execCommand("copy"); } catch (_) {}
-        document.body.removeChild(ta);
-      }
-      btn.setAttribute("data-copy-state", "copied");
-      if (labelEl) labelEl.textContent = "Copied";
-      if (iconUse) iconUse.setAttribute("href", "#ph-check");
-      if (resetTimer) clearTimeout(resetTimer);
-      resetTimer = setTimeout(function () {
-        btn.removeAttribute("data-copy-state");
-        if (labelEl) labelEl.textContent = "Copy";
-        if (iconUse) iconUse.setAttribute("href", "#ph-copy");
-        resetTimer = null;
-      }, 1600);
-    });
+    btn.setAttribute("data-copy-state", "copied");
+    if (labelEl) labelEl.textContent = "Copied";
+    if (iconUse) iconUse.setAttribute("href", "#ph-check");
+    const prev = copyResetTimers.get(btn);
+    if (prev) clearTimeout(prev);
+    const t = setTimeout(function () {
+      btn.removeAttribute("data-copy-state");
+      if (labelEl) labelEl.textContent = "Copy";
+      if (iconUse) iconUse.setAttribute("href", "#ph-copy");
+      copyResetTimers.delete(btn);
+    }, 1600);
+    copyResetTimers.set(btn, t);
   });
 
   /* ===== Drop .reveal class after animation completes so Chrome dismantles

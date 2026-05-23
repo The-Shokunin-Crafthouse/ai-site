@@ -58,30 +58,36 @@
   --tracking-eyebrow-strong: 0.96px;
   --tracking-body-sm: 0.5px;
 
-  /* Color — light */
-  --bg-base: #e0dfdc;
+  /* Color — light. Primary tokens reconciled with Figma color table
+     2026-05-22. Tokens not present in Figma table (--bg-recessed,
+     --bg-callout, --bg-card, --bg-prompt, --fg-quiet, etc.) kept at
+     prior values; only Figma-named primitives updated below. */
+  --bg-base: #e0ddda;
   --bg-nav: var(--bg-base);
-  --bg-subtle: #ebeae6;
+  --bg-subtle: #f5f1ee;
   --bg-recessed: #ebeae6;
-  --bg-surface-2: #edebe8;
-  --bg-surface-3: #e4e1dd;
-  --bg-inverse: #21201c;
+  --bg-surface-2: #ebe9e6;
+  --bg-surface-3: #e2e0dd;
+  --bg-inverse: #211f1c;
   --fg-primary: #21201c;
-  --fg-secondary: #5b5957;
-  --fg-tertiary: #7d7d77;
+  --fg-secondary: #595550;
+  --fg-tertiary: #7d7a77;
   --fg-quiet: #9c9997;
-  --fg-muted: #9b9997;
-  --fg-footer: #62615a;
+  --fg-muted: #999794;
+  --fg-footer: #625e5a;
   /* Inline body-copy link color = the studio accent, not the platform blue. */
   --fg-link: var(--accent-primary);
   --fg-tag: #c1b29c;
 
-  /* Workflow step badge colors — Figma 54:7438 step meta pills, mapped to
-     semantic/text/* variables (dark composite is canonical).
-     "You do" → body · "Prompt Claude" → link · "You + Claude" → accent. */
-  --badge-you: #595959;     /* light: text/body */
-  --badge-prompt: #8e7d65;  /* light: text/link */
-  --badge-mixed: #c8893f;   /* light: text/accent */
+  /* Workflow step badge colors — audit pass 2026-05-22 maps these to
+     Figma semantic/text/* values directly:
+       "You do"        → semantic/text/heading
+       "Prompt Claude" → semantic/text/accent
+       "You + Claude"  → semantic/text/accent (richer hue)
+     Light/dark swap via .dark scope below. */
+  --badge-you: #21201c;     /* light: text/heading */
+  --badge-prompt: #a67c42;  /* light: text/accent */
+  --badge-mixed: #c8893f;   /* light: text/accent (richer) */
 
   /* Prompt code body color — Figma 54:7438 / 55:9113 (CC Prompt). */
   --prompt-code-fg: #5b5b5a;
@@ -96,15 +102,22 @@
      (#21201C in light). Override in .dark for visibility. */
   --fg-icon-primary: #21201c;
 
+  /* Sheet title icon — Figma 148:7762 / 150:11123 (mobile sheet header).
+     Primary token holds the raw hex pulled from the Figma frame; the
+     semantic --fg-icon-sheet aliases it so consumers don't reference the
+     primary directly. Light = #AEA7A0 (warm gray). Dark override below. */
+  --color-warm-icon: #AEA7A0;
+  --fg-icon-sheet: var(--color-warm-icon);
+
   /* Inset callout surface — used by the "What I build first" card in
      Section 06. Sinks deeper than --bg-recessed in dark so the card
      reads as a separate plane against bg-base #0e0c0b. */
   --bg-callout: #ebeae6;
 
   /* Overview card surface (Section 1 — "The system, in 90 seconds" 4 cards).
-     Light: warm light surface above --bg-base. Dark: transparent so the
+     Light: matches Figma semantic/bg/card #ebeae7. Dark: transparent so the
      card reads against --bg-base without a separate plane. */
-  --bg-card: #ebeae6;
+  --bg-card: #ebeae7;
   --fg-on-accent: #21201c;
   --border-subtle: #d4d0ca;
   --border-button: var(--border-subtle);
@@ -114,7 +127,7 @@
   --hover-accent: #daff60;
   --hover-mint: #58f5d2;
   --hover-row: #f7f4f1;
-  --bg-tooltip: var(--bg-base);
+  --bg-tooltip: #fffefc;
   --fg-tooltip: #21201c;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.07);
   --decoration-fg-primary: rgba(33, 32, 28, 0.4);
@@ -125,10 +138,15 @@
   --space-1-5: 6px;
   --space-2: 8px;
   --space-3: 12px;
+  /* --space-3-5: half-step (14px) — Figma prompt inset, learnings gap,
+     tab-panel padding (142:4484, 142:4582, 142:4703) consistently use 14. */
+  --space-3-5: 14px;
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
+  /* --space-10: 40px — hero mobile padding-block (Figma 142:4357 px-24 py-40). */
+  --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
   --space-20: 80px;
@@ -168,6 +186,16 @@
      Radius snapped from Figma 16px to --radius-md (8px). */
   --bg-prompt: #ebeae6;
   --radius-prompt: var(--radius-md);
+
+  /* Toggle knob — both modes (Figma DarkModeToggle component). Hard
+     white, intentionally constant across modes. */
+  --surface-toggle-knob: #ffffff;
+
+  /* Step prompt deep surface — Figma 54:7438 step 09 dark slab. Light
+     mode swaps to the gates panel fill so the workflow's expanded
+     content reads as one consistent light surface; dark keeps the
+     deeper plane. Override lives in the .dark block. */
+  --bg-prompt-deep: var(--bg-subtle);
 
   /* Shadow */
   --shadow-elevated: 0 8px 4px rgba(0, 0, 0, 0.07);
@@ -232,6 +260,51 @@
   /* Layout — nav heights */
   --nav-h-desktop: 64px;
   --tabbar-h-mobile: 64px;
+
+  /* Sheet dark-handle expanded color — exposed as a top-level token so the
+     transition rule in app.css can reference it without a dark-scope lookup.
+     Resolution log 2026-05-21: handle darkens from --fg-secondary (#98938d)
+     to --color-fg-tertiary (#545352) when sheet reaches max snap. Light mode
+     handle stays white in both states (no expanded override). */
+  --color-fg-tertiary: #545352;
+
+  /* ===== Tier-3 bottom sheet (mobile) — MOBILE-UPDATE-SPEC §3.1.
+     Definitive Figma values from owner resolution log 2026-05-21.
+     Snap heights are absolute px (Figma reference viewport 844px tall):
+       - initial: top:562 → 282px visible from bottom
+       - max:     top:184 → 660px visible from bottom (hard max). */
+  --surface-sheet-bg: var(--bg-base);
+  --sheet-radius: var(--radius-lg);
+  --sheet-snap-initial: 282px;
+  --sheet-snap-max: 660px;
+  --sheet-pad-top: var(--space-3);   /* 12px */
+  --sheet-pad-bottom: var(--space-8); /* 32px */
+  --sheet-pad-inline: var(--space-6); /* 24px */
+  --sheet-gap: var(--space-6);
+  --sheet-shadow: drop-shadow(0 -2px 5px rgba(40, 24, 0, 0.08));
+  --sheet-handle-color: #ffffff;
+  --sheet-handle-width: 34px;
+  --sheet-handle-height: 5px;
+  --sheet-handle-radius: 8px;
+  /* Stats section inside sheet — divider follows mode; numerals stay in
+     the dark scale across both modes (design choice, preserve). */
+  --sheet-stats-divider: var(--border-subtle); /* light: #d4d0ca */
+  --sheet-stats-num: #d0ceca;                  /* both modes */
+  --sheet-stats-label: var(--text-accent);     /* gold/warm — Figma semantic/text/accent */
+
+  /* Active/tapped card dark surface — §4.6 resolved, cascades to desktop. */
+  --bg-card-dark: #121110;
+
+  /* Gates container dark fill — audit resolution 2026-05-22. Reuses the
+     same hex as --bg-card-dark; kept as a distinct semantic alias so a
+     future divergence doesn't have to fan-out across both components. */
+  --bg-gates-dark: var(--bg-card-dark);
+
+  /* Semantic text/accent — distinct from --fg-accent (#ca4541, the warm-red
+     used for required tags). text/accent is the warm-brown highlight used
+     on hiring eyebrow, prompt badge, card CTA, etc.
+     Light: Figma semantic/text/accent #a67c42. Dark: #8e7d65. */
+  --text-accent: #a67c42;
 }
 
 @media (min-width: 768px) {
@@ -266,28 +339,30 @@
    text/heading: #d0ceca · text/body: #98938d · text/quiet, text/muted: #545352
    action/primary: #daff60 */
 .dark {
-  --bg-base: #0e0c0b;
-  --bg-nav: #0e0c0b;
-  --bg-subtle: #0e0c0b;
+  /* Dark — primary tokens reconciled with Figma color table 2026-05-22. */
+  --bg-base: #0d0c0b;
+  --bg-nav: #0d0c0b;
+  --bg-subtle: #1b1a18;
   --bg-recessed: #080707;
   --bg-callout: #121110;
-  --bg-surface-2: #0e0c0b;
-  --bg-surface-3: #0e0c0b;
-  --bg-inverse: #fdfdfc;
-  --fg-primary: #d0ceca;
-  --fg-secondary: #98938d;
-  --fg-tertiary: #545352;
-  --fg-quiet: #545352;
-  --fg-muted: #545352;
-  --fg-footer: #98938d;
+  --bg-surface-2: #23211f;
+  --bg-surface-3: #161513;
+  --bg-inverse: #fdfaf8;
+  --fg-primary: #d0cdca;
+  --fg-secondary: #989089;
+  --fg-tertiary: #545351;
+  --fg-quiet: #3d3c3b;
+  --fg-muted: #3d3c3b;
+  --fg-footer: #a09e9b;
   --fg-link: var(--accent-primary);
   --fg-tag: #8e7d65;
-  /* Per Figma 54:7438 semantic/text/* variables (dark composite). */
-  --badge-you: #98938d;     /* text/body */
-  --badge-prompt: #c1b29c;  /* text/link */
-  --badge-mixed: #8e7d65;   /* text/accent */
+  /* Audit pass 2026-05-22 — badges follow Figma semantic/text/* dark values.
+     "You do" → heading · "Prompt Claude" → accent · "You + Claude" → link. */
+  --badge-you: #d0ceca;     /* text/heading */
+  --badge-prompt: #8e7d65;  /* text/accent */
+  --badge-mixed: #c1b29c;   /* text/link */
   --prompt-code-fg: #5b5b5a;
-  --fg-on-accent: #0e0c0b;
+  --fg-on-accent: #100f0e;
   --border-subtle: #1c1a18;
   --border-strong: #d0ceca;
   --accent-primary: #daff60;
@@ -295,8 +370,8 @@
   --hover-mint: #58f5d2;
   --hover-row: #2a2522;
   --fg-accent: #ca4541;
-  --bg-tooltip: #d0ceca;
-  --fg-tooltip: #0e0c0b;
+  --bg-tooltip: #23211f;
+  --fg-tooltip: #eae9e8;
   --shadow-tooltip: 0 8px 4px rgba(0, 0, 0, 0.35);
   --shadow-elevated: 0 16px 32px rgba(0, 0, 0, 0.45);
   --decoration-fg-primary: rgba(208, 206, 202, 0.4);
@@ -304,10 +379,50 @@
   /* Dark-mode prompt surface = --bg-base (#0e0c0b, exact Figma match). */
   --bg-prompt: var(--bg-base);
 
+  /* Step prompt deep surface — Figma 54:7438 dark plane. Deeper than
+     --bg-base so the mono code block reads as a distinct slab. */
+  --bg-prompt-deep: #080707;
+
   /* Dark-mode card surface stays transparent — cards read against bg-base. */
   --bg-card: transparent;
 
   /* Pin the brain icon to its original Figma value in dark; light gets a
      softer warm gray via :root above. */
   --fg-brain-icon: #2b2722;
+
+  /* Sheet overrides — handle + stats divider tuned for dark. Sheet bg
+     follows --bg-base which already swaps via .dark. No overlay (Figma
+     sheet has no scrim — resolution log 2026-05-21). */
+  --sheet-handle-color: var(--fg-secondary); /* #98938d */
+  --sheet-stats-divider: #1c1a18;            /* dark */
+  --sheet-stats-label: var(--text-accent);   /* gold/warm dark — #8e7a65 */
+
+  /* Sheet title icon — Figma 150:11123 dark. Primary overrides to
+     #2B2722 (deep warm brown). Semantic --fg-icon-sheet alias inherits. */
+  --color-warm-icon: #2B2722;
+
+  /* Semantic text/accent dark — Figma #8e7a65. */
+  --text-accent: #8e7a65;
+}
+
+/* ============================================================
+   Component-scoped token variants
+   ============================================================
+   Selectors that re-declare a small group of semantic tokens for a
+   sub-region. Kept here (not in app.css) so every raw hex value lives
+   in tokens.css. Each block names the component + the variant intent.
+   ============================================================ */
+
+/* Brain-row prompt (Section 3) — dark muted-text variant. Drops
+   contrast across the foreground scale so inline code chips read as
+   dimmed body copy rather than callouts. Border + bg-subtle locked
+   to #1c1a18 so the chip never lifts above the surrounding plane. */
+.dark .brain-row__prompt {
+  --fg-primary: #d0ceca;
+  --fg-secondary: #98938d;
+  --fg-tertiary: #545352;
+  --fg-quiet: #545352;
+  --fg-muted: #545352;
+  --border-subtle: #1c1a18;
+  --bg-subtle: #1c1a18;
 }

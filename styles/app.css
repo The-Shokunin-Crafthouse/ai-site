@@ -111,22 +111,40 @@ body {
   width: 100%;
 }
 
-/* Skip link — visible on focus */
+/* Skip link — visible on focus only. Owner reported a black pill briefly
+   appearing top-left on scroll-back-to-top in light mode. Root cause: the
+   prior position: absolute + transform: translateY(-100%) parked the link
+   above document-top, which iOS Safari's overscroll/rubber-band exposes
+   during the rebound when the address bar settles. Switching to position:
+   fixed anchors it to the viewport so it can't be revealed by document-
+   level bounce, and the visually-hidden pattern keeps it out of layout
+   for AT users until they tab to it. */
 .skip-link {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  transform: translateY(-100%);
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
   background: var(--fg-primary);
   color: var(--bg-base);
-  padding: var(--space-3) var(--space-4);
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
   z-index: var(--z-overlay);
-  transition: transform var(--dur-fast) var(--ease-standard);
 }
 .skip-link:focus-visible {
-  transform: translateY(0);
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
+  padding: var(--space-3) var(--space-4);
   outline-offset: -2px;
 }
 
@@ -195,65 +213,9 @@ body {
   border-radius: var(--radius-xs);
 }
 
-/* ===== Bottom tab bar — mobile ===== */
-.tabbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: var(--z-nav);
-  height: var(--tabbar-h-mobile);
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  background: color-mix(in srgb, var(--bg-base) 92%, transparent);
-  backdrop-filter: saturate(140%) blur(16px);
-  -webkit-backdrop-filter: saturate(140%) blur(16px);
-  border-top: 1px solid var(--border-subtle);
-  transform: translateY(0);
-  transition: transform var(--dur-fast) var(--ease-standard);
-}
-.tabbar.is-hidden { transform: translateY(110%); }
-@media (min-width: 768px) {
-  .tabbar { display: none; }
-}
-.tabbar__list {
-  height: var(--tabbar-h-mobile);
-  display: flex;
-  align-items: stretch;
-}
-.tabbar__list > li { flex: 1 1 0; display: flex; }
-.tabbar__item {
-  flex: 1 1 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  min-height: 44px;
-  width: 100%;
-  font-size: 11px;
-  line-height: 14px;
-  font-weight: var(--font-medium);
-  color: var(--fg-tertiary);
-  letter-spacing: 0.01em;
-  transition: color var(--dur-fast) var(--ease-standard),
-              transform var(--dur-fast) var(--ease-standard);
-}
-.tabbar__item:active { transform: scale(0.92); }
-.tabbar__item.is-active { color: var(--fg-primary); }
-.tabbar__item.is-active .tabbar__dot {
-  background: var(--accent-primary);
-  transform: scale(1);
-}
-.tabbar__label { display: block; }
-.tabbar__dot {
-  width: 4px;
-  height: 4px;
-  border-radius: var(--radius-full);
-  background: transparent;
-  transform: scale(0);
-  transition: transform var(--dur-standard) var(--ease-spring),
-              background-color var(--dur-fast) var(--ease-standard);
-}
+/* ===== Bottom tab bar removed per MOBILE-UPDATE-SPEC §6.1 (approved 2026-05-21).
+   Tabbar was mobile-only (display:none ≥ 768px); desktop layout untouched.
+   --tabbar-h-mobile token retained in tokens.css for historical refs. ===== */
 
 /* ===== Theme toggle visual structure (matches Tailwind classes from live) ===== */
 .theme-toggle {
@@ -304,7 +266,7 @@ body {
   height: 18px;
   width: 18px;
   border-radius: var(--radius-full);
-  background: #ffffff;
+  background: var(--surface-toggle-knob);
   transform: translateX(0);
   transition: transform var(--dur-standard) var(--ease-figma-gentle);
 }
@@ -371,9 +333,10 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding-block: var(--space-16);
+  /* Mobile py-56 — Figma 40 + 16 owner-requested breathing room above
+     eyebrow and below CTA. Desktop keeps space-16 (64px). */
+  padding-block: calc(var(--space-10) + var(--space-4));
   position: relative;
-  padding-bottom: calc(var(--tabbar-h-mobile) + var(--space-12));
 }
 @media (min-width: 768px) {
   .hero { padding-block: var(--space-16); }
@@ -392,15 +355,52 @@ body {
   }
 }
 
-/* Figma "Hero/Copy" (55:9574) fixes the column at 600px. */
+/* Figma "Hero/Copy" (55:9574) fixes the column at 600px.
+   Mobile: gap-24 between eyebrow, headline group, actions per Figma
+   `I142:4357;14:21` (MOBILE-UPDATE-SPEC §1.1). Margin-based stack on the
+   children below collapses to this gap on mobile. Hero/CTAs gap → 0 on
+   mobile per audit (Figma `Hero/CTAs gap: 0`). */
 .hero__copy { max-width: 600px; min-width: 0; }
+@media (max-width: 767px) {
+  /* Figma 142:5608 Hero/Copy spacing (mobile):
+       eyebrow → heading-group: 24
+       heading-group internal:    8
+       heading-group → CTAs:      24
+     Live markup is flat (no wrapping group), so the parent flex gap of
+     24 applies between all 4 children. Negative margin-top on .hero__subline
+     pulls it 16 closer to .hero__headline so the effective gap = 24 - 16 = 8. */
+  .hero__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);                                 /* 24 between sibling rows */
+  }
+  .hero__copy > .hero__eyebrow,
+  .hero__copy > .hero__headline,
+  .hero__copy > .hero__subline,
+  .hero__copy > .hero__actions { margin-bottom: 0; }
+  .hero__copy > .hero__subline {
+    margin-top: calc(var(--space-2) - var(--space-6));   /* -16 → effective 8px */
+  }
+  .hero__actions { gap: 0; }
+  /* Mobile headline + subtext typography (Figma 142:4357 / 142:5608).
+     Heading 28/35 -0.28; subtext 16/24 -0.16. Desktop unchanged. */
+  .hero__headline {
+    font-size: 28px;
+    line-height: 35px;
+    letter-spacing: -0.28px;
+  }
+  .hero__subline {
+    line-height: 24px;
+    letter-spacing: -0.16px;
+  }
+}
 .hero__visual { min-width: 0; }
 html, body { overflow-x: clip; }
 .hero__eyebrow {
   font-family: var(--font-body);
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
-  color: var(--fg-tertiary);
+  color: var(--text-accent);                          /* semantic/text/accent — swaps via .dark */
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
   margin-bottom: var(--space-4);
@@ -456,12 +456,22 @@ html, body { overflow-x: clip; }
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--border-button);
+  /* MOBILE-UPDATE-SPEC §6.3 — owner updating Figma to pill; code keeps
+     --radius-full on both breakpoints. */
   border-radius: var(--radius-full);
   font-size: var(--text-link-sm-size);
   font-weight: var(--font-medium);
   transition: border-color var(--dur-fast) var(--ease-standard),
               background-color var(--dur-fast) var(--ease-standard),
               transform var(--dur-fast) var(--ease-standard);
+}
+/* Mobile shows "See it at your company"; desktop shows the longer
+   "Skip to: ..." variant. Figma `I142:4357;14:28`. MOBILE-UPDATE-SPEC §5.1. */
+.hero__skip-label--mobile { display: none; }
+.hero__skip-label--desktop { display: inline; }
+@media (max-width: 767px) {
+  .hero__skip-label--mobile { display: inline; }
+  .hero__skip-label--desktop { display: none; }
 }
 .hero__skip .hero__arrow {
   transition: transform var(--dur-fast) var(--ease-standard);
@@ -474,7 +484,7 @@ html, body { overflow-x: clip; }
 @media (min-width: 768px) {
   .section { padding-block: var(--space-24); }
 }
-.section:last-of-type { padding-bottom: calc(var(--tabbar-h-mobile) + var(--space-20)); }
+.section:last-of-type { padding-bottom: var(--space-20); }
 @media (min-width: 768px) {
   .section:last-of-type { padding-bottom: var(--space-24); }
 }
@@ -547,7 +557,7 @@ html, body { overflow-x: clip; }
   text-transform: uppercase;
 }
 .placeholder h2 { margin-bottom: var(--space-6); }
-.placeholder:last-child { padding-bottom: calc(var(--tabbar-h-mobile) + var(--space-20)); }
+.placeholder:last-child { padding-bottom: var(--space-20); }
 @media (min-width: 768px) {
   .placeholder:last-child { padding-bottom: var(--space-20); }
 }
@@ -589,11 +599,32 @@ html, body { overflow-x: clip; }
               box-shadow var(--dur-fast) var(--ease-out-strong),
               transform var(--dur-fast) var(--ease-out-strong);
 }
-/* Light mode: card sits flush with page bg by default (1px --border-subtle
-   from base rule), swaps to the lighter --bg-card surface on hover/active.
-   No font color shifts. */
+/* Light mode card (audit pass 2026-05-22): fill --bg-card (#ebeae7),
+   no border (Figma). Dark default keeps the 1px border with no fill via
+   the .dark scope below. */
 .card:not(.dark *) {
-  background: var(--bg-base);
+  background: var(--bg-card);
+  border-color: transparent;
+}
+
+/* MOBILE-UPDATE-SPEC §4.6 — CORRECTION via resolution log 2026-05-21.
+   Dark Sheet2 frame shows ALL 4 cards with border-only, including the card
+   that triggered the sheet. The bg-fill (#121110) is the transient
+   tap/spring state, NOT a sticky open-state. State machine:
+     - default          → border (no fill)
+     - .is-tapping      → fill #121110, no border (during press spring)
+     - .is-open         → border (re-asserts default; tracked for future hooks)
+   Mapped to existing tap.js attribute: [data-tap-active="true"] = is-tapping. */
+.dark .card[data-tap-active="true"],
+.dark .card.is-tapping {
+  background: var(--bg-card-dark);
+  border-color: transparent;
+}
+/* Explicit no-op rule for .is-open so the state class round-trips cleanly
+   even if a future hook attaches behavior to it. */
+.dark .card.is-open {
+  background: transparent;
+  border-color: var(--border-subtle);
 }
 @media (max-width: 1023px) { .card { min-height: 220px; } }
 .card:focus-visible {
@@ -669,24 +700,128 @@ html, body { overflow-x: clip; }
   transition: transform var(--dur-fast) var(--ease-out-strong);
   display: inline-block;
 }
+
+/* ===== Card mobile reconciliation (Figma 149:8751 Card/Overview/01) =====
+   Layout: grid with number+title inline on row 1, body on row 2, CTA on
+   row 3. Card body = flex column; outer gap 10 between content frame and
+   CTA; content frame gap 4 between title-row and body. */
+@media (max-width: 767px) {
+  /* Cards/Stack mobile: pt 8 pb 72, px 24, gap 16. 72px below the last
+     card per owner spec 2026-05-22 — matches the ~36px horizontal
+     padding visual rhythm at 2× vertical.
+     Selector includes the [aria-expanded="true"] + adjacent match so it
+     beats the unscoped base rule's specificity (0,1,2) → ours is (0,3,1).
+     Scoped via :has(> .cards) so workflow / brain / tools rows keep
+     their default --space-12 bottom padding. */
+  .overview-row[aria-expanded="true"] + .overview-row__open:has(> .cards) {
+    padding-bottom: 0;
+  }
+  .overview-row__open > .cards {
+    padding-block: var(--space-2) 72px;               /* 8 / 72 */
+    gap: var(--space-4);                              /* 16 */
+  }
+  .card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "idx  title"
+      "sum  sum"
+      "cta  cta";
+    column-gap: 4px;                                  /* number ↔ title */
+    row-gap: 4px;                                     /* 4 inside content frame */
+    align-items: baseline;
+    padding: 18px 20px;
+    border-radius: 12px;
+    /* Override the desktop min-height: 220px @ max-width: 1023 rule. Figma
+       mobile card is 130px (or 111px for #04). Min-height was inflating
+       internal whitespace and pushing CTA away from body. */
+    min-height: 0;
+  }
+  /* Dark card surface (Figma 149:8751): solid #121110 fill, no border,
+     overflow:clip. Applies to every card in the expanded stack — no
+     active/inactive distinction in this frame. Overrides the global
+     §4.6 state machine on mobile so all states (default, .is-open,
+     .is-tapping) stay filled. Tap state still wins the 2px yellow
+     border via the data-tap-active rule above. */
+  .dark .card,
+  .dark .card.is-open,
+  .dark .card.is-tapping,
+  .dark .card[data-tap-active="true"] {
+    background: var(--bg-card-dark);                  /* #121110 */
+    border-color: transparent;
+    overflow: clip;
+  }
+  .dark .card[data-tap-active="true"] {
+    border-color: var(--accent-primary);              /* 2px yellow on tap, set above */
+  }
+  .card__index {
+    grid-area: idx;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: 300;                                 /* Inter Light */
+    font-variation-settings: "wght" 300;
+    letter-spacing: 0;
+    color: var(--fg-muted);
+    /* Inherited from .card__index base rule:
+       - font-feature-settings: "tnum"
+       - text-rendering: geometricPrecision
+       - -webkit-font-smoothing: antialiased
+       - -moz-osx-font-smoothing: grayscale
+       These collectively make Safari iOS render the "1" as a tighter,
+       wider-stroked glyph than the section row number (which has none
+       of them). Reset everything to the defaults that .overview-row__index
+       uses so both numbers render with the same Inter Light face. */
+    font-feature-settings: normal;
+    font-variant-numeric: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+  }
+  .card__title {
+    grid-area: title;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: var(--font-semibold);
+    margin-left: 0;
+  }
+  .card__summary {
+    grid-area: sum;
+    font-size: 13px;
+    line-height: 19px;
+    margin-top: 0;                                    /* parent row-gap handles 4 */
+  }
+  .card__cta {
+    grid-area: cta;
+    gap: 6px;
+    margin-top: 6px;                                  /* outer gap 10 = 4 row + 6 mt */
+    color: var(--text-accent);
+    font-size: 13px;
+    line-height: 18px;
+    overflow: clip;
+  }
+  /* "Open" label = 13/Medium; arrow = 14/Regular per Figma. The base
+     .card__cta size 13 already covers "Open"; bump the arrow specifically. */
+  .card__cta svg,
+  .card__cta .icon {
+    width: 14px;
+    height: 14px;
+  }
+}
 /* ===== Section 3 — Timeline / steps ===== */
 .timeline {
   max-width: none;
 }
 .timeline__toolbar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: var(--space-4);
   margin-bottom: var(--space-4);
   padding-bottom: 0;
-  /* Single divider on .steps top-border handles the visual rule. */
-}
-@media (min-width: 768px) {
-  .timeline__toolbar {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
+  /* Single divider on .steps top-border handles the visual rule.
+     Mobile + desktop both use a single-row layout per Figma 150:10319. */
 }
 .timeline__actions { display: flex; gap: var(--space-3); }
 .timeline__btn,
@@ -807,6 +942,9 @@ html, body { overflow-x: clip; }
   gap: var(--space-2);
   min-width: 120px;
 }
+/* TODO(dark-fill-pending §4.1): MOBILE-UPDATE-SPEC §4.1 — owner to confirm
+   dark-mode fill treatment via frame IDs 148:7358–151:18015. Current dark
+   = 1px border only; expected dark = filled chip. Implementation deferred. */
 .step__badge {
   display: inline-flex;
   align-items: center;
@@ -828,6 +966,115 @@ html, body { overflow-x: clip; }
   font-size: var(--text-body-sm-size);
   color: var(--fg-tertiary);
   font-feature-settings: "tnum";
+}
+
+/* ===== Steps mobile reconciliation (audit 2026-05-22) =====
+   Figma Step row 142:4469+. Structural change vs desktop:
+   - Desktop: grid auto/1fr/auto with meta in its own right column
+   - Mobile:  grid auto/1fr with main column holding meta below title+desc
+   No HTML change — grid-template-areas swap moves .step__meta into the
+   main column visually. */
+@media (max-width: 767px) {
+  /* Hide Expand all / Collapse all on mobile per owner direction
+     2026-05-22. Only the Show all 13 ↔ Collapse rows button remains
+     (lives outside the toolbar in .timeline__show-all-wrap). */
+  .timeline__actions { display: none; }
+  .timeline__btn,
+  .timeline__show-all {
+    padding: var(--space-2) var(--space-3-5);     /* 8 14 */
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: var(--font-regular);
+  }
+  /* Toolbar indented to line up with the row 02 header text column
+     (number column width + gap on the .overview-row grid). Progress
+     group then takes the rest of the row; the bar fills any remaining
+     space so the indicator stretches to the container's right edge
+     regardless of viewport width. */
+  .timeline__toolbar { padding-left: 36px; }   /* 24px num col + 12px gap → title left edge */
+  .timeline__progress {
+    flex: 1;
+    font-size: 11px;
+    line-height: 14px;
+    color: var(--fg-quiet);
+    gap: var(--space-2);                          /* 8 between label + bar */
+  }
+  .timeline__progress-bar {
+    flex: 1;
+    width: auto;
+    height: 4px;
+    border-radius: var(--radius-xs);
+  }
+  /* Mobile step row — Figma:
+     - top divider 1px var(--border-subtle), padding-block 18
+     - flex row: num (left, top-aligned) + main (flex-col gap 8)
+       main = title-block (flex-col gap 4) + meta row (flex gap 8) */
+  .step__head {
+    /* Fixed 24px num column + 12 gap so step numbers right-align under
+       the overview row numbers above, and step titles share the same
+       left edge as the row title. */
+    grid-template-columns: 24px 1fr;
+    grid-template-areas:
+      "num main"
+      "num meta";
+    align-items: start;
+    padding: 18px 0;
+    column-gap: var(--space-3);                    /* 12 */
+    row-gap: var(--space-2);                       /* 8 between main + meta */
+  }
+  .step__main {
+    /* Title + summary already inside .step__main; the existing
+       margin-bottom:4 on .step__title preserves the 4px title→desc gap. */
+    display: flex;
+    flex-direction: column;
+  }
+  .step__meta {
+    grid-area: meta;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);                           /* 8 */
+    min-width: 0;
+  }
+  .step__num {
+    /* Match the title's font size on mobile so num + title share a single
+       baseline. Force Inter and reset the tabular/geometric features
+       inherited from the desktop base rule — they swap the "1" glyph to
+       a variant that reads as a different family on mobile. Right-align
+       so digits stack vertically under the overview row number above. */
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 300;                              /* Inter Light */
+    letter-spacing: 0;
+    color: var(--fg-quiet);
+    padding-top: 0;
+    font-feature-settings: normal;
+    font-variant-numeric: normal;
+    text-rendering: auto;
+    justify-self: end;
+    text-align: right;
+  }
+  .step__title {
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-1);                 /* 4 */
+  }
+  .step__summary {
+    font-size: 12px;
+    line-height: 17px;
+  }
+  .step__badge {
+    padding: 4px 8px;
+    font-size: 9px;
+    line-height: 14px;
+    letter-spacing: 0.8px;
+  }
+  .step__tool {
+    font-size: 11px;
+    line-height: 14px;
+    color: var(--fg-quiet);
+  }
 }
 .step__chev {
   grid-area: chev;
@@ -928,10 +1175,11 @@ html, body { overflow-x: clip; }
   background: var(--bg-subtle);
   border-radius: var(--radius-md);
 }
-/* Dark keeps the hairline outline; light surface separation comes from the
-   --bg-subtle / --bg-base contrast alone. */
+/* Dark gates panel — audit resolution 2026-05-22 (§4.3 closed). Solid
+   --bg-gates-dark fill (#121110), no border. Cascades to desktop. */
 .dark .gates {
-  border: 1px solid var(--border-subtle);
+  background: var(--bg-gates-dark);
+  border: 0;
 }
 @media (min-width: 768px) {
   .gates { padding: var(--space-12); }
@@ -1004,6 +1252,104 @@ html, body { overflow-x: clip; }
   font-weight: var(--font-medium);
 }
 .gates__table td { color: var(--fg-secondary); }
+
+/* ===== Mobile-only flat gates list (Figma 142:4522 Gates/Stack) =====
+   Mutually exclusive with the desktop .gates__scroll table. Layout +
+   typography match Figma exactly; padding, gaps, borders, fonts all
+   spec-locked. */
+.gates__list { display: none; }                /* hidden on desktop */
+[data-mobile-only] { display: none; }          /* generic mobile-only opt-in */
+@media (max-width: 767px) {
+  [data-desktop-only] { display: none !important; }
+  [data-mobile-only] { display: block; }
+  .gates__list {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .gates__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);                       /* 8 between head and text */
+    padding-block: var(--space-4);             /* 16 */
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .gates__item:last-child { border-bottom: 0; }
+  .gates__item-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);                       /* 4 */
+  }
+  .gates__item-num {
+    font-weight: 300;                          /* Inter Light */
+    font-size: 16px;
+    line-height: 18px;
+    color: var(--fg-secondary);                /* text/body */
+  }
+  .gates__item-name {
+    font-weight: var(--font-semibold);
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--fg-primary);                  /* text/heading */
+  }
+  .gates__item-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);                       /* 4 between after + desc */
+  }
+  .gates__item-after,
+  .gates__item-desc {
+    margin: 0;
+    font-size: 12px;
+    line-height: 19.5px;
+  }
+  .gates__item-after {
+    color: var(--fg-secondary);                /* text/body for "Planner" etc */
+  }
+  .gates__item-after-label {
+    color: var(--fg-tertiary);                 /* text/muted for "After:" prefix */
+  }
+  .gates__item-desc {
+    color: var(--fg-secondary);                /* text/body */
+  }
+  /* Mobile gates container: 8 gap between label, heading, list */
+  .gates {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-4);
+  }
+  .gates__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: 0;
+  }
+  .gates__eyebrow,
+  .gates__title { margin-bottom: 0; }
+  .gates__eyebrow {
+    font-size: 10px;
+    line-height: 19.5px;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.8px;
+    color: var(--fg-tertiary);                 /* = Figma text/muted in light */
+  }
+  .gates__title {
+    font-family: var(--font-display);
+    font-weight: var(--font-light);
+    font-size: var(--text-display-size);         /* match section title — owner direction 2026-05-22 */
+    line-height: var(--text-display-line);
+    letter-spacing: 0;
+  }
+  /* Light mode follows .section__title — extralight for the extra-thin
+     display weight pairing. */
+  .gates__title:not(.dark *) {
+    font-weight: var(--font-extralight);
+  }
+}
 
 /* ===== Section 3 — Studio Brain rows (Figma 55:9391) =====
    Same row+accordion pattern as workflow steps, but no meta/summary column
@@ -1095,6 +1441,41 @@ html, body { overflow-x: clip; }
   letter-spacing: -0.005em;
   transition: color var(--dur-fast) var(--ease-out-strong);
 }
+
+/* ===== Brain rows mobile reconciliation (audit 2026-05-22) =====
+   Figma BrainRow 142:4570+. Mobile-only overrides; desktop spec unchanged. */
+@media (max-width: 767px) {
+  /* Lock brain row to the same 24px num column + 12 gap as the section 2
+     step rows so all expanded-row numbers right-align and all titles
+     share one left edge. Owner direction 2026-05-22. */
+  .brain-row__head {
+    grid-template-columns: 24px 1fr;
+    padding: 18px 0;
+    column-gap: var(--space-3);                /* 12 */
+  }
+  .brain-row__num {
+    /* Inter Light + feature reset kills the "tnum" glyph swap that made
+       the "1" read as a different family on mobile. */
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 300;                          /* Inter Light */
+    letter-spacing: 0;
+    color: var(--fg-quiet);
+    padding-top: 0;
+    font-feature-settings: normal;
+    font-variant-numeric: normal;
+    text-rendering: auto;
+    justify-self: end;
+    text-align: right;
+  }
+  .brain-row__title {
+    font-weight: var(--font-semibold);
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: 0;
+  }
+}
 /* Open state: number + title turn accent (Figma 55:9391 "Brain/Panel" active style). */
 .brain-row__head[aria-expanded="true"] .brain-row__num,
 .brain-row__head[aria-expanded="true"] .brain-row__title {
@@ -1183,15 +1564,9 @@ html, body { overflow-x: clip; }
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
 }
-.dark .brain-row__prompt {
-  --fg-primary: #d0ceca;
-  --fg-secondary: #98938d;
-  --fg-tertiary: #545352;
-  --fg-quiet: #545352;
-  --fg-muted: #545352;
-  --border-subtle: #1c1a18;
-  --bg-subtle: #1c1a18;
-}
+/* .dark .brain-row__prompt token overrides relocated to tokens.css under
+   "Component-scoped token variants" (2026-05-22). All raw hex now lives
+   in tokens.css. */
 .brain-row__prompt > :first-child { margin-top: 0; }
 .brain-row__prompt > :last-child { margin-bottom: 0; }
 .brain-row__prompt code {
@@ -1219,11 +1594,14 @@ html, body { overflow-x: clip; }
 
 /* Accumulated learnings list */
 .learnings { display: flex; flex-direction: column; gap: var(--space-5); }
+/* Filled-card treatment confirmed 2026-05-22. Match the overview cards'
+   surface in both modes via --bg-callout (#ebeae6 light / #121110 dark);
+   border dropped so the card reads as a flat plane. */
 .learning {
   padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--border-subtle);
+  border: 0;
   border-radius: var(--radius-md);
-  background: transparent;
+  background: var(--bg-callout);
 }
 .learning__head {
   font-family: var(--font-body);
@@ -1256,6 +1634,8 @@ html, body { overflow-x: clip; }
   flex-direction: column;
   gap: var(--space-4);
 }
+/* TODO(dark-fill-pending §4.5): MOBILE-UPDATE-SPEC §4.5 — owner to confirm
+   dark criteria/defaults fill treatment vs border. Same heuristic as §4.4. */
 .criteria > li, .defaults > li {
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--border-subtle);
@@ -1272,6 +1652,8 @@ html, body { overflow-x: clip; }
   font-family: var(--font-body);
 }
 .criteria__head strong, .defaults__head strong { color: var(--fg-primary); font-size: var(--text-body-lg-size); }
+/* TODO(dark-fill-pending §4.2): MOBILE-UPDATE-SPEC §4.2 — owner to confirm
+   dark criteria-weight chip fill treatment vs border. Same heuristic as §4.1. */
 .criteria__weight {
   display: inline-flex;
   align-items: center;
@@ -1407,6 +1789,41 @@ html, body { overflow-x: clip; }
   color: var(--fg-primary);
   letter-spacing: -0.005em;
   transition: color var(--dur-fast) var(--ease-out-strong);
+}
+/* Tools row mobile — same 24px num column + 12 gap as section 2 / 3
+   so the expanded-row number stacks right-aligned and the title shares
+   one left edge across all expanded sections. Owner direction
+   2026-05-22. */
+@media (max-width: 767px) {
+  .tools-row__head {
+    grid-template-columns: 24px 1fr;
+    padding: 18px 0;
+    column-gap: var(--space-3);                /* 12 */
+    min-height: 0;
+  }
+  .tools-row__num {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 300;                          /* Inter Light */
+    letter-spacing: 0;
+    color: var(--fg-quiet);
+    font-feature-settings: normal;
+    font-variant-numeric: normal;
+    text-rendering: auto;
+    justify-self: end;
+    text-align: right;
+  }
+  .tools-row__title {
+    /* Explicit 1:1 mirror of .brain-row__title mobile — owner direction
+       2026-05-22. font-family kept on the body sans-serif. */
+    font-family: var(--font-body);
+    font-weight: var(--font-semibold);
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: 0;
+    color: var(--fg-primary);
+  }
 }
 .tools-row__head[aria-expanded="true"] .tools-row__num,
 .tools-row__head[aria-expanded="true"] .tools-row__title {
@@ -1550,12 +1967,18 @@ html, body { overflow-x: clip; }
 .section--hiring .section__eyebrow { color: var(--fg-tertiary); }
 /* Figma 57:11618: Inter ExtraLight 200, distinct from Gentona hero.
    Tighter tracking than base display via --tracking-hiring-title;
-   applies in both modes (logged in decisions/decisions.md). */
+   applies in both modes (logged in decisions/decisions.md). Slant axis
+   carries the emphasis Figma marks with an italic font face — owner
+   direction 2026-05-22: use --text-emphasis-slant (Inter Variable slnt)
+   instead of switching to Inter Italic so the variable font stays as
+   the single weight + axis source. */
 .section--hiring .section__title {
   color: var(--fg-primary);
   font-family: var(--font-body);
   font-weight: 200;
   letter-spacing: var(--tracking-hiring-title);
+  font-style: normal;
+  font-variation-settings: "slnt" var(--text-emphasis-slant);
 }
 .section--hiring .section__lede { color: var(--fg-secondary); }
 
@@ -1567,6 +1990,27 @@ html, body { overflow-x: clip; }
   gap: var(--space-2);
   flex-wrap: wrap;
   margin-bottom: var(--space-8);
+}
+/* MOBILE-UPDATE-SPEC §3.5 + §6.6 — Figma 142:4702 "Hiring/Tabs/Scroll" — tabs
+   span 410px (wider than 327 content column). Switch to horizontal scroll
+   with snap on mobile. Desktop tabs row stays flex-wrap. */
+@media (max-width: 767px) {
+  .hiring__tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    /* Hide native scrollbar — taps are the affordance. */
+    scrollbar-width: none;
+    /* Bleed to viewport edges so the first/last tab can dock against gutter. */
+    margin-inline: calc(-1 * var(--pad-h));
+    padding-inline: var(--pad-h);
+  }
+  .hiring__tabs::-webkit-scrollbar { display: none; }
+  .hiring__tab {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
 }
 
 /* Figma 56:10494 (Tab/Startup selected) — accent border + accent label, with
@@ -1641,6 +2085,54 @@ html, body { overflow-x: clip; }
   text-decoration-thickness: 1px;
 }
 
+/* ===== Hiring mobile reconciliation (audit 2026-05-22) =====
+   Figma 142:4698+ Section/Hiring. Mobile-only overrides; desktop spec
+   unchanged. */
+@media (max-width: 767px) {
+  .section--hiring {
+    padding-block: var(--space-12);             /* 48 */
+  }
+  .section--hiring .section__header {
+    margin-bottom: 28px;
+  }
+  .hiring__eyebrow {
+    /* Panel-level eyebrow ("It's rocket AI science") per Figma
+       150:17949 — 14/18 not the section-eyebrow 10/14 scale. The
+       section header eyebrow lives on .section__eyebrow, not this
+       selector, so this rule applies to the inside-panel eyebrow only. */
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: var(--font-regular);
+    letter-spacing: 0;
+    color: var(--text-accent);
+    margin-bottom: var(--space-1);              /* 4 → role */
+    text-transform: none;                       /* override base uppercase */
+  }
+  .section--hiring .section__title {
+    font-size: 28px;
+    line-height: 34px;
+    letter-spacing: -1.12px;
+  }
+  .hiring__tab {
+    padding: 10px 16px;
+  }
+  .hiring__tab-size {
+    font-size: 11px;
+    line-height: 14px;
+    letter-spacing: 0.4px;
+    color: var(--fg-quiet);
+  }
+  .hiring__tab-label {
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: var(--font-semibold);
+    color: var(--fg-primary);
+  }
+  /* Panel-level mobile overrides live in a second @media block AFTER
+     the base .hiring__brain-card / .hiring__points rules below, because
+     their base declarations would otherwise win on source order. */
+}
+
 .hiring__role {
   font-family: var(--font-body);
   font-weight: var(--font-medium);
@@ -1659,6 +2151,12 @@ html, body { overflow-x: clip; }
    correctly instead of being sheared. Font color is unchanged. */
 .hiring__role-mark {
   position: relative;
+  /* Belt-and-suspenders: `font-style: oblique 5deg` matches the standard
+     CSS syntax iOS Safari honors reliably; font-variation-settings
+     drives Inter's slnt axis where supported. With both declared, modern
+     browsers use the variation-settings value while Safari falls back to
+     the oblique angle so the slant renders on mobile. */
+  font-style: oblique 5deg;
   font-variation-settings: "slnt" var(--text-emphasis-slant);
 }
 .hiring__role-mark::after {
@@ -1716,7 +2214,8 @@ html, body { overflow-x: clip; }
 }
 .section--hiring:not(.dark *) .hiring__brain-text code { background: rgba(0, 0, 0, 0.04); }
 
-/* Bullet table — `//` marker + body copy, dividers between rows. */
+/* Bullet table — → marker + body copy. Desktop keeps dividers + heavier
+   padding; mobile (rule further down) drops dividers + tightens spacing. */
 .hiring__points {
   display: flex;
   flex-direction: column;
@@ -1735,7 +2234,7 @@ html, body { overflow-x: clip; }
   color: var(--fg-secondary);
 }
 .hiring__points li::before {
-  content: "//";
+  content: "→";
   flex: 0 0 auto;
   font-family: var(--font-body);
   font-weight: var(--font-medium);
@@ -1744,6 +2243,59 @@ html, body { overflow-x: clip; }
   letter-spacing: 0;
   color: var(--fg-tertiary);
   white-space: nowrap;
+}
+
+/* ===== Hiring expanded panel mobile overrides (Figma 150:17592 light /
+   151:18015 dark). Placed AFTER the base hiring__* rules above so source
+   order makes the mobile values win at <=767px — the earlier @media
+   block tried to override base, but source order let base reclaim the
+   cascade. Owner audit 2026-05-22. */
+@media (max-width: 767px) {
+  .hiring__role { margin-bottom: var(--space-4); }     /* 16 */
+
+  .hiring__brain-card {
+    padding: var(--space-4);                           /* 16 */
+    gap: var(--space-3);                               /* 12 */
+    margin-bottom: var(--space-4);                     /* 16 to first bullet */
+    align-items: flex-start;                           /* top-align icon when text wraps */
+  }
+  .hiring__brain-icon {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+  }
+  .hiring__brain-icon .icon { width: 32px; height: 32px; }
+  .hiring__brain-label {
+    display: block;
+    font-size: 14px;
+    line-height: 17px;
+    margin-bottom: var(--space-1);                     /* 4 */
+  }
+  .hiring__brain-text {
+    font-size: 13px;
+    line-height: 17px;
+  }
+
+  .hiring__points {
+    padding-inline: 0;
+    margin-bottom: 0;
+    gap: var(--space-3);                               /* 12 between bullets */
+  }
+  .hiring__points li {
+    padding: 0;
+    padding-left: 0;
+    border-bottom: 0;
+    gap: var(--space-3);                               /* 12 between arrow + body */
+    font-size: 14px;
+    line-height: 19px;
+  }
+  .hiring__points li::before {
+    content: "→";
+    font-size: 14px;
+    line-height: 19px;
+    color: var(--fg-quiet);
+    width: 13px;
+  }
 }
 
 .hiring__cta {
@@ -1758,6 +2310,11 @@ html, body { overflow-x: clip; }
 .hiring__cta[hidden] { display: none; }
 @media (min-width: 768px) {
   .hiring__cta { flex-direction: row; justify-content: space-between; align-items: center; }
+}
+/* Mobile: 24px above the CTA copy so it doesn't sit flush against the
+   last bullet. Owner direction 2026-05-22. */
+@media (max-width: 767px) {
+  .hiring__cta { margin-top: var(--space-6); }
 }
 .hiring__cta-text {
   color: var(--fg-secondary);
@@ -1828,7 +2385,8 @@ html, body { overflow-x: clip; }
 }
 .back-to-top:active { transform: scale(0.92); }
 @media (max-width: 767px) {
-  .back-to-top { bottom: calc(var(--tabbar-h-mobile) + 16px); }
+  /* Tabbar removed per §6.1 — back-to-top sits 16px above safe-area bottom. */
+  .back-to-top { bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
 }
 .back-to-top svg { width: 16px; height: 16px; }
 
@@ -2012,6 +2570,10 @@ html, body { overflow-x: clip; }
 
 .overview-row {
   width: 100%;
+  /* Suppress the default iOS Safari tap highlight (semi-transparent grey
+     overlay) — owner direction 2026-05-22: rows should not flash a bg
+     fill on tap in either mode. */
+  -webkit-tap-highlight-color: transparent;
   display: grid;
   grid-template-columns: auto 1fr;
   /* Figma 52:5710-5716 uses gap 24 across rows 02-04; row 01 shows 32 (likely
@@ -2131,26 +2693,76 @@ html, body { overflow-x: clip; }
    title midpoint — matches Figma 52:5535. */
 
 @media (max-width: 767px) {
+  /* Audit reconciliation 2026-05-22 — Figma 142:5607 (Dark expanded
+     mobile) OverviewRow/Head py 22, gap 14. NO crumbs in mobile
+     expanded state. Subcopy (.overview-row__lede) on expand: 13/19
+     body, 8px gap from heading. */
   .overview-row {
-    column-gap: var(--space-4);
-    padding-block: var(--space-6);
+    /* Fixed number column + 12px gap on mobile. The section row's
+       number left-aligns inside the 24px box so its left edge sits at
+       --pad-h (flush with the hero text and CTA pill above). The title
+       then lands at x = pad-h + 24 + 12 = 60 from the viewport, which
+       is the column expanded-state content stacks against. Step rows
+       below keep their own right-aligned 24px col — they live inside
+       the drawer and align their TITLES (not numbers) to the section
+       title column. Owner direction 2026-05-22: section numbers should
+       never be indented from the page margin. */
+    grid-template-columns: 24px 1fr;
+    column-gap: var(--space-3);              /* 12px */
+    padding-block: 22px;
   }
-  .overview-row__index { font-size: 24px; min-width: 32px; }
-  .overview-row__title { font-size: 22px; line-height: 28px; }
+  .overview-row__main {
+    gap: var(--space-2);                     /* 8 between heading + lede */
+  }
+  /* Hide crumbs entirely on mobile (Figma 142:5610 expanded shows
+     no crumbs above heading — desktop continues to render them). */
+  .overview-row__crumbs,
+  .overview-row[aria-expanded="true"] .overview-row__crumbs {
+    display: none !important;
+  }
+  .overview-row__index {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 300;                        /* Inter Light, not --font-light (=100/Thin) */
+    color: var(--fg-quiet);
+    /* Left-align inside the 24px column so the digit glyph's left edge
+       sits at --pad-h — same x as the hero text + CTA pill. Reverted
+       from the right-align experiment that tried to stack section nums
+       under step nums; owner wants page-margin parity instead. */
+    justify-self: start;
+    text-align: left;
+  }
+  .overview-row__title {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: var(--font-semibold);
+  }
+  .overview-row[aria-expanded="true"] .overview-row__lede {
+    font-size: 13px;
+    line-height: 19px;
+    color: var(--fg-secondary);
+    margin-top: 0;
+  }
 }
 
 /* ===== Page footer (Figma 57:11700) — centered breadcrumb + © year.
-   Figma spec: full width, py 24, gap 32 between crumb and copy, no h-padding,
-   crumb segments separated by → at fg-quiet, body-sm tracking. */
+   Audit pass 2026-05-22:
+   - padding: 24 all sides (was 24/0)
+   - gap: 16 (was 32)
+   - font: 11/14 (was --text-body-sm 12/19.5)
+   - crumb color: --fg-tertiary (= Figma text/muted)
+   - arrows: --fg-quiet (unchanged)
+   - copyright: --fg-quiet
+   Mobile + desktop both follow Figma footer spec — applied globally. */
 .page-footer {
-  padding: var(--space-6) 0;
+  padding: var(--space-6);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: var(--space-8);
+  gap: var(--space-4);
   margin: 0 auto;
-  color: var(--fg-secondary);
+  color: var(--fg-tertiary);
 }
 .page-footer__crumb {
   margin: 0;
@@ -2158,16 +2770,15 @@ html, body { overflow-x: clip; }
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-2);
-  font-size: var(--text-body-sm-size);
-  line-height: var(--text-body-sm-line);
-  letter-spacing: var(--tracking-body-sm);
+  font-size: 11px;
+  line-height: 14px;
 }
 .page-footer__sep { color: var(--fg-quiet); }
 .page-footer__copy {
   margin: 0;
-  font-size: var(--text-body-sm-size);
-  line-height: var(--text-body-sm-line);
-  color: var(--fg-secondary);
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--fg-quiet);
   font-feature-settings: "tnum";
 }
 
@@ -2263,17 +2874,22 @@ html, body { overflow-x: clip; }
 /* Row title accent shift — fades both directions, independent from comet.
    Generic via [data-row-accent] so any row pattern (overview, step, brain) opts in.
    Scoped to `> button [data-row-accent]` so a hot outer row doesn't bleed accent
-   into nested rows (e.g. brain rows inside the open overview row 03). */
+   into nested rows (e.g. brain rows inside the open overview row 03).
+   Gated to (hover: hover) — on touch devices, [data-row-state="hot"] from
+   hover.js can stick past pointerup, keeping the number yellow even after
+   a row collapses. Touch path uses the tap-state rule above instead, which
+   clears on pointerup. */
 [data-row-hover] > button [data-row-accent] {
   transition: color var(--dur-standard) var(--ease-out-strong);
 }
-[data-row-hover][data-row-state="hot"] > button [data-row-accent] {
-  color: var(--accent-primary);
-}
-
-/* Light mode only: bump overview row number weight from 100 → 400 on hover. */
-[data-row-hover][data-row-state="hot"] > button .overview-row__index:not(.dark *) {
-  font-weight: var(--font-regular);
+@media (hover: hover) and (pointer: fine) {
+  [data-row-hover][data-row-state="hot"] > button [data-row-accent] {
+    color: var(--accent-primary);
+  }
+  /* Light mode only: bump overview row number weight from 100 → 400 on hover. */
+  [data-row-hover][data-row-state="hot"] > button .overview-row__index:not(.dark *) {
+    font-weight: var(--font-regular);
+  }
 }
 
 /* Button: ONLY the arrow translates on hover. No text color shift, no border change. */
@@ -2359,7 +2975,10 @@ html, body { overflow-x: clip; }
    ============================================================ */
 .step__prompt {
   position: relative;
-  background: #080707;
+  /* Mode-following via --bg-prompt-deep (tokens.css): light maps to
+     --bg-subtle (gates-panel parity), dark keeps the deeper #080707
+     plane so the mono slab reads distinct from --bg-base. */
+  background: var(--bg-prompt-deep);
   border-radius: var(--radius-lg, 16px);
   padding: var(--space-4) var(--space-6);
   display: flex;
@@ -2367,12 +2986,6 @@ html, body { overflow-x: clip; }
   min-width: 0;
   overflow: clip;
   max-height: var(--prompt-max-h, none);
-}
-/* Light mode: prompt surface matches the .gates panel (--bg-subtle) so the
-   workflow's expanded content reads as one consistent light surface. Dark
-   keeps the deeper #080707 plane. */
-.step__prompt:not(.dark *) {
-  background: var(--bg-subtle);
 }
 .step__prompt--empty {
   background: transparent;
@@ -2489,9 +3102,10 @@ html, body { overflow-x: clip; }
    Eyebrow + lede use CSS transitions so the close fade can run before the
    drawer drops — driven by the .is-closing class set in JS.
    ============================================================ */
-.overview-row[aria-expanded="true"] .overview-row__title {
-  animation: overview-title-slide 720ms var(--ease-out-strong) both;
-}
+/* Title stays put on expand — owner direction 2026-05-22. Only the
+   new revealed content (lede + cards / step list / brain list / tools list)
+   animates in. Collapse path (.is-closing) is untouched and still uses
+   its own transition rules further down this file. */
 .overview-row[aria-expanded="true"] .overview-row__lede {
   animation: overview-lede-slide 720ms var(--ease-out-strong) 160ms both;
 }
@@ -2700,7 +3314,11 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
 .overview-row__panel-icon {
   width: 32px;
   height: 32px;
-  color: var(--fg-icon-primary);
+  /* Desktop card-expanded panel icon shares the mobile sheet icon token
+     (--fg-icon-sheet → --color-warm-icon: #AEA7A0 light / #2B2722 dark)
+     so the same brain/kanban/etc glyph reads the same in both surfaces.
+     Owner direction 2026-05-22. */
+  color: var(--fg-icon-sheet);
   flex-shrink: 0;
 }
 .overview-row__panel-title {
@@ -2792,3 +3410,341 @@ li#tools .overview-row[aria-expanded="true"] + .overview-row__open [data-tools-l
 @media (prefers-reduced-motion: reduce) {
   .overview-row__open { animation: none; }
 }
+
+/* ============================================================
+   Tier-3 bottom sheet (mobile only)
+   MOBILE-UPDATE-SPEC §3.1 — definitive values supplied by owner 2026-05-21.
+   Sheet markup is injected by scripts/sheet.js into [data-sheet-root]. All
+   transform animation happens via popmotion in JS (spring + inertia); CSS
+   here covers static surface + initial off-screen state.
+   ============================================================ */
+/* Sheet activation overlay — owner spec 2026-05-22.
+   Full-viewport scrim under the sheet at site bg / 80% opacity + 12px
+   backdrop blur, plus z-stack high enough to cover the theme toggle
+   (z-nav 20) and the grain canvas (z 9999). Replaces the prior
+   "no overlay" decision from resolution log 2026-05-21. */
+
+/* Hide grain while a sheet is mounted. iOS Safari's GPU compositor
+   re-rasterizes the noise canvas with a much heavier alpha during the
+   overlay's backdrop-blur transition (mid-dismiss). Cleanest fix is to
+   take the grain out of paint for the sheet's full lifecycle — open
+   through finalize-close — and restore it after. */
+html[data-sheet-open="true"] canvas[data-grain] {
+  opacity: 0 !important;
+}
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: color-mix(in srgb, var(--bg-base) 15%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  pointer-events: none;
+  /* Open: --dur-fast (180ms). Close: --dur-micro (120ms) so the scrim +
+     blur clear faster than the sheet's spring return, removing the
+     lingering haze owner reported 2026-05-22. backdrop-filter is on a
+     parallel transition so the blur unwinds together with the opacity. */
+  transition: opacity var(--dur-micro) var(--ease-out-strong),
+              backdrop-filter var(--dur-micro) var(--ease-out-strong),
+              -webkit-backdrop-filter var(--dur-micro) var(--ease-out-strong);
+}
+.sheet-overlay[data-active="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity var(--dur-fast) var(--ease-standard),
+              backdrop-filter var(--dur-fast) var(--ease-standard),
+              -webkit-backdrop-filter var(--dur-fast) var(--ease-standard);
+}
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Sit above grain canvas (z 9999) and theme toggle (z-nav 20) — owner
+     spec 2026-05-22: sheet is always the topmost surface. */
+  z-index: 10001;
+  width: 100vw;
+  /* Max height = max snap visible-from-bottom value (660px per resolution log). */
+  max-height: var(--sheet-snap-max);
+  height: var(--sheet-snap-max);
+  background: var(--surface-sheet-bg);
+  border-top-left-radius: var(--sheet-radius);
+  border-top-right-radius: var(--sheet-radius);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  filter: var(--sheet-shadow);
+  padding: var(--sheet-pad-top) var(--sheet-pad-inline) var(--sheet-pad-bottom);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheet-gap);
+  /* Start fully below the viewport. sheet.js spring-animates translateY
+     to the snap point on open. */
+  transform: translateY(100%);
+  /* Scroll lock until .sheet--expanded (max snap reached, set by sheet.js). */
+  overflow: hidden;
+  touch-action: none;
+}
+.sheet.sheet--expanded {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+/* Drag handle — 34×5 with 8px radius. Touch target 28px tall around it. */
+.sheet__handle-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 28px;
+  margin: calc(-1 * var(--sheet-pad-top)) calc(-1 * var(--sheet-pad-inline)) 0;
+  padding: var(--sheet-pad-top) var(--sheet-pad-inline) 0;
+  cursor: grab;
+  touch-action: none;
+}
+.sheet__handle-area:active { cursor: grabbing; }
+.sheet__handle {
+  display: block;
+  width: var(--sheet-handle-width);
+  height: var(--sheet-handle-height);
+  border-radius: var(--sheet-handle-radius);
+  background: var(--sheet-handle-color);
+  /* Resolution log 2026-05-21 — dark handle darkens at max snap. Smooth
+     it so the spring + color transitions land together. */
+  transition: background-color 150ms var(--ease-out-strong);
+}
+/* Dark + expanded → handle darkens from --fg-secondary (#98938d) to
+   --color-fg-tertiary (#545352). Light handle stays white in both states. */
+.dark .sheet.sheet--expanded .sheet__handle {
+  background-color: var(--color-fg-tertiary);
+}
+
+/* Sheet title region — Figma 148:7760 / 148:8254:
+   - Icon (32×32) + Title inline, gap 8
+   - Divider 1px below row, gap 8 from row
+   - Title: Inter Regular 28 / 38.8 / -0.28 / heading color
+   Achieved with padding-bottom 8 + border-bottom 1px on the row. */
+.sheet__title-row {
+  display: flex;
+  /* Default: center-align num/icon against a single-line title so the
+     glyph optical-centers with the cap height. When sheet.js detects the
+     title has wrapped to 2+ lines, .sheet__title-row--multi flips this
+     to flex-start so the glyph hugs the first line instead of floating
+     to the vertical middle of the wrapped block. */
+  align-items: center;
+  gap: var(--space-2);                                /* 8 — Figma */
+  padding-bottom: var(--space-2);                     /* 8 — Figma */
+  border-bottom: 1px solid var(--border-subtle);
+  margin: 0;
+  width: 100%;
+}
+.sheet__title-row--multi { align-items: flex-start; }
+.sheet__title-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  color: var(--fg-icon-sheet);                        /* swaps via .dark */
+}
+/* Step-sheet variant — number takes the place of the icon. Owner
+   direction 2026-05-22: match the card-sheet title treatment exactly
+   (divider underneath, same display-scale type) with the number sized
+   to the title. */
+.sheet__num {
+  font-family: var(--font-body);
+  font-weight: 300;                                   /* Inter Light, matches expanded step head */
+  font-size: 28px;
+  line-height: 38.8px;
+  letter-spacing: -0.28px;
+  color: var(--fg-quiet);                             /* matches expanded step head contrast */
+  flex-shrink: 0;
+}
+.sheet__title-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.sheet__title {
+  font-family: var(--font-body);
+  font-weight: var(--font-regular);
+  font-size: 28px;
+  line-height: 38.8px;
+  letter-spacing: -0.28px;
+  color: var(--fg-primary);
+  margin: 0;
+}
+
+/* Sheet body-section wraps the prose + stats group per Figma
+   148:8260 / 148:7766 with a 32px internal gap. */
+.sheet__body-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);                              /* 32 */
+  width: 100%;
+}
+
+/* Stats group — only a TOP divider (Figma originally had top + bottom;
+   owner spec 2026-05-22 drops the bottom horizontal line). */
+.sheet__stats-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);                              /* 16 */
+  width: 100%;
+  border-top: 1px solid var(--sheet-stats-divider);
+  padding-top: var(--space-4);
+}
+
+/* Stats inner — 3 equal-width cols, gap 8. Horizontal padding is symmetric
+   so column centers stay fixed regardless of label length, and the same
+   columns line up across all four sheets. */
+.sheet__stats {
+  display: flex;
+  gap: var(--space-2);                              /* 8 between cols */
+  padding: var(--space-2) 0 var(--space-1);
+  list-style: none;
+  margin: 0;
+}
+.sheet__stats > li {
+  flex: 1 1 0;
+  min-width: 0;                                     /* prevent intrinsic width from expanding cols */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;                      /* top-align so wrapped labels start on same line */
+  gap: var(--space-2);                              /* 8 between number + label */
+}
+.sheet__stat-num {
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 100;                                  /* Inter Thin */
+  font-variation-settings: "wght" 100;
+  font-size: 34px;
+  line-height: 24px;
+  color: var(--fg-primary);                         /* heading, both modes */
+  letter-spacing: -0.34px;
+  width: 100%;
+  text-align: center;
+}
+.sheet__stat-label {
+  font-family: var(--font-body);
+  font-weight: var(--font-regular);
+  font-size: 12px;
+  line-height: normal;
+  letter-spacing: -0.12px;
+  color: var(--sheet-stats-label);                  /* text/muted */
+  width: 100%;
+  text-align: center;
+}
+
+/* Sheet body — audit pass 2026-05-22 supersedes the earlier two-state
+   typography swap. Figma sheet body is always 13/19.5 -0.13 regardless
+   of snap; the prior 16/24 reading was page body, not sheet body. */
+.sheet__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  color: var(--fg-secondary);
+  font-size: 13px;
+  line-height: 19.5px;
+  letter-spacing: -0.13px;
+}
+.sheet__body p { margin: 0; }
+.sheet__body code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  color: inherit;
+}
+/* Inside a prompt container the <pre><code> body should not pick up the
+   inline-code background chip — that styling is reserved for markdown
+   filenames in prose. Owner direction 2026-05-22: in dark mode, strip
+   the background, padding, and radius so the prompt reads as one
+   surface. Light mode keeps its existing treatment. */
+.dark .sheet__body pre code,
+.dark .step__prompt pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+.sheet__body strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
+
+/* Sheet is mobile-only — desktop keeps the inline tier-2 expansion pattern.
+   Forcing display:none in case sheet.js misfires on a resized window. */
+@media (min-width: 768px) {
+  .sheet { display: none !important; }
+}
+
+/* ============================================================
+   Tap states (mobile / touch) — revised per owner feedback 2026-05-22.
+   Buttons: 2px solid yellow border on tap + subtle scale (0.96 in tap.js).
+     No yellow background overlay (was reading muddy under 18% accent).
+   Section rows: ONLY number font color flips to solid yellow on tap; no
+     scale, no border, no bg.
+   On close (aria-expanded → false) the number returns to default — the
+     hover-row-accent rule is gated to (hover: hover) so touch never
+     leaves a stuck "hot" state.
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Buttons (hero CTA, overview cards, timeline buttons, hiring tabs,
+     hiring CTA) — tap state = 2px accent border. Keep prior border-color
+     intact at rest. */
+  .hero__skip[data-tap-active="true"],
+  .card[data-tap-active="true"],
+  .timeline__btn[data-tap-active="true"],
+  .timeline__show-all[data-tap-active="true"],
+  .hiring__tab[data-tap-active="true"],
+  .hiring__cta-link[data-tap-active="true"] {
+    border-width: 2px;
+    border-color: var(--accent-primary);
+    border-style: solid;
+  }
+
+  /* Dark overview cards previously got a #121110 bg fill on tap via the
+     §4.6 state machine. On mobile, override that — tap = 2px yellow
+     border only, no fill. Desktop §4.6 cascade unchanged. */
+  .dark .card[data-tap-active="true"],
+  .dark .card.is-tapping {
+    background: transparent;
+    border-color: var(--accent-primary);
+  }
+
+  /* Section rows — tap state only flips the number color. */
+  .overview-row[data-tap-active="true"] .overview-row__index,
+  .step__head[data-tap-active="true"] .step__num,
+  .brain-row__head[data-tap-active="true"] .brain-row__num,
+  .tools-row__head[data-tap-active="true"] .tools-row__num {
+    color: var(--accent-primary);
+  }
+}
+
+/* Expanded overview row — number stays yellow while open (matches the
+   step/brain/tools heads which already set this via their own
+   aria-expanded rules). Applied globally so desktop + mobile share the
+   same expanded-state visual. */
+.overview-row[aria-expanded="true"] .overview-row__index {
+  color: var(--accent-primary);
+}
+
+/* Light mode: any section number rendered in accent (expanded row, tapped
+   row, or hover-hot row) renders SemiBold so the yellow weight reads at
+   the same density Figma shows. Dark numbers stay at their default thin
+   weight per Figma dark composite. */
+.overview-row[aria-expanded="true"]:not(.dark *) .overview-row__index,
+.overview-row[data-tap-active="true"]:not(.dark *) .overview-row__index,
+.step__head[aria-expanded="true"]:not(.dark *) .step__num,
+.step__head[data-tap-active="true"]:not(.dark *) .step__num,
+.brain-row__head[aria-expanded="true"]:not(.dark *) .brain-row__num,
+.brain-row__head[data-tap-active="true"]:not(.dark *) .brain-row__num,
+.tools-row__head[aria-expanded="true"]:not(.dark *) .tools-row__num,
+.tools-row__head[data-tap-active="true"]:not(.dark *) .tools-row__num {
+  font-weight: var(--font-semibold);
+}
+
+/* Suppress hover-comet on touch devices — MOBILE-UPDATE-SPEC §3.4.
+   .hover-trace + comet system are decorative; touch users get tap-scale +
+   yellow flash instead. */
+@media (hover: none) and (pointer: coarse) {
+  .hover-trace { display: none !important; }
+}
+
