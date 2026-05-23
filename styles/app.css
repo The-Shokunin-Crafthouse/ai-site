@@ -3489,6 +3489,17 @@ html[data-sheet-open="true"] canvas[data-grain] {
   background: var(--bg-subtle);
   color: inherit;
 }
+/* Inside a prompt container the <pre><code> body should not pick up the
+   inline-code background chip — that styling is reserved for markdown
+   filenames in prose. Owner direction 2026-05-22: in dark mode, strip
+   the background, padding, and radius so the prompt reads as one
+   surface. Light mode keeps its existing treatment. */
+.dark .sheet__body pre code,
+.dark .step__prompt pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
 .sheet__body strong { color: var(--fg-primary); font-weight: var(--font-semibold); }
 
 /* Sheet is mobile-only — desktop keeps the inline tier-2 expansion pattern.
