@@ -1015,12 +1015,20 @@ html, body { overflow-x: clip; }
     min-width: 0;
   }
   .step__num {
-    font-size: 18px;
-    line-height: 24px;
+    /* Match the title's font size on mobile so num + title share a single
+       baseline. Force Inter and reset the tabular/geometric features
+       inherited from the desktop base rule — they swap the "1" glyph to
+       a variant that reads as a different family on mobile. */
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 20px;
     font-weight: 300;                              /* Inter Light */
     letter-spacing: 0;
     color: var(--fg-quiet);
     padding-top: 0;
+    font-feature-settings: normal;
+    font-variant-numeric: normal;
+    text-rendering: auto;
   }
   .step__title {
     font-size: 15px;
