@@ -2102,12 +2102,17 @@ html, body { overflow-x: clip; }
     margin-bottom: 28px;
   }
   .hiring__eyebrow {
-    font-size: 10px;
-    line-height: 14px;
-    font-weight: var(--font-semibold);
-    letter-spacing: 1.2px;
+    /* Panel-level eyebrow ("It's rocket AI science") per Figma
+       150:17949 — 14/18 not the section-eyebrow 10/14 scale. The
+       section header eyebrow lives on .section__eyebrow, not this
+       selector, so this rule applies to the inside-panel eyebrow only. */
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: var(--font-regular);
+    letter-spacing: 0;
     color: var(--text-accent);
-    margin-bottom: var(--space-3);              /* 12 */
+    margin-bottom: var(--space-1);              /* 4 → role */
+    text-transform: none;                       /* override base uppercase */
   }
   .section--hiring .section__title {
     font-size: 28px;
@@ -2262,7 +2267,8 @@ html, body { overflow-x: clip; }
 }
 .section--hiring:not(.dark *) .hiring__brain-text code { background: rgba(0, 0, 0, 0.04); }
 
-/* Bullet table — `//` marker + body copy, dividers between rows. */
+/* Bullet table — → marker + body copy. Desktop keeps dividers + heavier
+   padding; mobile (rule further down) drops dividers + tightens spacing. */
 .hiring__points {
   display: flex;
   flex-direction: column;
