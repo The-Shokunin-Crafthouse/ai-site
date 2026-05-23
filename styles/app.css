@@ -2095,7 +2095,7 @@ html, body { overflow-x: clip; }
      drives Inter's slnt axis where supported. With both declared, modern
      browsers use the variation-settings value while Safari falls back to
      the oblique angle so the slant renders on mobile. */
-  font-style: oblique 5deg;
+  font-style: oblique 4deg;
   font-variation-settings: "slnt" var(--text-emphasis-slant);
 }
 .hiring__role-mark::after {
