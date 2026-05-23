@@ -2123,6 +2123,56 @@ html, body { overflow-x: clip; }
     font-weight: var(--font-semibold);
     color: var(--fg-primary);
   }
+
+  /* Hiring expanded panel — Figma 150:17592 (light) / 151:18015 (dark).
+     Brain card shrinks to a 16-padded box with a 32×32 brain icon and
+     smaller copy; bullets become a flat list with → arrows, no dividers,
+     no inline padding. Role-to-card gap pulled down to 16. */
+  .hiring__role { margin-bottom: var(--space-4); }     /* 16 */
+
+  .hiring__brain-card {
+    padding: var(--space-4);                           /* 16 */
+    gap: var(--space-3);                               /* 12 */
+    margin-bottom: var(--space-4);                     /* 16 to first bullet */
+    align-items: flex-start;                           /* top-align icon when text wraps */
+  }
+  .hiring__brain-icon {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+  }
+  .hiring__brain-icon .icon { width: 32px; height: 32px; }
+  .hiring__brain-label {
+    display: block;
+    font-size: 14px;
+    line-height: 17px;
+    margin-bottom: var(--space-1);                     /* 4 */
+  }
+  .hiring__brain-text {
+    font-size: 13px;
+    line-height: 17px;
+  }
+
+  .hiring__points {
+    padding-inline: 0;
+    margin-bottom: 0;
+    gap: var(--space-3);                               /* 12 between bullets */
+  }
+  .hiring__points li {
+    padding: 0;
+    padding-left: 0;
+    border-bottom: 0;
+    gap: var(--space-3);                               /* 12 between arrow + body */
+    font-size: 14px;
+    line-height: 19px;
+  }
+  .hiring__points li::before {
+    content: "→";
+    font-size: 14px;
+    line-height: 19px;
+    color: var(--fg-quiet);
+    width: 13px;
+  }
 }
 
 .hiring__role {
