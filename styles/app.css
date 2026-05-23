@@ -2275,7 +2275,7 @@ html, body { overflow-x: clip; }
   color: var(--fg-secondary);
 }
 .hiring__points li::before {
-  content: "//";
+  content: "→";
   flex: 0 0 auto;
   font-family: var(--font-body);
   font-weight: var(--font-medium);
