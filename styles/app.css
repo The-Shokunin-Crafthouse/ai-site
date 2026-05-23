@@ -266,7 +266,7 @@ body {
   height: 18px;
   width: 18px;
   border-radius: var(--radius-full);
-  background: #ffffff;
+  background: var(--surface-toggle-knob);
   transform: translateX(0);
   transition: transform var(--dur-standard) var(--ease-figma-gentle);
 }
@@ -1564,15 +1564,9 @@ html, body { overflow-x: clip; }
   font-size: var(--text-body-sm-size);
   line-height: var(--text-body-sm-line);
 }
-.dark .brain-row__prompt {
-  --fg-primary: #d0ceca;
-  --fg-secondary: #98938d;
-  --fg-tertiary: #545352;
-  --fg-quiet: #545352;
-  --fg-muted: #545352;
-  --border-subtle: #1c1a18;
-  --bg-subtle: #1c1a18;
-}
+/* .dark .brain-row__prompt token overrides relocated to tokens.css under
+   "Component-scoped token variants" (2026-05-22). All raw hex now lives
+   in tokens.css. */
 .brain-row__prompt > :first-child { margin-top: 0; }
 .brain-row__prompt > :last-child { margin-bottom: 0; }
 .brain-row__prompt code {
@@ -2972,7 +2966,10 @@ html, body { overflow-x: clip; }
    ============================================================ */
 .step__prompt {
   position: relative;
-  background: #080707;
+  /* Mode-following via --bg-prompt-deep (tokens.css): light maps to
+     --bg-subtle (gates-panel parity), dark keeps the deeper #080707
+     plane so the mono slab reads distinct from --bg-base. */
+  background: var(--bg-prompt-deep);
   border-radius: var(--radius-lg, 16px);
   padding: var(--space-4) var(--space-6);
   display: flex;
@@ -2980,12 +2977,6 @@ html, body { overflow-x: clip; }
   min-width: 0;
   overflow: clip;
   max-height: var(--prompt-max-h, none);
-}
-/* Light mode: prompt surface matches the .gates panel (--bg-subtle) so the
-   workflow's expanded content reads as one consistent light surface. Dark
-   keeps the deeper #080707 plane. */
-.step__prompt:not(.dark *) {
-  background: var(--bg-subtle);
 }
 .step__prompt--empty {
   background: transparent;

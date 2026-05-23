@@ -187,6 +187,16 @@
   --bg-prompt: #ebeae6;
   --radius-prompt: var(--radius-md);
 
+  /* Toggle knob — both modes (Figma DarkModeToggle component). Hard
+     white, intentionally constant across modes. */
+  --surface-toggle-knob: #ffffff;
+
+  /* Step prompt deep surface — Figma 54:7438 step 09 dark slab. Light
+     mode swaps to the gates panel fill so the workflow's expanded
+     content reads as one consistent light surface; dark keeps the
+     deeper plane. Override lives in the .dark block. */
+  --bg-prompt-deep: var(--bg-subtle);
+
   /* Shadow */
   --shadow-elevated: 0 8px 4px rgba(0, 0, 0, 0.07);
 
@@ -369,6 +379,10 @@
   /* Dark-mode prompt surface = --bg-base (#0e0c0b, exact Figma match). */
   --bg-prompt: var(--bg-base);
 
+  /* Step prompt deep surface — Figma 54:7438 dark plane. Deeper than
+     --bg-base so the mono code block reads as a distinct slab. */
+  --bg-prompt-deep: #080707;
+
   /* Dark-mode card surface stays transparent — cards read against bg-base. */
   --bg-card: transparent;
 
@@ -389,4 +403,26 @@
 
   /* Semantic text/accent dark — Figma #8e7a65. */
   --text-accent: #8e7a65;
+}
+
+/* ============================================================
+   Component-scoped token variants
+   ============================================================
+   Selectors that re-declare a small group of semantic tokens for a
+   sub-region. Kept here (not in app.css) so every raw hex value lives
+   in tokens.css. Each block names the component + the variant intent.
+   ============================================================ */
+
+/* Brain-row prompt (Section 3) — dark muted-text variant. Drops
+   contrast across the foreground scale so inline code chips read as
+   dimmed body copy rather than callouts. Border + bg-subtle locked
+   to #1c1a18 so the chip never lifts above the surrounding plane. */
+.dark .brain-row__prompt {
+  --fg-primary: #d0ceca;
+  --fg-secondary: #98938d;
+  --fg-tertiary: #545352;
+  --fg-quiet: #545352;
+  --fg-muted: #545352;
+  --border-subtle: #1c1a18;
+  --bg-subtle: #1c1a18;
 }
