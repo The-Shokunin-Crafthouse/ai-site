@@ -115,7 +115,7 @@ Media: MAX, DESIGN, COWORK, FIGMA quadrants. Hint: "4 surfaces · 1 token pool"
 
 **Claude Max** ($100/mo) gives me Opus and Sonnet on a shared token pool. Sonnet for planning, content, scaffolding; Opus for sprint builds and evaluator passes.
 
-**Claude Design** runs on Opus 4.7 with its own independent weekly limit that does not touch the Max pool. I use it for visual direction before committing anything to Figma.
+**Claude Design** runs on Opus 4.7 with its own independent weekly limit that does not touch the Max pool. I use it for visual inspiration before committing anything to Figma.
 
 **Cowork** is the Desktop app's third tab. File-based knowledge work — briefs, memory updates, deliverable organization. Same connectors as chat. Remote dispatch from iPhone. Not Claude Code, not Agent View.
 
