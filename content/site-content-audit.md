@@ -1,8 +1,9 @@
 # AI.LEVIBAHN.COM — CONTENT AUDIT
-**Last updated:** 2026-05-21
-**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-05-21 including user testing integration.
+**Last updated:** 2026-05-23
+**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-05-23 including ICM layered context loading.
 
 **Change log:**
+- 2026-05-23 — ICM layered context loading applied. Five-layer chain (CLAUDE.md → WORKSPACE.md → sprint CONTEXT.md → references/ → output/) replaces "read studio-memory.md before anything else" across Card 01, Card 03 Generator, Brain Row 01, Tools Row 01, Step 09 prompt, Step 10 prompt. Card 01 stats updated 3 → 5 memory layers. Brain Row 02 stages tree expanded to show per-stage CONTEXT.md / references/ / output/ structure. Step 13 split into build-log.md (every sprint) + studio-memory.md (standing standards only). Sprint contract now a versioned file at `stages/03-build/[sprint-name]/CONTEXT.md` — Step 09 summary/body/prompt/goal note and Step 10 prompt updated accordingly. Step 02 clarified that claude.ai project knowledge is the only surface where studio-memory.md loads as a single file.
 - 2026-05-21 — Added user testing tooling (Maze / Lyssna / Dscout) across Tools Row 02, Step 10, Studio Brain Row 03, Approval Gates Gate 03, and all three For Hiring Managers tabs. Added derivative update to Card 02.
 
 ---
@@ -56,13 +57,13 @@ Skip link: "Skip to: How I'd apply this at your company"
 ### Card 01 — The Brain (EXPANDED)
 Drag-to-rotate brain media. Hint: "Drag to rotate"
 
-Every Claude session reads `studio-memory.md` before anything else. That file holds the studio identity, design principles, code standards, approval gates, and accumulated learnings. It is the only context Claude needs to start working at studio quality.
+Every Claude Code session loads context in five layers, in order: adapter `CLAUDE.md` → project `WORKSPACE.md` → sprint `CONTEXT.md` → `references/` → `output/`. Studio identity and principles still live in `studio-memory.md`, but no session reads it directly anymore — only the specific sections each sprint needs, loaded through the sprint CONTEXT.md Inputs table.
 
-Projects inherit a second layer: `WORKSPACE.md` at the project root, `WORKFLOW.md` for stage flow, and a `token-map.md` extracted from Figma. Three files, read in order, and the agent has full operating context with no ramp-up.
+The sprint CONTEXT.md is the layer that does the work. It names the exact files (and sections) to load, the contract Claude is held to, and the audit checklist run before the PR opens. `references/` carry stable inputs for the sprint; `output/` carries this-run artifacts.
 
-The memory grows. After each shipped project, the studio appends real learnings — the Next.js `trailingSlash` trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern. The next project starts with that knowledge already loaded.
+The memory grows. After each shipped project, the studio appends real learnings — the Next.js `trailingSlash` trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern. The next sprint starts with that knowledge already addressable.
 
-Stats: 3 memory layers · 7 design principles · ∞ accumulated learnings
+Stats: 5 memory layers · 7 design principles · ∞ accumulated learnings
 
 Link: "See the full Studio Brain →"
 
@@ -94,7 +95,7 @@ Media: PLAN / GEN / EVAL nodes + center "ME" node. Hint: "3 agents · 1 human"
 
 The **Planner** turns a one-paragraph brief into a full product spec with sprint breakdown. Runs in Claude.ai with the studio project active. Cheap. One pass.
 
-The **Generator** builds the sprint. Reads `WORKSPACE.md`, `studio-memory.md`, and `token-map.md` first. Implements one section, ships a PR with a live preview URL and four breakpoint snapshots. Dispatched as a background session in Agent View so it runs without my attention.
+The **Generator** builds the sprint. Reads the layered chain — `CLAUDE.md` → `WORKSPACE.md` → the sprint's `CONTEXT.md` — and loads only the files named in that CONTEXT.md's Inputs table. Implements one section, runs the CONTEXT.md audit checklist before opening the PR, ships a PR with a live preview URL and four breakpoint snapshots. Dispatched as a background session in Agent View so it runs without my attention.
 
 The **Evaluator** grades the sprint against Originality, Design Quality, Craft, and Functionality. Skeptical by design. Catches issues before I review. Single-pass: never put a `/goal` on it.
 
@@ -150,7 +151,7 @@ Link: "See the full tool tables →"
 ### STEP 02 — Run the Planner
 - Badge: Prompt Claude · Tool: Claude.ai
 - Summary: Brief in, full product spec out. Sprint breakdown, success criteria, tech stack.
-- Body: The Planner runs in the Shokunin Crafthouse project on Claude.ai. `studio-memory.md` is already in the project knowledge, so it reads our identity and design principles before expanding the brief.
+- Body: The Planner runs in the Shokunin Crafthouse project on Claude.ai. `studio-memory.md` is uploaded directly to project knowledge — this is the **only** surface where it loads as a single full file. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.
 - **What it returns:** project overview, complete deliverables list, design direction tied to the seven Shokunin principles, technical stack, three to six sprints, and specific success criteria per sprint.
 - **Approval gate one — Concept.** I read the spec carefully and edit anything I disagree with before moving on.
 - Prompt:
@@ -338,21 +339,25 @@ Link: "See the full tool tables →"
 
 ### STEP 09 — Build the sprint
 - Badge: Prompt Claude · Tool: Claude Code
-- Summary: Contract first. Then implementation. PR opens with a live preview URL.
-- Body: The Generator reads `WORKSPACE.md`, `studio-memory.md`, and `token-map.md`, pulls the Sandbox frames via Figma MCP, and proposes a sprint contract before writing a line of code. I approve the contract in writing first.
-- Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at `/_previews/[N]/`. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.
-- Dispatched via Agent View as a background session, so the build runs without my attention. Optional `/goal` drives it through to a ready-to-review PR after the contract is approved.
+- Summary: Contract file first. Then implementation. PR opens with a live preview URL.
+- Body: The Generator reads the layered chain (`CLAUDE.md` → `WORKSPACE.md` → the sprint `CONTEXT.md` at `stages/03-build/[sprint-name]/CONTEXT.md`), loads only what the CONTEXT.md Inputs table names, pulls the Sandbox frames via Figma MCP, and proposes a contract. Once I approve, Claude writes the approved contract into the CONTEXT.md Contract field, updates Status to `approved`, and commits the file before any code lands.
+- Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at `/_previews/[N]/`. Before opening the PR, Claude runs every item in the CONTEXT.md Audit checklist and updates Status to `complete`. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.
+- Dispatched via Agent View as a background session, so the build runs without my attention. Optional `/goal` drives it through to a ready-to-review PR after the contract file is approved and committed.
 - Prompt:
   > /caveman
   >
-  > Read WORKSPACE.md, ~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md, and _config/design-system/token-map.md before anything else.
+  > Read WORKSPACE.md first. Then read the sprint CONTEXT.md at:
+  > stages/03-build/[sprint-name]/CONTEXT.md
+  >
+  > Load only the files listed in the Inputs table — do not load studio-memory.md in full. The Inputs table specifies exactly which sections are needed for this sprint.
   >
   > Using Figma MCP, read the [section or page name] frames on the Sandbox page of this Figma file: [paste Figma URL]
   >
   > Before writing any code:
   > 1. Propose a sprint contract — exactly what you will build and the specific criteria I will use to verify it's complete
   > 2. Stop and wait for my approval of the contract
-  > 3. Only begin implementation after I confirm
+  > 3. After I approve, write the approved contract into the "Contract" section of stages/03-build/[sprint-name]/CONTEXT.md, update Status to "approved", and commit the file
+  > 4. Only begin implementation after the file is committed
   >
   > Implementation requirements:
   > - Framework: [Next.js / HTML+CSS / React — pick one]
@@ -362,7 +367,9 @@ Link: "See the full tool tables →"
   >
   > When complete:
   > - Run `npm run preview [section-name]` to generate snapshot screenshots at all four breakpoints into /previews/[section-name]/
-  > - Create a feature branch called feat/[section-name] and open a PR with: summary, "## Live Preview" placeholder, "## Snapshots" with 4 embedded images
+  > - Create a feature branch called feat/[section-name]
+  > - Before opening the PR, run through every item in the Audit section of stages/03-build/[sprint-name]/CONTEXT.md. Check each item explicitly. If any item fails, fix it first. Update Status to "complete" after all audit items pass.
+  > - Open the PR with: summary, "## Live Preview" placeholder, "## Snapshots" with 4 embedded images
   > - Print the preview URL in chat as a raw cmd-clickable line: 📱 Preview URL: https://[domain]/_previews/[pr-number]/
   > - Run `gh run watch --exit-status` on preview-deploy.yml and print ✅ on success / ❌ + failure logs on fail
   > - Stop and wait — do not proceed to the next section without my approval
@@ -378,11 +385,12 @@ Link: "See the full tool tables →"
   > /caveman
   >
   > You are the Evaluator for The Shokunin Crafthouse.
-  > Read WORKSPACE.md and ~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md first.
+  > Read WORKSPACE.md first. Then read the sprint CONTEXT.md at:
+  > stages/03-build/[sprint-name]/CONTEXT.md
+  >
+  > The CONTEXT.md contains the approved sprint contract, the Inputs table (what the Generator was supposed to load), and the pre-output audit checklist (what the Generator was supposed to verify before opening the PR). Read all three sections before grading.
   >
   > The Generator just completed Sprint [N].
-  >
-  > Sprint contract was: [paste the exact contract Claude proposed in Step 9]
   > Live preview URL: [paste the URL from the bot comment on the PR]
   >
   > Evaluation order:
@@ -420,24 +428,42 @@ Link: "See the full tool tables →"
 
 ### STEP 13 — Update the studio memory
 - Badge: Prompt Claude · Tool: Cowork
-- Summary: Append learnings. Never rewrite. The system gets smarter every time.
-- Body: After delivery, Cowork appends to `studio-memory.md`: design approaches that worked, code patterns that became standing standards, mistakes to avoid next time, and any new aesthetic preferences that emerged.
-- **Approval gate four — Delivery.** Memory updated, decisions logged, the project closes. The next project starts with that knowledge already loaded.
-- Prompt:
+- Summary: Two appends. `build-log.md` captures every sprint. `studio-memory.md` takes only standing standards distilled from it.
+- Body: After delivery Cowork runs two passes. **Part A — every sprint:** append the sprint record (what shipped, decisions made, issues resolved) to `build-log.md`. It is never loaded as agent context — it exists for human reference and future audits. **Part B — only if signal emerged:** distill that log into `studio-memory.md` appends, but only for learnings that apply to all future projects (standing standards, mistakes to avoid broadly, new aesthetic defaults). Sprint-specific notes never cross over. studio-memory.md is loaded selectively by the sprint CONTEXT.md Inputs table; noise there degrades every future session.
+- **Approval gate four — Delivery.** Build-log appended, studio-memory updated only where it earns its place, decisions logged. The project closes.
+- Prompt (two parts):
+  > # Part A — Log the sprint to build-log.md (always — every sprint)
+  >
+  > Append to ~/Projects/shokunin-crafthouse/studio-memory/build-log.md:
+  >
+  > ## [Project name] — Sprint [N]: [sprint-name] — [date]
+  > - What was built: [brief description]
+  > - Technical decisions made during the sprint
+  > - Issues encountered and how they were resolved
+  > - Token usage notes if relevant
+  >
+  > Do not edit any existing entries. Only append. Save and commit.
+  >
+  >
+  > # Part B — Update studio-memory.md (selectively — standing standards only)
+  >
   > Update the studio memory file at:
   > ~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md
   >
-  > Append to ACCUMULATED LEARNINGS:
-  > - Design approaches that worked well on this project
-  > - Code patterns we established
-  > - Mistakes to avoid next time
-  > - Any decisions that should become standing studio standards
+  > Review this project. Append to studio-memory.md ONLY if this project produced learnings that should apply to ALL future projects.
   >
-  > Append to CREATIVE PREFERENCES if anything new emerged about aesthetic direction.
-  > Append to TECHNOLOGY STACK if any new tool patterns were established.
+  > Append to ACCUMULATED LEARNINGS only if:
+  > - A code pattern emerged that should become a standing standard
+  > - A design approach worked well enough to carry forward broadly
+  > - A mistake occurred that would recur across projects without a standing rule
+  > - A tool pattern was established that future sessions should know about
   >
-  > Do not rewrite or remove any existing content. Only append.
-  > Commit the updated file and push.
+  > Do NOT append sprint-specific notes, project-specific details, or one-time decisions. Those belong in build-log.md.
+  >
+  > Append to CREATIVE PREFERENCES only if something genuinely new emerged about aesthetic direction that should inform future work.
+  > Append to TECHNOLOGY STACK only if a new tool pattern was established that applies beyond this project.
+  >
+  > Do not rewrite or remove existing content. Only append. Commit and push.
 
 ---
 
@@ -461,7 +487,7 @@ Link: "See the full tool tables →"
 **Lede:** These are the files Claude reads at the start of every session. The studio gets smarter with every project because this memory persists.
 
 ### Brain Row 01 — Studio Memory
-**Desc:** One file, read at the start of every Claude Code session: `studio-memory.md`. It holds the studio identity, design principles, quality criteria, code standards, approval gates, creative defaults, and a running log of accumulated learnings. The next project starts with these already loaded.
+**Desc:** `studio-memory.md` is the studio's long-term institutional memory — identity, design principles, quality criteria, code standards, approval gates, creative defaults, and accumulated learnings. It is no longer read directly at session start. Sessions surface it through the layered chain (CLAUDE.md → WORKSPACE.md → sprint CONTEXT.md), loading only the sections each sprint's Inputs table names. The next sprint starts with the relevant learnings already addressable, without paying for the rest in context tokens.
 
 **Eyebrow:** Three real entries from `§8 Accumulated Learnings`
 
@@ -497,12 +523,20 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
       - `figma-links.md` — Canonical Figma URLs.
       - `token-map.md` — Extracted Figma tokens.
       - `ui-rules.md` — Component + layout rules.
-  - `stages/` — Five stages, numbered.
-    - `01-brief/` — Spec, references, scope.
-    - `02-design/` — Figma exports, Claude Design output.
-    - `03-build/` — Implementation work.
-    - `04-review/` — Evaluator reports, snapshots.
-    - `05-launch/` — Deploy notes, post-launch.
+  - `stages/` — Five stages, numbered. Each stage holds `CONTEXT.md` + `references/` + `output/`.
+    - `01-brief/`
+      - `CONTEXT.md` — Stage contract: Inputs, Process, Outputs, Audit.
+      - `references/` — Stable inputs the stage consumes (brief, scope).
+      - `output/` — Stage deliverables (approved spec).
+    - `02-design/`
+      - `CONTEXT.md`, `references/`, `output/` (plus `figma/`, `claude-design/`).
+    - `03-build/`
+      - `CONTEXT.md` — Top-level build stage contract.
+      - `[sprint-name]/` — One folder per sprint, each with its own `CONTEXT.md` (Inputs table, approved contract, audit checklist), `references/`, `output/` (snapshots, evaluator report).
+    - `04-review/`
+      - `CONTEXT.md`, `references/`, `output/`.
+    - `05-launch/`
+      - `CONTEXT.md`, `references/`, `output/`.
   - `decisions/` — Rationale log.
     - `decisions.md` — Why we chose what we chose.
 
@@ -538,7 +572,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 
 | If I need to… | Use this | Why |
 |---------------|----------|-----|
-| Persist studio identity across every session | `studio-memory.md` + Claude Project | Read at the start of every Claude Code session. The studio compounds. |
+| Persist studio identity across every session | `studio-memory.md` + Claude Project | Surfaced via the layered loader (CLAUDE.md → WORKSPACE.md → sprint CONTEXT.md), Inputs-table sections only. The studio compounds without paying full-file context cost each sprint. |
 | Build with the agent | Claude Code (terminal) | All code work — scaffold, build, deploy. Background sessions in Agent View. |
 | Protect main from accidents | GitHub branch ruleset | PR required, force-pushes blocked, deletions restricted. I am the only approver. |
 | Constrain Claude's reach | `~/.claude/settings.json` | Allowed paths only. SSH, keychains, personal docs blocked. |
