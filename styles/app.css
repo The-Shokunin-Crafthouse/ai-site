@@ -2134,56 +2134,9 @@ html, body { overflow-x: clip; }
     font-weight: var(--font-semibold);
     color: var(--fg-primary);
   }
-
-  /* Hiring expanded panel — Figma 150:17592 (light) / 151:18015 (dark).
-     Brain card shrinks to a 16-padded box with a 32×32 brain icon and
-     smaller copy; bullets become a flat list with → arrows, no dividers,
-     no inline padding. Role-to-card gap pulled down to 16. */
-  .hiring__role { margin-bottom: var(--space-4); }     /* 16 */
-
-  .hiring__brain-card {
-    padding: var(--space-4);                           /* 16 */
-    gap: var(--space-3);                               /* 12 */
-    margin-bottom: var(--space-4);                     /* 16 to first bullet */
-    align-items: flex-start;                           /* top-align icon when text wraps */
-  }
-  .hiring__brain-icon {
-    flex: 0 0 32px;
-    width: 32px;
-    height: 32px;
-  }
-  .hiring__brain-icon .icon { width: 32px; height: 32px; }
-  .hiring__brain-label {
-    display: block;
-    font-size: 14px;
-    line-height: 17px;
-    margin-bottom: var(--space-1);                     /* 4 */
-  }
-  .hiring__brain-text {
-    font-size: 13px;
-    line-height: 17px;
-  }
-
-  .hiring__points {
-    padding-inline: 0;
-    margin-bottom: 0;
-    gap: var(--space-3);                               /* 12 between bullets */
-  }
-  .hiring__points li {
-    padding: 0;
-    padding-left: 0;
-    border-bottom: 0;
-    gap: var(--space-3);                               /* 12 between arrow + body */
-    font-size: 14px;
-    line-height: 19px;
-  }
-  .hiring__points li::before {
-    content: "→";
-    font-size: 14px;
-    line-height: 19px;
-    color: var(--fg-quiet);
-    width: 13px;
-  }
+  /* Panel-level mobile overrides live in a second @media block AFTER
+     the base .hiring__brain-card / .hiring__points rules below, because
+     their base declarations would otherwise win on source order. */
 }
 
 .hiring__role {
@@ -2296,6 +2249,59 @@ html, body { overflow-x: clip; }
   letter-spacing: 0;
   color: var(--fg-tertiary);
   white-space: nowrap;
+}
+
+/* ===== Hiring expanded panel mobile overrides (Figma 150:17592 light /
+   151:18015 dark). Placed AFTER the base hiring__* rules above so source
+   order makes the mobile values win at <=767px — the earlier @media
+   block tried to override base, but source order let base reclaim the
+   cascade. Owner audit 2026-05-22. */
+@media (max-width: 767px) {
+  .hiring__role { margin-bottom: var(--space-4); }     /* 16 */
+
+  .hiring__brain-card {
+    padding: var(--space-4);                           /* 16 */
+    gap: var(--space-3);                               /* 12 */
+    margin-bottom: var(--space-4);                     /* 16 to first bullet */
+    align-items: flex-start;                           /* top-align icon when text wraps */
+  }
+  .hiring__brain-icon {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+  }
+  .hiring__brain-icon .icon { width: 32px; height: 32px; }
+  .hiring__brain-label {
+    display: block;
+    font-size: 14px;
+    line-height: 17px;
+    margin-bottom: var(--space-1);                     /* 4 */
+  }
+  .hiring__brain-text {
+    font-size: 13px;
+    line-height: 17px;
+  }
+
+  .hiring__points {
+    padding-inline: 0;
+    margin-bottom: 0;
+    gap: var(--space-3);                               /* 12 between bullets */
+  }
+  .hiring__points li {
+    padding: 0;
+    padding-left: 0;
+    border-bottom: 0;
+    gap: var(--space-3);                               /* 12 between arrow + body */
+    font-size: 14px;
+    line-height: 19px;
+  }
+  .hiring__points li::before {
+    content: "→";
+    font-size: 14px;
+    line-height: 19px;
+    color: var(--fg-quiet);
+    width: 13px;
+  }
 }
 
 .hiring__cta {
