@@ -6,7 +6,7 @@
   const HOLD_MS = 3000;
   const TRANSITION_MS = 4000;
   const CYCLE_MS = 2 * (HOLD_MS + TRANSITION_MS);
-  const FRAME_INTERVAL_MS = 83;
+  const FRAME_INTERVAL_MS = 200;
   const SIZE = 64;
 
   function easeInOut(t) {

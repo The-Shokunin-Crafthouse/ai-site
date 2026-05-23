@@ -14,16 +14,15 @@
    - .sheet--expanded class toggled at max snap; CSS swaps body font
      16/24 → 13/19.5 with 150ms ease-out.
 
-   No overlay (no scrim in Figma). Outside-tap closes via a transparent
-   document click listener.
+   Overlay: a full-viewport scrim (.sheet-overlay) sits below the sheet and
+   fades in/out via [data-active]. Outside-tap close is handled by a
+   capture-phase document click listener bound in openSheet.
 
    Trigger interception (mobile only — capture-phase click listener):
    - .card[data-card]            → template[data-drawer-tpl="<card>"]
    - .step__head                 → sibling .step__body innerHTML
    - .brain-row__head            → sibling .brain-row__body innerHTML
    - .tools-row__head            → sibling .tools-row__body innerHTML
-
-   Public API: window.AiSiteSheet.open({ title, bodyHTML, statsHTML }).
 */
 (function () {
   "use strict";
@@ -55,7 +54,7 @@
   var SPRING_SNAP = { stiffness: 300, damping: 30 };
   var DISMISS_VELOCITY = 0.5; /* px/ms */
 
-  var mq = window.matchMedia("(max-width: 767px)");
+  var viewport = window.AiSiteViewport;
   var pm = window.popmotion;
   if (!pm || !pm.animate) return;
 
@@ -160,7 +159,7 @@
   }
 
   function openSheet(opts) {
-    if (!mq.matches) return;
+    if (!viewport || !viewport.isMobile()) return;
     if (activeSheet) closeSheet();
 
     opts = opts || {};
@@ -181,7 +180,8 @@
     requestAnimationFrame(function () {
       if (activeOverlay) activeOverlay.setAttribute("data-active", "true");
     });
-    overlay.addEventListener("click", closeSheet);
+    /* Overlay click is covered by the capture-phase onOutsideClick listener
+       bound at end of openSheet — no need for a separate handler here. */
 
     var sheet = document.createElement("aside");
     sheet.className = "sheet";
@@ -346,10 +346,8 @@
   function closeSheet() {
     if (!activeSheet) return;
     setSnapState("closing");
-    // Flip the overlay's data-active immediately so the scrim + blur
-    // start clearing on the close-side transition (var(--dur-micro)
-    // 120ms) without waiting for the sheet's spring to finish.
-    if (activeOverlay) activeOverlay.removeAttribute("data-active");
+    /* Overlay scrim + blur start clearing immediately — handled inside
+       dismissWith() so both drag-to-dismiss and closeSheet paths fire it. */
     dismissWith(0);
   }
 
@@ -499,7 +497,7 @@
   }
 
   function onCapturedClick(e) {
-    if (!mq.matches) return;
+    if (!viewport || !viewport.isMobile()) return;
     /* Don't intercept clicks inside an open sheet. */
     if (activeSheet && activeSheet.contains(e.target)) return;
 
@@ -536,10 +534,4 @@
   /* Capture-phase so the interception fires before the desktop inline
      expansion handlers in scripts/app.js. */
   document.addEventListener("click", onCapturedClick, true);
-
-  /* Public API. */
-  window.AiSiteSheet = {
-    open: openSheet,
-    close: closeSheet,
-  };
 })();

@@ -7,18 +7,81 @@
  *   Re-enter starts a fresh comet from off-canvas left.
  * - Buttons: same dot+trail traces clockwise around the button's rounded rect perimeter.
  *
- * Tokens: --hover-comet-speed (px/s), --hover-comet-trail (px), --hover-comet-head (px)
+ * Tokens: --hover-comet-head (px), --hover-comet-glow (drop-shadow). Speed +
+ * trail lengths live as constants below — the divider/button comets share the
+ * same SPEED but use different trail lengths (TRAIL_ROW / TRAIL_BTN).
  * Honors prefers-reduced-motion (skips the comet entirely).
  */
 (function () {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduced) return;
+  /* Touch-only devices never fire mouseenter/mouseleave usefully — skip the
+     boot scan and DOM mounts entirely. Mirrors tap.js's hover-capability
+     gate so the two scripts cover disjoint pointer types. */
+  if (window.matchMedia("(hover: none)").matches) return;
 
   const SPEED = 192;           // px/s, linear — slowed 20% from 240 per fix #3d (rows + buttons)
   const TRAIL_ROW = 200;       // px — Hover 1 measurement for dividers
   const TRAIL_BTN = 120;       // px — shorter tail on buttons, grow-in same as divider
   const HEAD = 4;              // px — dot dimension
   const FADE_MS = 1000;        // longer fade so the comet lingers after mouseleave
+
+  // ============================================================
+  // Shared rAF lifecycle for divider + button comets. Owns the loop,
+  // fade end-of-life, and active/fading state machine. Callers provide
+  // `tick(dt)` (advance + paint) plus `onStart` / `onLeave` for whatever
+  // per-setup attribute writes need to happen on each transition.
+  // ============================================================
+  function makeCometLoop({ fadeEl, tick, onStart, onLeave }) {
+    let raf = null;
+    let lastT = 0;
+    let active = false;
+    let fading = false;
+    let fadeStart = 0;
+
+    function frame(t) {
+      if (!raf) return;
+      const dt = lastT ? (t - lastT) / 1000 : 0;
+      lastT = t;
+      tick(dt);
+      if (fading && t - fadeStart >= FADE_MS) {
+        fadeEl.dataset.active = "false";
+        fadeEl.style.opacity = "";
+        fading = false;
+        stop();
+        return;
+      }
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      active = true;
+      fading = false;
+      if (onStart) onStart();
+      if (!raf) {
+        lastT = 0;
+        raf = requestAnimationFrame(frame);
+      }
+    }
+
+    function stop() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = null;
+      lastT = 0;
+    }
+
+    function leave(t) {
+      if (!active) return;
+      active = false;
+      fading = true;
+      fadeStart = t || performance.now();
+      if (onLeave) onLeave();
+      fadeEl.style.transition = `opacity ${FADE_MS}ms var(--ease-out-strong)`;
+      fadeEl.dataset.active = "false";
+    }
+
+    return { start, stop, leave, isActive: () => active };
+  }
 
   // ============================================================
   // DIVIDERS — top border of any element with [data-hover="divider"]
@@ -39,16 +102,11 @@
 
   function setupDivider(host) {
     const trace = mountDividerTrace(host);
-    let raf = null;
-    let lastT = 0;
     let anchorX = 0;            // host-local x of the number column's left edge
     let wrapX = 0;              // host-local x of off-viewport-left (full-tail loop point)
     let endX = 0;               // host-local x past viewport right
     let headX = 0;              // host-local x of head's left edge
     let isFirstLap = true;      // first lap after hover grows the tail from 0 → TRAIL_ROW
-    let active = false;
-    let fading = false;
-    let fadeStart = 0;
 
     function measure() {
       const rect = host.getBoundingClientRect();
@@ -78,75 +136,49 @@
       trace.line.style.transform = `translateX(${headX - tailLength}px)`;
     }
 
-    function frame(t) {
-      if (!raf) return;
-      const dt = lastT ? (t - lastT) / 1000 : 0;
-      lastT = t;
-      headX += SPEED * dt;
-
-      // Wrap when comet has fully exited viewport right → back to off-viewport-left
-      // with the tail already at full length (first-lap grow is over).
-      if (headX > endX) {
-        headX = wrapX;
-        isFirstLap = false;
-      }
-
-      paint();
-
-      if (fading) {
-        if (t - fadeStart >= FADE_MS) {
-          trace.el.dataset.active = "false";
-          trace.el.style.opacity = "";
-          fading = false;
-          stop();
-          return;
+    const loop = makeCometLoop({
+      fadeEl: trace.el,
+      onStart: () => {
+        measure();
+        // Every (re-)hover starts fresh at the numbers anchor with the tail at 0 —
+        // instant visual feedback. Pre-paint before activating opacity to avoid the
+        // default-position flash.
+        headX = anchorX;
+        isFirstLap = true;
+        paint();
+        trace.el.style.opacity = "";
+        trace.el.dataset.active = "true";
+      },
+      tick: (dt) => {
+        headX += SPEED * dt;
+        // Wrap when comet has fully exited viewport right → back to off-viewport-left
+        // with the tail already at full length (first-lap grow is over).
+        if (headX > endX) {
+          headX = wrapX;
+          isFirstLap = false;
         }
-      }
+        paint();
+      },
+    });
 
-      raf = requestAnimationFrame(frame);
-    }
+    // Track hover separately from loop.isActive() — `active` flips to false
+    // on leave (during fade-out), but we still want to restart on viewport
+    // re-entry only if the pointer is genuinely still over the host.
+    let isHovering = false;
+    host.addEventListener("mouseenter", () => {
+      isHovering = true;
+      loop.start();
+    });
+    host.addEventListener("mouseleave", () => {
+      isHovering = false;
+      loop.leave(performance.now());
+    });
 
-    function start() {
-      measure();
-      // Every (re-)hover starts fresh at the numbers anchor with the tail at 0 —
-      // instant visual feedback. Pre-paint before activating opacity to avoid the
-      // default-position flash.
-      headX = anchorX;
-      isFirstLap = true;
-      paint();
-      active = true;
-      fading = false;
-      trace.el.style.opacity = "";
-      trace.el.dataset.active = "true";
-      if (!raf) {
-        lastT = 0;
-        raf = requestAnimationFrame(frame);
-      }
-    }
-
-    function stop() {
-      if (raf) cancelAnimationFrame(raf);
-      raf = null;
-      lastT = 0;
-    }
-
-    function leave(t) {
-      if (!active) return;
-      active = false;
-      fading = true;
-      fadeStart = t || performance.now();
-      // Apply CSS-driven opacity fade while RAF keeps position updating
-      trace.el.style.transition = `opacity ${FADE_MS}ms var(--ease-out-strong)`;
-      trace.el.dataset.active = "false";
-    }
-
-    host.addEventListener("mouseenter", start);
-    host.addEventListener("mouseleave", () => leave(performance.now()));
-
-    // Pause off-screen
+    // Pause off-screen; resume when scrolled back in while still hovered.
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
-        if (!e.isIntersecting && raf) stop();
+        if (!e.isIntersecting) loop.stop();
+        else if (isHovering) loop.start();
       });
     }, { rootMargin: "200px" });
     io.observe(host);
@@ -234,14 +266,9 @@
 
   function setupButton(host) {
     const orbit = mountButtonOrbit(host);
-    let raf = null;
-    let lastT = 0;
     let perim = 0;
     let headDist = 0;
     let firstLap = true;
-    let active = false;
-    let fading = false;
-    let fadeStart = 0;
 
     function measure() {
       const rect = host.getBoundingClientRect();
@@ -296,64 +323,35 @@
       orbit.grad.setAttribute("fy", p.y);
     }
 
-    function frame(t) {
-      if (!raf) return;
-      const dt = lastT ? (t - lastT) / 1000 : 0;
-      lastT = t;
-      headDist += SPEED * dt;
-      if (headDist >= perim) {
-        headDist -= perim;
-        firstLap = false;
-      }
-      paint();
-
-      if (fading && t - fadeStart >= FADE_MS) {
-        orbit.wrap.dataset.active = "false";
+    const loop = makeCometLoop({
+      fadeEl: orbit.wrap,
+      onStart: () => {
+        measure();
+        headDist = 0;
+        firstLap = true;
+        paint();
+        host.dataset.btnState = "hot";
         orbit.wrap.style.opacity = "";
-        fading = false;
-        stop();
-        return;
-      }
-      raf = requestAnimationFrame(frame);
-    }
+        orbit.wrap.style.transition = "";
+        orbit.wrap.dataset.active = "true";
+      },
+      onLeave: () => {
+        host.dataset.btnState = "";
+      },
+      tick: (dt) => {
+        headDist += SPEED * dt;
+        if (headDist >= perim) {
+          headDist -= perim;
+          firstLap = false;
+        }
+        paint();
+      },
+    });
 
-    function start() {
-      measure();
-      headDist = 0;
-      firstLap = true;
-      paint();
-      active = true;
-      fading = false;
-      host.dataset.btnState = "hot";
-      orbit.wrap.style.opacity = "";
-      orbit.wrap.style.transition = "";
-      orbit.wrap.dataset.active = "true";
-      if (!raf) {
-        lastT = 0;
-        raf = requestAnimationFrame(frame);
-      }
-    }
-
-    function stop() {
-      if (raf) cancelAnimationFrame(raf);
-      raf = null;
-      lastT = 0;
-    }
-
-    function leave(t) {
-      if (!active) return;
-      active = false;
-      fading = true;
-      fadeStart = t || performance.now();
-      host.dataset.btnState = "";
-      orbit.wrap.style.transition = `opacity ${FADE_MS}ms var(--ease-out-strong)`;
-      orbit.wrap.dataset.active = "false";
-    }
-
-    host.addEventListener("mouseenter", start);
-    host.addEventListener("mouseleave", () => leave(performance.now()));
+    host.addEventListener("mouseenter", loop.start);
+    host.addEventListener("mouseleave", () => loop.leave(performance.now()));
     if ("ResizeObserver" in window) {
-      new ResizeObserver(() => { if (active) measure(); }).observe(host);
+      new ResizeObserver(() => { if (loop.isActive()) measure(); }).observe(host);
     }
   }
 
@@ -380,6 +378,4 @@
   } else {
     boot();
   }
-  // Expose for late-mounted DOM (cards inserted after page load)
-  window.__hoverTrace = { setupDivider, setupButton, setupRow };
 })();
