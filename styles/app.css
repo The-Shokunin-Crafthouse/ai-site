@@ -991,7 +991,7 @@ html, body { overflow-x: clip; }
      group then takes the rest of the row; the bar fills any remaining
      space so the indicator stretches to the container's right edge
      regardless of viewport width. */
-  .timeline__toolbar { padding-left: 34px; }
+  .timeline__toolbar { padding-left: 36px; }   /* 24px num col + 12px gap → title left edge */
   .timeline__progress {
     flex: 1;
     font-size: 11px;
@@ -1010,7 +1010,10 @@ html, body { overflow-x: clip; }
      - flex row: num (left, top-aligned) + main (flex-col gap 8)
        main = title-block (flex-col gap 4) + meta row (flex gap 8) */
   .step__head {
-    grid-template-columns: auto 1fr;
+    /* Fixed 24px num column + 12 gap so step numbers right-align under
+       the overview row numbers above, and step titles share the same
+       left edge as the row title. */
+    grid-template-columns: 24px 1fr;
     grid-template-areas:
       "num main"
       "num meta";
@@ -1036,7 +1039,8 @@ html, body { overflow-x: clip; }
     /* Match the title's font size on mobile so num + title share a single
        baseline. Force Inter and reset the tabular/geometric features
        inherited from the desktop base rule — they swap the "1" glyph to
-       a variant that reads as a different family on mobile. */
+       a variant that reads as a different family on mobile. Right-align
+       so digits stack vertically under the overview row number above. */
     font-family: var(--font-body);
     font-size: 15px;
     line-height: 20px;
@@ -1047,6 +1051,8 @@ html, body { overflow-x: clip; }
     font-feature-settings: normal;
     font-variant-numeric: normal;
     text-rendering: auto;
+    justify-self: end;
+    text-align: right;
   }
   .step__title {
     font-size: 15px;
@@ -2571,7 +2577,12 @@ html, body { overflow-x: clip; }
      expanded state. Subcopy (.overview-row__lede) on expand: 13/19
      body, 8px gap from heading. */
   .overview-row {
-    column-gap: var(--space-3-5);            /* 14px */
+    /* Fixed number column + 12px gap on mobile so the section row's
+       number sits right-aligned in a 24px box and its title's left edge
+       lands at x = pad-h + 24 + 12 = 60 from the viewport. Step rows
+       below mirror the same template so the column stacks vertically. */
+    grid-template-columns: 24px 1fr;
+    column-gap: var(--space-3);              /* 12px */
     padding-block: 22px;
   }
   .overview-row__main {
@@ -2588,7 +2599,8 @@ html, body { overflow-x: clip; }
     line-height: 24px;
     font-weight: 300;                        /* Inter Light, not --font-light (=100/Thin) */
     color: var(--fg-quiet);
-    min-width: 24px;
+    justify-self: end;                       /* right-align to the 24px column edge */
+    text-align: right;
   }
   .overview-row__title {
     font-size: 18px;
