@@ -792,3 +792,44 @@ itself.
 - If failures recur even at 10m, the root cause is upstream (Hostinger
   SSH frontend), not workflow config — escalate there rather than
   bumping again.
+
+## 2026-05-23 — Inter Variable v3.19 font swap
+
+Swapped to Inter Variable v3.19 (self-hosted, subsetted, served from `/fonts`).
+Restores the `slnt` axis, which was absent in the previously pinned version.
+Required because italic variants on headings were falling back to synthetic oblique —
+visible at large sizes in Safari. Self-hosted over Google Fonts per standing standard
+(non-`wght` axis in use).
+
+## 2026-05-23 — Opus 4.7 workflow steps: `/effort xhigh` and `/ultrareview`
+
+Added two new step definitions to the Claude Code workflow for ai-site sessions.
+`/effort xhigh` sets extended reasoning budget for architecture-level decisions.
+`/ultrareview` runs a full pre-PR audit (accessibility, motion, token consistency,
+responsive breakpoints). Both are opt-in per sprint, not defaults — cost and time
+are too high for routine sprints.
+
+## 2026-05-23 — ICM layered context loading applied to site copy
+
+Applied the 5-layer ICM context chain (Layer 0–4) across ai-site copy sessions.
+Previously, copy sessions loaded studio-memory.md in full. Now sessions load only
+the sections named in the sprint CONTEXT.md Inputs table. Reduces context bloat
+and keeps copy sessions scoped to the current sprint's voice constraints. Pattern
+matches the code session standard established in the ICM v2.2 template.
+
+## 2026-05-23 — `claude agents --json` added to session scripting standard
+
+`claude agents --json` (available from Claude Code v2.1.145) outputs all live
+sessions as structured JSON. Added to the studio toolchain for tmux-resurrect
+integration and session-picker scripts. `claude agents` (no flag) remains the
+interactive one-screen view. Both are documented in the session start checklist
+in WORKSPACE.md.
+
+## 2026-05-23 — Hiring tab company-size ranges widened (desktop)
+
+Desktop hiring tabs updated: "3–50 Startup" → retained, "50–1000 Mid-size"
+range confirmed. Change aligns desktop copy with the mobile tab copy landed in
+the prior sprint. Approved as an explicit cascade (mobile → desktop) per the
+cascade-decisions standard (ref: 2026-05-22 — cascade decisions).
+Rationale: original desktop ranges were compressed from an earlier content pass
+and no longer matched how visitors self-identify.
