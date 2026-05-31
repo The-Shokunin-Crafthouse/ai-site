@@ -401,7 +401,7 @@
         </div>
       </div>
       <p><strong>Claude Max</strong> ($100/mo) gives me Opus and Sonnet on a shared token pool. Sonnet for planning, content, scaffolding; Opus for sprint builds and evaluator passes.</p>
-      <p><strong>Claude Design</strong> runs on Opus 4.7 with its own independent weekly limit that does not touch the Max pool. I use it for visual inspiration before committing anything to Figma.</p>
+      <p><strong>Claude Design</strong> runs on Opus 4.8 with its own independent weekly limit that does not touch the Max pool. I use it for visual inspiration before committing anything to Figma.</p>
       <p><strong>Cowork</strong> is the Desktop app's third tab. File-based knowledge work — briefs, memory updates, deliverable organization. Same connectors as chat. Remote dispatch from iPhone. Not Claude Code, not Agent View.</p>
       <p><strong>Figma + Figma MCP</strong> are the design system and the agent's interface to it. Sandbox is creative workspace; Production is canonical. <code>generate_figma_design</code> writes approved frames straight to the Production canvas — no manual promotion step. <code>/sync-figma-token</code> pulls tokens from Sandbox into <code>token-map.md</code>.</p>
       <p><strong>GitHub Actions + Hostinger</strong> handle deploys. Every PR opens a live preview at a real URL.</p>
@@ -670,7 +670,7 @@ Commit all three workflow files plus any framework config changes to a new branc
               </button>
               <div class="step__body" id="step-6-body" hidden>
                 <div class="step__body-text">
-                  <p>Claude Design runs on Opus 4.7 with its own independent weekly limit that does not touch the Max pool. I treat it as a free creative resource for exploration before committing anything to Figma.</p>
+                  <p>Claude Design runs on Opus 4.8 with its own independent weekly limit that does not touch the Max pool. I treat it as a free creative resource for exploration before committing anything to Figma.</p>
                   <p>The pattern is two opposing directions: my instinct, then its opposite. The contrast forces a decision about point of view. Output saves to <code>stages/02-design/claude-design/</code>.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
@@ -804,7 +804,7 @@ This file is the source of truth for all implementation. No color, font, or spac
                 <div class="step__body-text">
                   <p>The Generator reads the layered chain (<code>CLAUDE.md</code> → <code>WORKSPACE.md</code> → the sprint <code>CONTEXT.md</code> at <code>stages/03-build/[sprint-name]/CONTEXT.md</code>), loads only what the CONTEXT.md Inputs table names, pulls the Sandbox frames via Figma MCP, and proposes a contract. Once I approve, Claude writes the approved contract into the CONTEXT.md Contract field, updates Status to <code>approved</code>, and commits the file before any code lands.</p>
                   <p>Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at <code>/_previews/[N]/</code>. Before opening the PR, Claude runs every item in the CONTEXT.md Audit checklist and updates Status to <code>complete</code>. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.</p>
-                  <p>Dispatched via Agent View as a background session, so the build runs without my attention. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract file is approved and committed. Use <code>/effort xhigh</code> — the effort tier specifically added for coding and agentic tasks on Opus 4.7, sitting between <code>high</code> and <code>max</code>.</p>
+                  <p>Dispatched via Agent View as a background session, so the build runs without my attention. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract file is approved and committed. Use <code>/effort xhigh</code> — the effort tier specifically added for coding and agentic tasks on Opus 4.8, sitting between <code>high</code> and <code>max</code>.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-9-prompt" aria-label="Copy prompt">
@@ -858,7 +858,7 @@ When complete:
               </button>
               <div class="step__body" id="step-10-body" hidden>
                 <div class="step__body-text">
-                  <p>Before the Evaluator session, run <code>/ultrareview</code> on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.</p>
+                  <p>Before the Evaluator session, run <code>/code-review --fix</code> (v2.1.152+) on the open PR branch. It runs the standard code review pass and then applies straightforward fixes inline, so the obvious issues are already resolved before the cloud reviewers see the diff. Then run <code>/ultrareview</code> on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.</p>
                   <p>A fresh Claude Code session, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
                   <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.</p>
                   <p>In a team context, the Evaluator pass is necessary but not sufficient. The AI grades Functionality against code and visual snapshots — not against observed behavior. User testing runs here, between the Evaluator result and the merge decision. Which tool depends on company stage.</p>
@@ -1432,7 +1432,7 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Explore visual direction</td>
-                      <td data-label="Use this">Claude Design (Opus 4.7) <span class="tool-table__star" aria-hidden="true">★</span></td>
+                      <td data-label="Use this">Claude Design (Opus 4.8) <span class="tool-table__star" aria-hidden="true">★</span></td>
                       <td data-label="Why">Separate weekly limit. Does not draw from Max pool. Free creative resource within its own cap.</td>
                     </tr>
                     <tr>
@@ -1458,7 +1458,7 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
                     <tr>
                       <td data-label="If I need to…">Monitor multiple sprints at once</td>
                       <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
-                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3.</td>
+                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. Dynamic Workflows (v2.1.154+) let me chain background sessions on the same project so a finished sprint can hand off to the Evaluator without me wiring it up.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
