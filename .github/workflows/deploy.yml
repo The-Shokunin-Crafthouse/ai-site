@@ -1,3 +1,5 @@
+# Propagated from studio-memory/templates/github-workflows/deploy.yml (2026-06-05).
+# Do not edit here — update the canonical template and re-propagate.
 name: Deploy to Hostinger
 
 on:
@@ -7,17 +9,60 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      REMOTE_HOST: ${{ secrets.HOSTINGER_HOST }}
+      REMOTE_PORT: "65002"
+      REMOTE_PATH: ~/domains/levibahn.com/public_html/ai/
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Deploy via rsync
-        uses: burnett01/rsync-deployments@7.0.1
+      - name: Load SSH key
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          switches: -avzr --delete --exclude='.git' --exclude='.github' --exclude='.DS_Store' --exclude='SPEC.md' --exclude='README.md' --exclude='snapshots' --exclude='previews' --exclude='_config' --exclude='docs' --exclude='icons/phosphor.svg'
-          path: ./
-          remote_path: ~/domains/levibahn.com/public_html/ai/
-          remote_host: ${{ secrets.HOSTINGER_HOST }}
-          remote_port: 65002
-          remote_user: ${{ secrets.HOSTINGER_USER }}
-          remote_key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          ssh-private-key: ${{ secrets.HOSTINGER_SSH_KEY }}
+
+      - name: Trust host key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "$REMOTE_PORT" -H "$REMOTE_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy via rsync (with retry)
+        uses: nick-fields/retry@v2
+        env:
+          REMOTE_USER: ${{ secrets.HOSTINGER_USER }}
+        with:
+          max_attempts: 3
+          timeout_minutes: 5
+          retry_wait_seconds: 10
+          command: |
+            rsync -avzr --delete --delete-excluded \
+              --filter='protect _previews/' \
+              --filter='protect _previews/**' \
+              --exclude='.git/' \
+              --exclude='.github/' \
+              --exclude='.DS_Store' \
+              --exclude='node_modules/' \
+              --exclude='WORKSPACE.md' \
+              --exclude='WORKFLOW.md' \
+              --exclude='workspace.manifest.yaml' \
+              --exclude='adapters/' \
+              --exclude='_config/' \
+              --exclude='decisions/' \
+              --exclude='stages/' \
+              --exclude='previews/' \
+              --exclude='_previews/' \
+              --exclude='package.json' \
+              --exclude='package-lock.json' \
+              --exclude='content/' \
+              --exclude='_archive/' \
+              --exclude='_pending/' \
+              --exclude='_snapshots/' \
+              --exclude='snapshots/' \
+              --exclude='docs/' \
+              --exclude='SPEC.md' \
+              --exclude='README.md' \
+              --exclude='ai-site-update-cowork-task.md' \
+              --exclude='icons/phosphor.svg' \
+              -e "ssh -p $REMOTE_PORT" \
+              ./ "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"
