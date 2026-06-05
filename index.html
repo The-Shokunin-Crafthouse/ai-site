@@ -403,7 +403,7 @@
       <p><strong>Claude Max</strong> ($100/mo) gives me Opus and Sonnet on a shared token pool. Sonnet for planning, content, scaffolding; Opus for sprint builds and evaluator passes.</p>
       <p><strong>Claude Design</strong> runs on Opus 4.7 with its own independent weekly limit that does not touch the Max pool. I use it for visual inspiration before committing anything to Figma.</p>
       <p><strong>Cowork</strong> is the Desktop app's third tab. File-based knowledge work — briefs, memory updates, deliverable organization. Same connectors as chat. Remote dispatch from iPhone. Not Claude Code, not Agent View.</p>
-      <p><strong>Figma + Figma MCP</strong> are the design system and the agent's interface to it. Sandbox is creative workspace; Production is canonical. <code>generate_figma_design</code> writes approved frames straight to the Production canvas — no manual promotion step. <code>/sync-figma-token</code> pulls tokens from Sandbox into <code>token-map.md</code>.</p>
+      <p><strong>Figma + Figma MCP</strong> are the design system and the agent's interface to it. Sandbox is creative workspace; Production is canonical. <code>generate_figma_design</code> writes approved frames straight to the Production canvas — no manual promotion step. <code>/sync-figma-token</code> pulls tokens from Sandbox into <code>token-map.md</code> — for projects with their own token set; branded properties consume the shared system instead.</p>
       <p><strong>GitHub Actions + Hostinger</strong> handle deploys. Every PR opens a live preview at a real URL.</p>
       <ul class="drawer__stats">
         <li><span class="drawer__stat-num">4</span><span class="drawer__stat-label">surfaces</span></li>
@@ -498,6 +498,7 @@ Apply the Shokunin Crafthouse lens — the brief should define who the visitor i
                   <p>The Planner runs in the Shokunin Crafthouse project on Claude.ai. <code>studio-memory.md</code> is uploaded directly to project knowledge — this is the <strong>only</strong> surface where it loads as a single full file. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.</p>
                   <p><strong>What it returns:</strong> project overview, complete deliverables list, design direction tied to the seven Shokunin principles, technical stack, three to six sprints, and specific success criteria per sprint.</p>
                   <p><strong>Approval gate one — Concept.</strong> I read the spec carefully and edit anything I disagree with before moving on.</p>
+                  <p>Before any design work starts, one more decision is logged in <code>decisions/decisions.md</code>: does this project consume the Shokunin shared design system? Branded properties link it and skip token extraction in Step 07. Client work self-hosts. A branded property that bypasses the shared system needs a written reason — logged, not assumed.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-2-prompt" aria-label="Copy prompt">
@@ -618,6 +619,7 @@ Report the GitHub URL when done.</code></pre>
                   <p>Push to main triggers an rsync to Hostinger production. Every PR opens triggers a preview build at <code>/_previews/[pr-number]/</code> with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down.</p>
                   <p>Claude Code prints the predicted preview URL directly in chat and runs <code>gh run watch</code> to confirm the deploy succeeded. No GitHub round-trip to find a URL.</p>
                   <p>I review desktop and mobile from the live URL, not screenshots. The PR closes and the preview tears down on its own.</p>
+                  <p>The workflow files themselves are sourced from the canonical templates in studio memory — updated once there and propagated, never edited repo by repo.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-5-prompt" aria-label="Copy prompt">
@@ -721,7 +723,7 @@ Show the same type of layout. Real typography, real hierarchy. A choice a princi
               <div class="step__body" id="step-7-body" hidden>
                 <div class="step__body-text">
                   <p>I build color styles, the type scale, the spacing scale, and base components on the Sandbox page. Type is solved before anything else because changing typefaces later is a redesign.</p>
-                  <p>Then Claude Code reads the Figma file via MCP and writes <code>_config/design-system/token-map.md</code>. That file becomes the source of truth — no color, font, or spacing value gets used in code unless it lives there.</p>
+                  <p>Then Claude Code reads the Figma file via MCP and writes <code>_config/design-system/token-map.md</code>. That file becomes the source of truth — no color, font, or spacing value gets used in code unless it lives there. Shokunin-branded properties skip this extraction entirely — their tokens and fonts come from the shared design system at brand.shokunincrafthouse.com, decided once at project kickoff. Only projects with an isolated token set run the extraction.</p>
                   <p><strong>Approval gate two — Design.</strong> Token map approved before any sprint starts.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
@@ -1163,7 +1165,7 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
               </span>
             </button>
             <div class="brain-row__body" id="brain-row-2-body" hidden>
-              <p class="brain-row__desc">Every project clones from the same template. <code>WORKSPACE.md</code> defines the project. <code>WORKFLOW.md</code> defines the stages and approval gates. <code>token-map.md</code> is the design system source of truth. Stages live in numbered folders so the lifecycle is visible at a glance.</p>
+              <p class="brain-row__desc">Every project clones from the same template. <code>WORKSPACE.md</code> defines the project. <code>WORKFLOW.md</code> defines the stages and approval gates. <code>token-map.md</code> is the design system source of truth for projects with an isolated token set; Shokunin-branded properties consume the shared system at brand.shokunincrafthouse.com. Stages live in numbered folders so the lifecycle is visible at a glance.</p>
               <div class="brain-row__prompt">
                 <p class="brain-row__eyebrow">Open any folder below to see what's inside</p>
 
@@ -1443,7 +1445,7 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
                     <tr>
                       <td data-label="If I need to…">Sync Figma tokens into the repo</td>
                       <td data-label="Use this"><code>/sync-figma-token</code></td>
-                      <td data-label="Why">Reads the Sandbox page, extracts tokens, syncs to <code>_config/design-system/token-map.md</code>. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting.</td>
+                      <td data-label="Why">Reads the Sandbox page, extracts tokens, syncs to <code>_config/design-system/token-map.md</code>. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting. Bypassed for Shokunin-branded properties, which link the shared CSS from brand.shokunincrafthouse.com instead.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Get a live preview on every PR</td>
