@@ -1,3 +1,5 @@
+# Propagated from studio-memory/templates/github-workflows/preview-cleanup.yml (2026-06-05).
+# Do not edit here — update the canonical template and re-propagate.
 name: PR Preview Cleanup
 
 on:
@@ -11,18 +13,31 @@ jobs:
     permissions:
       pull-requests: write
       contents: read
+    env:
+      REMOTE_HOST: ${{ secrets.HOSTINGER_HOST }}
+      REMOTE_PORT: "65002"
+      PREVIEW_PATH: ~/domains/levibahn.com/public_html/ai/_previews/${{ github.event.pull_request.number }}/
     steps:
-      - name: Tear down preview directory
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Load SSH key
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.HOSTINGER_HOST }}
-          username: ${{ secrets.HOSTINGER_USER }}
-          key: ${{ secrets.HOSTINGER_SSH_KEY }}
-          port: 65002
-          timeout: 10m
-          command_timeout: 30m
-          script: |
-            rm -rf ~/domains/levibahn.com/public_html/ai/_previews/${{ github.event.pull_request.number }}/
+          ssh-private-key: ${{ secrets.HOSTINGER_SSH_KEY }}
+
+      - name: Trust host key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "$REMOTE_PORT" -H "$REMOTE_HOST" >> ~/.ssh/known_hosts
+
+      - name: Tear down preview directory (with retry)
+        uses: nick-fields/retry@v2
+        env:
+          REMOTE_USER: ${{ secrets.HOSTINGER_USER }}
+        with:
+          max_attempts: 3
+          timeout_minutes: 5
+          retry_wait_seconds: 10
+          command: |
+            ssh -p "$REMOTE_PORT" "$REMOTE_USER@$REMOTE_HOST" "rm -rf $PREVIEW_PATH"
 
       - name: Comment cleanup confirmation
         uses: actions/github-script@v8
