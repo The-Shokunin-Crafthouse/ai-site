@@ -21,8 +21,8 @@
 | `studio-memory.md` §5 Technology Stack | Card 04 body; Tools Rows 01–03 | Site also documents tools beyond §5 (Claude Design, Cowork, Agent View) — those facts live in runbooks, not studio-memory.md |
 | `templates/project-template/` file tree | Brain Row 02 file tree; Step 04 prompt (template path + WORKSPACE.md fields) | Tree on site must match template reality. sync-figma-token + figma-skills additions are open item 4 in the 2026-06-03 report |
 | `build-log.md` (existence + purpose) | Step 13 body + prompt; Card 01 body ("the memory grows") | Append-only contract restated on site |
-| `Business_Runbook_Claude_Max_v1_8.md` | Card 04 (pricing, token pool); Tools rows; Hiring tabs ("~$120/mo") | Verified 2026-06-03: §19 totals ~$119–121/mo without VPS — matches all "$120" mentions |
-| `New_Project_Setup_Guide_v2_5.md` | Steps 03–05 (scaffold, deploy, preview workflows) | Verified 2026-06-03: step prompts match guide conventions |
+| `playbooks/business-runbook.md` | Card 04 (pricing, token pool); Tools rows; Hiring tabs ("~$120/mo") | Verified 2026-06-03: §19 totals ~$119–121/mo without VPS — matches all "$120" mentions |
+| `playbooks/new-project-setup.md` | Steps 03–05 (scaffold, deploy, preview workflows) | Verified 2026-06-03: step prompts match guide conventions |
 | Workflow definition (13 steps) | Section 3 Steps 01–13; Card 02 ("13 steps"); Row 02 lede; mobile tab bar | Folder-side source of the 13-step list needs pinning — likely WORKFLOW.md in template + runbook. Guide Steps 2B/2C are deliberately NOT site steps — site is an editorial retelling; gate facts land as sentences, not new steps |
 | Model/version facts (Opus x.y, Claude Code vN) | Card 04; Tools Row 02; Steps 09–10 bodies and prompts | Highest-churn facts on the site; check every sync |
 | `$120/mo` cost figure | Card 04 stats; Startup tab (×2 mentions) | Restated in different words — grep "120" |
