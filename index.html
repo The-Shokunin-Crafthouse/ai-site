@@ -310,9 +310,9 @@
           <p class="d-media__hint" aria-hidden="true">Drag to rotate</p>
         </div>
       </div>
-      <p>Every Claude Code session loads context in five layers, in order: adapter <code>CLAUDE.md</code> → project <code>WORKSPACE.md</code> → sprint <code>CONTEXT.md</code> → <code>references/</code> → <code>output/</code>. Studio identity and principles still live in <code>studio-memory.md</code>, but no session reads it directly anymore — only the specific sections each sprint needs, loaded through the sprint CONTEXT.md Inputs table.</p>
+      <p>Every Claude Code session loads context in five layers, in order: root <code>CLAUDE.md</code> → project <code>WORKSPACE.md</code> → sprint <code>CONTEXT.md</code> → <code>references/</code> → <code>output/</code>. Studio identity, principles, and gates live in <code>studio-memory.md</code> — a core capped at 100 lines, loaded whole at every session start because it is small enough to afford. Everything deeper — accumulated learnings, code standards, creative defaults — loads on demand, named by the sprint CONTEXT.md Inputs table.</p>
       <p>The sprint <code>CONTEXT.md</code> is the layer that does the work. It names the exact files (and sections) to load, the contract Claude is held to, and the audit checklist run before the PR opens. <code>references/</code> carry stable inputs for the sprint; <code>output/</code> carries this-run artifacts.</p>
-      <p>The memory grows. After each shipped project, the studio appends real learnings — the Next.js <code>trailingSlash</code> trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern. The next sprint starts with that knowledge already addressable.</p>
+      <p>The memory grows. After each shipped project, <code>sc-learn</code> captures real learnings — the Next.js <code>trailingSlash</code> trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern — each one a file in <code>learnings/</code>, indexed in a single line. The next sprint starts with that knowledge already addressable.</p>
       <ul class="drawer__stats">
         <li><span class="drawer__stat-num">5</span><span class="drawer__stat-label">memory layers</span></li>
         <li><span class="drawer__stat-num">7</span><span class="drawer__stat-label">design principles</span></li>
@@ -495,7 +495,7 @@ Apply the Shokunin Crafthouse lens — the brief should define who the visitor i
               </button>
               <div class="step__body" id="step-2-body" hidden>
                 <div class="step__body-text">
-                  <p>The Planner runs in the Shokunin Crafthouse project on Claude.ai. <code>studio-memory.md</code> is uploaded directly to project knowledge — this is the <strong>only</strong> surface where it loads as a single full file. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.</p>
+                  <p>The Planner runs in the Shokunin Crafthouse project on Claude.ai. Project knowledge carries a verbatim mirror of the studio core plus the learnings index — canonical lives in the folder, and the mirror is never edited in place. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.</p>
                   <p><strong>What it returns:</strong> project overview, complete deliverables list, design direction tied to the seven Shokunin principles, technical stack, three to six sprints, and specific success criteria per sprint.</p>
                   <p><strong>Approval gate one — Concept.</strong> I read the spec carefully and edit anything I disagree with before moving on.</p>
                   <p>Before any design work starts, one more decision is logged in <code>decisions/decisions.md</code>: does this project consume the Shokunin shared design system? Branded properties link it and skip token extraction in Step 07. Client work self-hosts. A branded property that bypasses the shared system needs a written reason — logged, not assumed.</p>
@@ -807,6 +807,7 @@ This file is the source of truth for all implementation. No color, font, or spac
                   <p>The Generator reads the layered chain (<code>CLAUDE.md</code> → <code>WORKSPACE.md</code> → the sprint <code>CONTEXT.md</code> at <code>stages/03-build/[sprint-name]/CONTEXT.md</code>), loads only what the CONTEXT.md Inputs table names, pulls the Sandbox frames via Figma MCP, and proposes a contract. Once I approve, Claude writes the approved contract into the CONTEXT.md Contract field, updates Status to <code>approved</code>, and commits the file before any code lands.</p>
                   <p>Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at <code>/_previews/[N]/</code>. Before opening the PR, Claude runs every item in the CONTEXT.md Audit checklist and updates Status to <code>complete</code>. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.</p>
                   <p>Dispatched via Agent View as a background session, so the build runs without my attention. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract file is approved and committed. Use <code>/effort xhigh</code> — the effort tier specifically added for coding and agentic tasks on Opus 4.8, sitting between <code>high</code> and <code>max</code>.</p>
+                  <p>The build runs under the autonomy contract. Any call that is reversible, within studio standards, and within scope gets made and logged to <code>decisions/decisions.md</code> via <code>sc-adr</code> — not asked. Before the PR opens, <code>sc-verify</code> runs the Gate-3 self-check; failures are fixed or flagged, never silently presented. The PR, preview URL, decisions since the last gate, and verify report arrive together as one gate packet. Scope changes, money, live services, and brand direction still come to me. Always.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-9-prompt" aria-label="Copy prompt">
@@ -860,7 +861,8 @@ When complete:
               </button>
               <div class="step__body" id="step-10-body" hidden>
                 <div class="step__body-text">
-                  <p>Before the Evaluator session, run <code>/code-review --fix</code> (v2.1.152+) on the open PR branch. It runs the standard code review pass and then applies straightforward fixes inline, so the obvious issues are already resolved before the cloud reviewers see the diff. Then run <code>/ultrareview</code> on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.</p>
+                  <p>If the Generator needs to apply targeted cleanup before the Evaluator runs, <code>/code-review --fix</code> (v2.1.152+) writes review findings directly to the working tree in one pass. Before the Evaluator session, run <code>/ultrareview</code> on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.</p>
+                  <p><code>sc-verify</code> (the Generator's self-check, Step 09) and the Evaluator are complementary, not redundant. Self-verify first — cheap, catches the builder's own obvious failures. Independent audit second — catches what the builder is blind to. A sprint that passes <code>sc-verify</code> can still fail the Evaluator. That is the system working.</p>
                   <p>A fresh Claude Code session, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
                   <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.</p>
                   <p>In a team context, the Evaluator pass is necessary but not sufficient. The AI grades Functionality against code and visual snapshots — not against observed behavior. User testing runs here, between the Evaluator result and the merge decision. Which tool depends on company stage.</p>
@@ -950,55 +952,25 @@ Output:
                 <span class="step__num" data-row-accent>13</span>
                 <span class="step__main">
                   <span class="step__title">Update the studio memory</span>
-                  <span class="step__summary">Two appends. build-log.md captures every sprint. studio-memory.md takes only standing standards.</span>
+                  <span class="step__summary">One skill. <code>sc-learn</code> captures every sprint automatically. I approve only what compounds.</span>
                 </span>
                 <span class="step__meta">
                   <span class="step__badge step__badge--prompt">Prompt Claude</span>
-                  <span class="step__tool">Cowork</span>
+                  <span class="step__tool">Claude Code</span>
                 </span>
               </button>
               <div class="step__body" id="step-13-body" hidden>
                 <div class="step__body-text">
-                  <p>After delivery Cowork runs two passes. <strong>Part A — every sprint:</strong> append the sprint record (what shipped, decisions made, issues resolved) to <code>build-log.md</code>. It is never loaded as agent context — it exists for human reference and future audits.</p>
-                  <p><strong>Part B — only if signal emerged:</strong> distill that log into <code>studio-memory.md</code> appends, but only for learnings that apply to all future projects (standing standards, mistakes to avoid broadly, new aesthetic defaults). Sprint-specific notes never cross over. <code>studio-memory.md</code> is loaded selectively by the sprint CONTEXT.md Inputs table; noise there degrades every future session.</p>
-                  <p><strong>Approval gate four — Delivery.</strong> Build-log appended, studio-memory updated only where it earns its place, decisions logged. The project closes.</p>
+                  <p>At sprint close <code>sc-learn</code> runs three captures without hand-holding. The repo's own <code>LEARNINGS.md</code> takes project-specific lessons — quirks, gotchas, stack-specific fixes — so each repo gets smarter about itself. <code>build-log.md</code> takes the sprint record; it is never loaded as agent context. Studio promotion stays deliberate: candidates that pass the compounding test — <em>will this change how an unrelated future project is built?</em> — are drafted for my approval, and approved entries land as files in <code>learnings/</code> with a one-line index entry. Nothing is appended to the core — it is capped at 100 lines, and noise there degrades every future session.</p>
+                  <p><strong>Approval gate four — Delivery.</strong> Repo learnings captured, build-log appended, promotions approved only where they earn their place. The project closes.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
-                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-13-prompt" aria-label="Copy both prompts">
+                  <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-13-prompt" aria-label="Copy prompt">
                     <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
                   </button>
-                  <pre><code id="step-13-prompt"># Part A — Log the sprint to build-log.md (always — every sprint)
-
-Append to ~/Projects/shokunin-crafthouse/studio-memory/build-log.md:
-
-## [Project name] — Sprint [N]: [sprint-name] — [date]
-- What was built: [brief description]
-- Technical decisions made during the sprint
-- Issues encountered and how they were resolved
-- Token usage notes if relevant
-
-Do not edit any existing entries. Only append. Save and commit.
-
-
-# Part B — Update studio-memory.md (selectively — standing standards only)
-
-Update the studio memory file at:
-~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md
-
-Review this project. Append to studio-memory.md ONLY if this project produced learnings that should apply to ALL future projects.
-
-Append to ACCUMULATED LEARNINGS only if:
-- A code pattern emerged that should become a standing standard
-- A design approach worked well enough to carry forward broadly
-- A mistake occurred that would recur across projects without a standing rule
-- A tool pattern was established that future sessions should know about
-
-Do NOT append sprint-specific notes, project-specific details, or one-time decisions. Those belong in build-log.md.
-
-Append to CREATIVE PREFERENCES only if something genuinely new emerged about aesthetic direction that should inform future work.
-Append to TECHNOLOGY STACK only if a new tool pattern was established that applies beyond this project.
-
-Do not rewrite or remove existing content. Only append. Commit and push.</code></pre>
+                  <pre><code id="step-13-prompt">Run sc-learn for this sprint. Capture repo learnings to LEARNINGS.md, write the
+build-log entry, and draft studio-promotion candidates per the §8 compounding test.
+Show me the promotion candidates before promoting any to studio-memory/learnings/.</code></pre>
                 </div>
               </div>
             </li>
@@ -1019,7 +991,7 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
             <header class="gates__head">
               <p class="gates__eyebrow">Four approval gates</p>
               <h3 id="gates-title" class="gates__title">Every gate is human. AI waits at each one.</h3>
-              <p class="gates__lede" data-desktop-only>From <code>studio-memory.md</code> §7. Gate failures stop the sprint. No exceptions.</p>
+              <p class="gates__lede" data-desktop-only>From <code>studio-memory.md</code> §5. Gate failures stop the sprint. No exceptions.</p>
             </header>
             <div class="gates__scroll" data-desktop-only>
               <table class="gates__table">
@@ -1133,9 +1105,9 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
               </span>
             </button>
             <div class="brain-row__body" id="brain-row-1-body" hidden>
-              <p class="brain-row__desc"><code>studio-memory.md</code> is the studio's long-term institutional memory — identity, design principles, quality criteria, code standards, approval gates, creative defaults, and accumulated learnings. It is no longer read directly at session start. Sessions surface it through the layered chain (<code>CLAUDE.md</code> → <code>WORKSPACE.md</code> → sprint <code>CONTEXT.md</code>), loading only the sections each sprint's Inputs table names. The next sprint starts with the relevant learnings already addressable, without paying for the rest in context tokens.</p>
+              <p class="brain-row__desc"><code>studio-memory.md</code> is the studio's core institutional memory — identity, design principles, quality criteria, stack defaults, and approval gates, capped at 100 lines and loaded at the start of every session. Depth lives beside it, not inside it: accumulated learnings in <code>learnings/</code> (one file per lesson, indexed one line each), code standards and creative defaults in <code>playbooks/</code>. Sessions read a detail file only when the work calls for it. The next sprint starts with the relevant learnings already addressable, without paying for the rest in context tokens.</p>
               <div class="brain-row__prompt">
-                <p class="brain-row__eyebrow">Three real entries from <code>§8 Accumulated Learnings</code></p>
+                <p class="brain-row__eyebrow">Three real entries from <code>learnings/</code></p>
                 <ul class="learnings">
                   <li class="learning">
                     <p class="learning__date">2026-05-09</p>
@@ -1307,7 +1279,7 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
               </span>
             </button>
             <div class="brain-row__body" id="brain-row-4-body" hidden>
-              <p class="brain-row__desc">These are the defaults I've encoded so every session starts with a point of view, not a blank canvas. From <code>studio-memory.md §9</code>. Override with intent and reason, never by accident.</p>
+              <p class="brain-row__desc">These are the defaults I've encoded so every session starts with a point of view, not a blank canvas. From <code>playbooks/creative-defaults.md</code>. Override with intent and reason, never by accident.</p>
               <div class="brain-row__prompt">
                 <ul class="defaults">
                   <li>
@@ -1385,7 +1357,7 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
                     <tr>
                       <td data-label="If I need to…">Persist studio identity across every session</td>
                       <td data-label="Use this"><code>studio-memory.md</code> + Claude Project</td>
-                      <td data-label="Why">Surfaced via the layered loader (CLAUDE.md → WORKSPACE.md → sprint CONTEXT.md), Inputs-table sections only. The studio compounds without paying full-file context cost each sprint.</td>
+                      <td data-label="Why">The ≤100-line core loads whole at session start; learnings and playbooks load on demand via the sprint Inputs table. The studio compounds without paying full-file context cost each sprint.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Build with the agent</td>
@@ -1460,7 +1432,7 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
                     <tr>
                       <td data-label="If I need to…">Monitor multiple sprints at once</td>
                       <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
-                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. Dynamic Workflows (v2.1.154+) let me chain background sessions on the same project so a finished sprint can hand off to the Evaluator without me wiring it up.</td>
+                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
@@ -1498,9 +1470,9 @@ Do not rewrite or remove existing content. Only append. Commit and push.</code><
                       <td data-label="Why">File-based, multi-step. Reads <code>cowork-context.md</code> on every task.</td>
                     </tr>
                     <tr>
-                      <td data-label="If I need to…">Append to studio memory after ship</td>
-                      <td data-label="Use this">Cowork</td>
-                      <td data-label="Why">Appends, never rewrites. Saves directly to the file.</td>
+                      <td data-label="If I need to…">Close out a sprint's learnings</td>
+                      <td data-label="Use this"><code>sc-learn</code></td>
+                      <td data-label="Why">Captures repo lessons and the build-log entry automatically; drafts studio promotions for approval. Appends, never rewrites.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Organize deliverables before handoff</td>
