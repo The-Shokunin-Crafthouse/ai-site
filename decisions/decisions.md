@@ -833,3 +833,64 @@ the prior sprint. Approved as an explicit cascade (mobile → desktop) per the
 cascade-decisions standard (ref: 2026-05-22 — cascade decisions).
 Rationale: original desktop ranges were compressed from an earlier content pass
 and no longer matched how visitors self-identify.
+
+## 2026-06-03 — Canonical content audit: single versioned file in `content/`, per weekly-task rule
+**Stage:** content-ops
+**Status:** accepted
+
+**Context.** Two systems of record disagreed about where the canonical
+site-content audit lives: a stale `site-content-audit-v2.md` sat at the
+repo root while the weekly update task (`ai-site-update-cowork-task.md`)
+versions the audit inside `content/` (currently `v3`). The new
+`sc-content-sync` skill initially ruled root-v2 canonical, which would
+have made the skill and the weekly task fight each other indefinitely.
+Benchmark runs during the skill's development showed agents resolving
+the ambiguity in opposite directions.
+
+**Decision.** Canonical is the single highest-version
+`site-content-audit-v*.md` in `content/` — the same resolution rule the
+weekly task uses (`ls content/site-content-audit-v*.md | sort -V | tail -1`).
+Updates archive the current version to `_archive/` (dated) and write the
+next version number; `content/` holds exactly one version file at all
+times.
+
+**Consequences.**
+**Easier:** sc-content-sync and the weekly update task can never disagree
+about canonical; version history is preserved in `_archive/`; the
+root-level v2 is now unambiguously a stray to reconcile and remove.
+**Harder:** every content edit mints a new version file, so casual
+in-place edits to the audit are off the table; anything pointing at a
+specific version path (Claude project knowledge uploads, links) must be
+refreshed each update.
+
+**Alternatives considered.**
+- **Root-level file as canonical, edited in place** — Rejected. Would
+  require rewriting the weekly task's versioning convention, which is
+  already established and self-consistent; in-place editing also loses
+  the dated archive trail.
+- **Keep both and sync them** — Rejected. Two copies of the same record
+  is the drift problem itself, not a solution to it.
+
+## 2026-06-06 — Canonical content audit: stable version-free filename (supersedes 2026-06-03)
+**Stage:** content-ops
+**Status:** accepted
+
+**Context.** The 2026-06-03 decision pinned canonical to the highest
+`site-content-audit-v*.md` in `content/`, resolved via `sort -V`. The
+Workflow Contract v1 (§9) retires version numbers from filenames
+studio-wide — history belongs to git and dated `_archive/` copies, not
+to filename suffixes. The `sort -V` hack also proved fragile in
+practice: the 2026-06-06 sync found v3 AND v4 both sitting in
+`content/` plus a stray v2 at the repo root.
+
+**Decision.** Canonical is the stable file `content/site-content-audit.md`.
+Updates copy the current file to `_archive/site-content-audit-[YYYY-MM-DD].md`
+first, then edit canonical in place. Change-log entries are dated (no
+version tag). `content/` holds exactly one `site-content-audit*.md` —
+the canonical; any versioned copy there is drift.
+
+**Consequences.** sc-content-sync and the weekly update task resolve by
+fixed path (no globbing); both updated 2026-06-06. The sc-content-sync
+installed copy must be reinstalled in Cowork Settings to pick up the
+rule. claude.ai project knowledge carries the file under its stable
+name from now on.

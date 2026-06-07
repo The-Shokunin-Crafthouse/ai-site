@@ -1,9 +1,11 @@
 # AI.LEVIBAHN.COM — CONTENT AUDIT
-**Last updated:** 2026-05-30
-**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-05-30 including the Opus 4.8 rollout.
+**Last updated:** 2026-06-06
+**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-06 including the Workflow Contract v1 restructure.
 
 **Change log:**
-- 2026-05-30 — Opus 4.7 → 4.8 across all four references (Card 04 expanded, Step 06 body, Step 09 body, Tools Row 02 Claude Design row). Dynamic Workflows note (v2.1.154+) appended to Tools Row 02 Agent View row. `/code-review --fix` (v2.1.152+) sentence prepended to Step 10 body, ahead of the existing `/ultrareview` sentence.
+- 2026-06-06 (v5) — Workflow Contract v1 restructure propagated (studio-memory `1682408..3765125`). Card 01 body, Brain Row 01 desc + eyebrow, and Tools Row 01 retold for the split memory: ≤100-line core always loaded, learnings/ (37 files + INDEX.md), playbooks/. Step 13 rewritten to the sc-learn two-tier model — old Part A/B prompt replaced (it cited sections Phase 1 removed). Step 09 body gains the autonomy-contract paragraph (decide-and-log via sc-adr, sc-verify pre-PR, one gate packet). Step 10 body gains the sc-verify-vs-Evaluator distinction. Approval Gates lede §7 → §5; Brain Row 04 source §9 → playbooks/creative-defaults.md; Step 02 “only surface” claim corrected to the mirror model. Reconciliation: content/ v1–v3 strays removed per the 2026-06-03 canonical-file decision; the v4 lineage won the 2026-05-30 retelling conflict; root v2 stray deleted, its archive copy committed.
+- 2026-06-05 (v4) — Shared Design System Infrastructure decision propagated (studio-memory `3493459`): shared-system carve-outs added to Step 07 body, Tools Row 02 `/sync-figma-token` row, Card 04 Figma paragraph, and Brain Row 02 desc; kickoff gate sentence added to Step 02 body; canonical-template propagation sentence added to Step 05 body. Mapping manifest bootstrapped at `_config/content-map.md`.
+- 2026-05-30 (v3) — Three surgical updates: Opus 4.7 → 4.8 in Card 04, Tools Row 02, and Step 09; Dynamic Workflows (v2.1.154+) note added to Tools Row 02 Agent View row; `/code-review --fix` sentence added to Step 10 body.
 - 2026-05-23 (v1) — Added `claude agents --json` scripting note to Tools Row 02 Agent View row (v2.1.145+). CLAUDE.md changes (item 1: `/simplify` → `/code-review`; item 2: `/goal` workflow note; item 3: `--json` flag) handed off to Claude Code via `_pending/approved-2026-05-23.md`.
 - 2026-05-23 — Opus 4.7 additions. Step 09: `/effort xhigh` added to body and prompt as recommended effort tier for Generator sprint sessions. Step 10: `/ultrareview` added as pre-Evaluator code review step — parallel cloud reviewer agents, independently verified findings, code correctness only.
 - 2026-05-23 — ICM layered context loading applied. Five-layer chain (CLAUDE.md → WORKSPACE.md → sprint CONTEXT.md → references/ → output/) replaces "read studio-memory.md before anything else" across Card 01, Card 03 Generator, Brain Row 01, Tools Row 01, Step 09 prompt, Step 10 prompt. Card 01 stats updated 3 → 5 memory layers. Brain Row 02 stages tree expanded to show per-stage CONTEXT.md / references/ / output/ structure. Step 13 split into build-log.md (every sprint) + studio-memory.md (standing standards only). Sprint contract now a versioned file at `stages/03-build/[sprint-name]/CONTEXT.md` — Step 09 summary/body/prompt/goal note and Step 10 prompt updated accordingly. Step 02 clarified that claude.ai project knowledge is the only surface where studio-memory.md loads as a single file.
@@ -60,11 +62,11 @@ Skip link: "Skip to: How I'd apply this at your company"
 ### Card 01 — The Brain (EXPANDED)
 Drag-to-rotate brain media. Hint: "Drag to rotate"
 
-Every Claude Code session loads context in five layers, in order: adapter `CLAUDE.md` → project `WORKSPACE.md` → sprint `CONTEXT.md` → `references/` → `output/`. Studio identity and principles still live in `studio-memory.md`, but no session reads it directly anymore — only the specific sections each sprint needs, loaded through the sprint CONTEXT.md Inputs table.
+Every Claude Code session loads context in five layers, in order: root `CLAUDE.md` → project `WORKSPACE.md` → sprint `CONTEXT.md` → `references/` → `output/`. Studio identity, principles, and gates live in `studio-memory.md` — a core capped at 100 lines, loaded whole at every session start because it is small enough to afford. Everything deeper — accumulated learnings, code standards, creative defaults — loads on demand, named by the sprint CONTEXT.md Inputs table.
 
 The sprint CONTEXT.md is the layer that does the work. It names the exact files (and sections) to load, the contract Claude is held to, and the audit checklist run before the PR opens. `references/` carry stable inputs for the sprint; `output/` carries this-run artifacts.
 
-The memory grows. After each shipped project, the studio appends real learnings — the Next.js `trailingSlash` trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern. The next sprint starts with that knowledge already addressable.
+The memory grows. After each shipped project, `sc-learn` captures real learnings — the Next.js `trailingSlash` trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern — each one a file in `learnings/`, indexed in a single line. The next sprint starts with that knowledge already addressable.
 
 Stats: 5 memory layers · 7 design principles · ∞ accumulated learnings
 
@@ -122,7 +124,7 @@ Media: MAX, DESIGN, COWORK, FIGMA quadrants. Hint: "4 surfaces · 1 token pool"
 
 **Cowork** is the Desktop app's third tab. File-based knowledge work — briefs, memory updates, deliverable organization. Same connectors as chat. Remote dispatch from iPhone. Not Claude Code, not Agent View.
 
-**Figma + Figma MCP** are the design system and the agent's interface to it. Sandbox is creative workspace; Production is canonical. `generate_figma_design` writes approved frames straight to the Production canvas — no manual promotion step. `/sync-figma-token` pulls tokens from Sandbox into `token-map.md`.
+**Figma + Figma MCP** are the design system and the agent's interface to it. Sandbox is creative workspace; Production is canonical. `generate_figma_design` writes approved frames straight to the Production canvas — no manual promotion step. `/sync-figma-token` pulls tokens from Sandbox into `token-map.md` — for projects with their own token set; branded properties consume the shared system instead.
 
 **GitHub Actions + Hostinger** handle deploys. Every PR opens a live preview at a real URL.
 
@@ -154,9 +156,10 @@ Link: "See the full tool tables →"
 ### STEP 02 — Run the Planner
 - Badge: Prompt Claude · Tool: Claude.ai
 - Summary: Brief in, full product spec out. Sprint breakdown, success criteria, tech stack.
-- Body: The Planner runs in the Shokunin Crafthouse project on Claude.ai. `studio-memory.md` is uploaded directly to project knowledge — this is the **only** surface where it loads as a single full file. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.
+- Body: The Planner runs in the Shokunin Crafthouse project on Claude.ai. Project knowledge carries a verbatim mirror of the studio core plus the learnings index — canonical lives in the folder, and the mirror is never edited in place. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.
 - **What it returns:** project overview, complete deliverables list, design direction tied to the seven Shokunin principles, technical stack, three to six sprints, and specific success criteria per sprint.
 - **Approval gate one — Concept.** I read the spec carefully and edit anything I disagree with before moving on.
+- Before any design work starts, one more decision is logged in `decisions/decisions.md`: does this project consume the Shokunin shared design system? Branded properties link it and skip token extraction in Step 07. Client work self-hosts. A branded property that bypasses the shared system needs a written reason — logged, not assumed.
 - Prompt:
   > You are the Planner agent for The Shokunin Crafthouse.
   > Read studio-memory.md from project knowledge.
@@ -227,6 +230,7 @@ Link: "See the full tool tables →"
 - Body: Push to main triggers an rsync to Hostinger production. Every PR opens triggers a preview build at `/_previews/[pr-number]/` with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down.
 - Claude Code prints the predicted preview URL directly in chat and runs `gh run watch` to confirm the deploy succeeded. No GitHub round-trip to find a URL.
 - I review desktop and mobile from the live URL, not screenshots. The PR closes and the preview tears down on its own.
+- The workflow files themselves are sourced from the canonical templates in studio memory — updated once there and propagated, never edited repo by repo.
 - Prompt:
   > Create three GitHub Actions workflows for this project. The domain for this project is: [your domain]
   >
@@ -294,7 +298,7 @@ Link: "See the full tool tables →"
 - Badge: You + Claude · Tool: Figma + MCP
 - Summary: Tokens first, components second. Extract to token-map.md before any code.
 - Body: I build color styles, the type scale, the spacing scale, and base components on the Sandbox page. Type is solved before anything else because changing typefaces later is a redesign.
-- Then Claude Code reads the Figma file via MCP and writes `_config/design-system/token-map.md`. That file becomes the source of truth — no color, font, or spacing value gets used in code unless it lives there.
+- Then Claude Code reads the Figma file via MCP and writes `_config/design-system/token-map.md`. That file becomes the source of truth — no color, font, or spacing value gets used in code unless it lives there. Shokunin-branded properties skip this extraction entirely — their tokens and fonts come from the shared design system at brand.shokunincrafthouse.com, decided once at project kickoff. Only projects with an isolated token set run the extraction.
 - **Approval gate two — Design.** Token map approved before any sprint starts.
 - Prompt (two prompts):
   > # Prompt 1 — Claude.ai · Checklist + copy
@@ -346,6 +350,7 @@ Link: "See the full tool tables →"
 - Body: The Generator reads the layered chain (`CLAUDE.md` → `WORKSPACE.md` → the sprint `CONTEXT.md` at `stages/03-build/[sprint-name]/CONTEXT.md`), loads only what the CONTEXT.md Inputs table names, pulls the Sandbox frames via Figma MCP, and proposes a contract. Once I approve, Claude writes the approved contract into the CONTEXT.md Contract field, updates Status to `approved`, and commits the file before any code lands.
 - Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at `/_previews/[N]/`. Before opening the PR, Claude runs every item in the CONTEXT.md Audit checklist and updates Status to `complete`. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.
 - Dispatched via Agent View as a background session, so the build runs without my attention. Optional `/goal` drives it through to a ready-to-review PR after the contract file is approved and committed. Use `/effort xhigh` — the effort tier specifically added for coding and agentic tasks on Opus 4.8, sitting between `high` and `max`.
+- The build runs under the autonomy contract. Any call that is reversible, within studio standards, and within scope gets made and logged to `decisions/decisions.md` via `sc-adr` — not asked. Before the PR opens, `sc-verify` runs the Gate-3 self-check; failures are fixed or flagged, never silently presented. The PR, preview URL, decisions since the last gate, and verify report arrive together as one gate packet. Scope changes, money, live services, and brand direction still come to me. Always.
 - Prompt:
   > /effort xhigh
   > /caveman
@@ -381,7 +386,8 @@ Link: "See the full tool tables →"
 ### STEP 10 — Evaluate the sprint
 - Badge: Prompt Claude · Tool: Claude Code
 - Summary: Fresh session. Single pass. Four criteria scored. PASS or FAIL.
-- Body: Before the Evaluator session, run `/code-review --fix` (v2.1.152+) on the open PR branch. It runs the standard code review pass and then applies straightforward fixes inline, so the obvious issues are already resolved before the cloud reviewers see the diff. Then run `/ultrareview` on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.
+- Body: If the Generator needs to apply targeted cleanup before the Evaluator runs, `/code-review --fix` (v2.1.152+) writes review findings directly to the working tree in one pass. Before the Evaluator session, run `/ultrareview` on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.
+- `sc-verify` (the Generator's self-check, Step 09) and the Evaluator are complementary, not redundant. Self-verify first — cheap, catches the builder's own obvious failures. Independent audit second — catches what the builder is blind to. A sprint that passes `sc-verify` can still fail the Evaluator. That is the system working.
 - A fresh Claude Code session, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.
 - Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.
 - In a team context, the Evaluator pass is necessary but not sufficient. The AI grades Functionality against code and visual snapshots — not against observed behavior. User testing runs here, between the Evaluator result and the merge decision. Which tool depends on company stage.
@@ -432,50 +438,21 @@ Link: "See the full tool tables →"
 - No prompt.
 
 ### STEP 13 — Update the studio memory
-- Badge: Prompt Claude · Tool: Cowork
-- Summary: Two appends. `build-log.md` captures every sprint. `studio-memory.md` takes only standing standards distilled from it.
-- Body: After delivery Cowork runs two passes. **Part A — every sprint:** append the sprint record (what shipped, decisions made, issues resolved) to `build-log.md`. It is never loaded as agent context — it exists for human reference and future audits. **Part B — only if signal emerged:** distill that log into `studio-memory.md` appends, but only for learnings that apply to all future projects (standing standards, mistakes to avoid broadly, new aesthetic defaults). Sprint-specific notes never cross over. studio-memory.md is loaded selectively by the sprint CONTEXT.md Inputs table; noise there degrades every future session.
-- **Approval gate four — Delivery.** Build-log appended, studio-memory updated only where it earns its place, decisions logged. The project closes.
-- Prompt (two parts):
-  > # Part A — Log the sprint to build-log.md (always — every sprint)
-  >
-  > Append to ~/Projects/shokunin-crafthouse/studio-memory/build-log.md:
-  >
-  > ## [Project name] — Sprint [N]: [sprint-name] — [date]
-  > - What was built: [brief description]
-  > - Technical decisions made during the sprint
-  > - Issues encountered and how they were resolved
-  > - Token usage notes if relevant
-  >
-  > Do not edit any existing entries. Only append. Save and commit.
-  >
-  >
-  > # Part B — Update studio-memory.md (selectively — standing standards only)
-  >
-  > Update the studio memory file at:
-  > ~/Projects/shokunin-crafthouse/studio-memory/studio-memory.md
-  >
-  > Review this project. Append to studio-memory.md ONLY if this project produced learnings that should apply to ALL future projects.
-  >
-  > Append to ACCUMULATED LEARNINGS only if:
-  > - A code pattern emerged that should become a standing standard
-  > - A design approach worked well enough to carry forward broadly
-  > - A mistake occurred that would recur across projects without a standing rule
-  > - A tool pattern was established that future sessions should know about
-  >
-  > Do NOT append sprint-specific notes, project-specific details, or one-time decisions. Those belong in build-log.md.
-  >
-  > Append to CREATIVE PREFERENCES only if something genuinely new emerged about aesthetic direction that should inform future work.
-  > Append to TECHNOLOGY STACK only if a new tool pattern was established that applies beyond this project.
-  >
-  > Do not rewrite or remove existing content. Only append. Commit and push.
+- Badge: Prompt Claude · Tool: Claude Code
+- Summary: One skill. `sc-learn` captures every sprint automatically. I approve only what compounds.
+- Body: At sprint close `sc-learn` runs three captures without hand-holding. The repo's own `LEARNINGS.md` takes project-specific lessons — quirks, gotchas, stack-specific fixes — so each repo gets smarter about itself. `build-log.md` takes the sprint record; it is never loaded as agent context. Studio promotion stays deliberate: candidates that pass the compounding test — *will this change how an unrelated future project is built?* — are drafted for my approval, and approved entries land as files in `learnings/` with a one-line index entry. Nothing is appended to the core — it is capped at 100 lines, and noise there degrades every future session.
+- **Approval gate four — Delivery.** Repo learnings captured, build-log appended, promotions approved only where they earn their place. The project closes.
+- Prompt:
+  > Run sc-learn for this sprint. Capture repo learnings to LEARNINGS.md, write the
+  > build-log entry, and draft studio-promotion candidates per the §8 compounding test.
+  > Show me the promotion candidates before promoting any to studio-memory/learnings/.
 
 ---
 
 ### APPROVAL GATES TABLE (callout)
 **Eyebrow:** Four approval gates
 **Title:** Every gate is human. AI waits at each one.
-**Lede:** From `studio-memory.md` §7. Gate failures stop the sprint. No exceptions.
+**Lede:** From `studio-memory.md` §5. Gate failures stop the sprint. No exceptions.
 
 | Gate | After | What must be true |
 |------|-------|-------------------|
@@ -492,9 +469,9 @@ Link: "See the full tool tables →"
 **Lede:** These are the files Claude reads at the start of every session. The studio gets smarter with every project because this memory persists.
 
 ### Brain Row 01 — Studio Memory
-**Desc:** `studio-memory.md` is the studio's long-term institutional memory — identity, design principles, quality criteria, code standards, approval gates, creative defaults, and accumulated learnings. It is no longer read directly at session start. Sessions surface it through the layered chain (CLAUDE.md → WORKSPACE.md → sprint CONTEXT.md), loading only the sections each sprint's Inputs table names. The next sprint starts with the relevant learnings already addressable, without paying for the rest in context tokens.
+**Desc:** `studio-memory.md` is the studio's core institutional memory — identity, design principles, quality criteria, stack defaults, and approval gates, capped at 100 lines and loaded at the start of every session. Depth lives beside it, not inside it: accumulated learnings in `learnings/` (one file per lesson, indexed one line each), code standards and creative defaults in `playbooks/`. Sessions read a detail file only when the work calls for it. The next sprint starts with the relevant learnings already addressable, without paying for the rest in context tokens.
 
-**Eyebrow:** Three real entries from `§8 Accumulated Learnings`
+**Eyebrow:** Three real entries from `learnings/`
 
 **Learning 1 — 2026-05-09**
 **Next.js `trailingSlash: true` needs `skipTrailingSlashRedirect: true` for POST routes.**
@@ -509,7 +486,7 @@ Disabling row-level security does not grant table access. Backend writes fail wi
 SVG headline lockups that scale with their column (not the viewport) want `container-type: inline-size` on the parent + `cqi` sizing on the SVG. Viewport units break at intermediate widths when the column is narrower than the viewport.
 
 ### Brain Row 02 — Workspace architecture
-**Desc:** Every project clones from the same template. `WORKSPACE.md` defines the project. `WORKFLOW.md` defines the stages and approval gates. `token-map.md` is the design system source of truth. Stages live in numbered folders so the lifecycle is visible at a glance.
+**Desc:** Every project clones from the same template. `WORKSPACE.md` defines the project. `WORKFLOW.md` defines the stages and approval gates. `token-map.md` is the design system source of truth for projects with an isolated token set; Shokunin-branded properties consume the shared system at brand.shokunincrafthouse.com. Stages live in numbered folders so the lifecycle is visible at a glance.
 
 **Eyebrow:** Open any folder below to see what's inside
 
@@ -556,7 +533,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 - **Functionality** (Required pass) — Users understand what the interface does, find primary actions, and complete tasks without guessing. The AI Evaluator approximates this from code and snapshots. User testing confirms it from real behavior.
 
 ### Brain Row 04 — Creative defaults
-**Desc:** These are the defaults I've encoded so every session starts with a point of view, not a blank canvas. From `studio-memory.md §9`. Override with intent and reason, never by accident.
+**Desc:** These are the defaults I've encoded so every session starts with a point of view, not a blank canvas. From `playbooks/creative-defaults.md`. Override with intent and reason, never by accident.
 
 - **Start monochromatic.** One accent, introduced late, with purpose. Three colors is usually one too many.
 - **Springs over curves.** Springs feel physical; cubic-beziers feel digital. Use springs unless the motion is choreographed on a timeline.
@@ -577,7 +554,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 
 | If I need to… | Use this | Why |
 |---------------|----------|-----|
-| Persist studio identity across every session | `studio-memory.md` + Claude Project | Surfaced via the layered loader (CLAUDE.md → WORKSPACE.md → sprint CONTEXT.md), Inputs-table sections only. The studio compounds without paying full-file context cost each sprint. |
+| Persist studio identity across every session | `studio-memory.md` + Claude Project | The ≤100-line core loads whole at session start; learnings and playbooks load on demand via the sprint Inputs table. The studio compounds without paying full-file context cost each sprint. |
 | Build with the agent | Claude Code (terminal) | All code work — scaffold, build, deploy. Background sessions in Agent View. |
 | Protect main from accidents | GitHub branch ruleset | PR required, force-pushes blocked, deletions restricted. I am the only approver. |
 | Constrain Claude's reach | `~/.claude/settings.json` | Allowed paths only. SSH, keychains, personal docs blocked. |
@@ -590,10 +567,10 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 | Turn a brief into a spec | Claude.ai Planner | Studio context already in project knowledge. One pass. |
 | Explore visual direction | Claude Design (Opus 4.8) ★ | Separate weekly limit. Does not draw from Max pool. Free creative resource within its own cap. |
 | Translate Figma into code | Claude Code + Figma MCP | Reads Sandbox, writes code. `generate_figma_design` also writes approved frames to the Figma Production page. |
-| Sync Figma tokens into the repo | `/sync-figma-token` | Reads the Sandbox page, extracts tokens, syncs to `_config/design-system/token-map.md`. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting. |
+| Sync Figma tokens into the repo | `/sync-figma-token` | Reads the Sandbox page, extracts tokens, syncs to `_config/design-system/token-map.md`. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting. Bypassed for Shokunin-branded properties, which link the shared CSS from brand.shokunincrafthouse.com instead. |
 | Get a live preview on every PR | GitHub Actions preview workflow | Real URL per PR plus snapshot screenshots in the PR body. |
 | Run unattended within a phase | `/goal` after contract approval | Claude Code 2.1.139+. Sets a session-scoped completion condition; Haiku checks every turn. Use for Step 4 scaffold and Step 9 sprints. Never on the Evaluator. Always cap with *or stop after N turns*. |
-| Monitor multiple sprints at once | Agent View (`claude agents`) | Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. `claude agents --json` (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. Dynamic Workflows (v2.1.154+) let me chain background sessions on the same project so a finished sprint can hand off to the Evaluator without me wiring it up. |
+| Monitor multiple sprints at once | Agent View (`claude agents`) | Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. `claude agents --json` (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via `/workflows`. |
 | Grade a sprint | Evaluator — fresh Claude Code session | Single-pass audit. Never put `/goal` on it. |
 | Validate decisions with real users | Maze / Lyssna / Dscout | The AI Evaluator grades Functionality from code and snapshots. It cannot replace a real user. Tool scales to company stage — see For Hiring Managers. |
 
@@ -602,7 +579,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 | If I need to… | Use this | Why |
 |---------------|----------|-----|
 | Sharpen a rough brief | Cowork | File-based, multi-step. Reads `cowork-context.md` on every task. |
-| Append to studio memory after ship | Cowork | Appends, never rewrites. Saves directly to the file. |
+| Close out a sprint's learnings | `sc-learn` | Captures repo lessons and the build-log entry automatically; drafts studio promotions for approval. Appends, never rewrites. |
 | Organize deliverables before handoff | Cowork | Renames, sorts, flags WIPs. Proposes the structure before changing anything. |
 | Synthesize research into a design brief | Cowork + Claude for Chrome | Full browser control. Fewer screen interactions, faster execution. |
 | Dispatch a task from iPhone | Cowork remote dispatch | iOS app → Mac runs the task. Mac stays awake. |
