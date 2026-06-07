@@ -1,8 +1,9 @@
 # AI.LEVIBAHN.COM — CONTENT AUDIT
-**Last updated:** 2026-06-06
+**Last updated:** 2026-06-07
 **Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-06 including the Workflow Contract v1 restructure.
 
 **Change log:**
+- 2026-06-07 (v6) — Planning Context Rules §6 propagated (studio-memory `047ec2f`): pre-session main-sync gate added to the Workflow section intro — sync `main` and confirm up to date before any branch or worktree, ahead of every Claude Code session (scaffold, build, evaluate). New §6 surface; no prior audit mention. Archived v5 → `_archive/site-content-audit-v5-2026-06-06.md`. [auto-sync]
 - 2026-06-06 (v5) — Workflow Contract v1 restructure propagated (studio-memory `1682408..3765125`). Card 01 body, Brain Row 01 desc + eyebrow, and Tools Row 01 retold for the split memory: ≤100-line core always loaded, learnings/ (37 files + INDEX.md), playbooks/. Step 13 rewritten to the sc-learn two-tier model — old Part A/B prompt replaced (it cited sections Phase 1 removed). Step 09 body gains the autonomy-contract paragraph (decide-and-log via sc-adr, sc-verify pre-PR, one gate packet). Step 10 body gains the sc-verify-vs-Evaluator distinction. Approval Gates lede §7 → §5; Brain Row 04 source §9 → playbooks/creative-defaults.md; Step 02 “only surface” claim corrected to the mirror model. Reconciliation: content/ v1–v3 strays removed per the 2026-06-03 canonical-file decision; the v4 lineage won the 2026-05-30 retelling conflict; root v2 stray deleted, its archive copy committed.
 - 2026-06-05 (v4) — Shared Design System Infrastructure decision propagated (studio-memory `3493459`): shared-system carve-outs added to Step 07 body, Tools Row 02 `/sync-figma-token` row, Card 04 Figma paragraph, and Brain Row 02 desc; kickoff gate sentence added to Step 02 body; canonical-template propagation sentence added to Step 05 body. Mapping manifest bootstrapped at `_config/content-map.md`.
 - 2026-05-30 (v3) — Three surgical updates: Opus 4.7 → 4.8 in Card 04, Tools Row 02, and Step 09; Dynamic Workflows (v2.1.154+) note added to Tools Row 02 Agent View row; `/code-review --fix` sentence added to Step 10 body.
@@ -140,6 +141,8 @@ Link: "See the full tool tables →"
 **Lede:** Every step says exactly which tool, which prompt, and which approval gate. I do five of them. AI does the rest.
 
 **Toolbar:** Expand all / Collapse all · "0 of 13 explored" progress bar
+
+**Planning context — sync main before every session.** Before any Claude Code session in the workflow below — scaffold, build, evaluate — the local repo is synced to `main` (`git checkout main && git pull origin main`) and confirmed up to date with remote before any branch or worktree is created. A required pre-session gate from `studio-memory.md` §6 — not optional, not skipped because a change "looks small."
 
 ### STEP 01 — Write the brief
 - Badge: You do · Tool: Notes
