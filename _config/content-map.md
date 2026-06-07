@@ -1,7 +1,7 @@
 # CONTENT MAP — studio-memory ↔ site content audit
 > Maintained by the sc-content-sync skill. An index of where folder facts surface in the site content audit — a starting point for drift checks, never the boundary of one. Add rows as new mappings are discovered. Update the SHAs after every applied sync.
 
-**Canonical audit file:** the single `site-content-audit-v*.md` in `ai-site/content/` (highest version; same rule as the weekly update task)
+**Canonical audit file:** `ai-site/content/site-content-audit.md` — stable, version-free name (history = dated copies in `_archive/` + git). Same rule as the weekly update task; `sort -V` resolution retired 2026-06-06.
 
 **Last synced:**
 - studio-memory: `d551ed5` (2026-06-06 — contract v1 migration + setup-guide Opus 4.8 catch-up)
