@@ -28,7 +28,7 @@ jobs:
           printf "User-agent: *\nDisallow: /\n" > robots.txt
 
       - name: Load SSH key
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.HOSTINGER_SSH_KEY }}
 
@@ -39,7 +39,7 @@ jobs:
 
       # mkdir is folded into --rsync-path: one connection instead of two, and it retries.
       - name: Deploy preview via rsync (with retry)
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v4
         env:
           REMOTE_USER: ${{ secrets.HOSTINGER_USER }}
         with:
