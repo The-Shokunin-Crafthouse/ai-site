@@ -894,3 +894,34 @@ fixed path (no globbing); both updated 2026-06-06. The sc-content-sync
 installed copy must be reinstalled in Cowork Settings to pick up the
 rule. claude.ai project knowledge carries the file under its stable
 name from now on.
+
+## 2026-06-11 — Fable 5 assigned to Planner and Evaluator seats only; Generator stays Opus 4.8
+**Stage:** model-ops
+**Status:** accepted
+
+**Context.** Fable 5 is now available alongside Opus 4.8 and Sonnet 4.6.
+The workflow runs three model-driven seats: the Planner (one-shot spec
+generation), the Generator (sprint builds across many turns), and the
+Evaluator (single-pass grading). Each seat carries a different cost and
+judgment profile, and the runbook copy named only Sonnet and Opus — no
+Fable assignment existed.
+
+**Decision.** Assign Fable 5 to the Planner and Evaluator seats only.
+The Generator stays on Opus 4.8. Sonnet 4.6 remains the default for
+content and scaffolding.
+
+**Consequences.** The Planner and Evaluator are single-pass,
+cost-bounded judgment seats — one shot each — which is where Fable 5
+fits. The Generator is token-heavy execution across many sprint turns,
+so Opus 4.8 stays there; routing it to Fable would trade build quality
+for a saving on the wrong seat. Runbook copy updated on branch
+copy/fable-runbook-updates: Card 04, Tools Row 01 + 02, Step 02 body,
+Step 10 body, For Hiring Managers. Content audit bumped to v7
+(2026-06-11).
+
+**Alternatives considered.**
+- **Keep all seats on Opus 4.8** — Rejected. Leaves the cost-bounded,
+  single-pass seats on a heavier model than they need.
+- **Route the Generator to Fable 5 too** — Rejected. Sprint builds are
+  token-heavy, multi-turn execution where Opus 4.8's depth earns its
+  place; the judgment seats are where Fable's single-pass profile fits.

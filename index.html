@@ -371,7 +371,7 @@
       </div>
       <p>The <strong>Planner</strong> turns a one-paragraph brief into a full product spec with sprint breakdown. Runs in Claude.ai with the studio project active. Cheap. One pass.</p>
       <p>The <strong>Generator</strong> builds the sprint. Reads the layered chain — <code>CLAUDE.md</code> → <code>WORKSPACE.md</code> → the sprint's <code>CONTEXT.md</code> — and loads only the files named in that CONTEXT.md's Inputs table. Implements one section, runs the CONTEXT.md audit checklist before opening the PR, ships a PR with a live preview URL and four breakpoint snapshots. Dispatched as a background session in Agent View so it runs without my attention.</p>
-      <p>The <strong>Evaluator</strong> grades the sprint against Originality, Design Quality, Craft, and Functionality. Skeptical by design. Catches issues before I review. Single-pass: never put a <code>/goal</code> on it.</p>
+      <p>The <strong>Evaluator</strong> grades the sprint against Originality, Design Quality, Craft, and Functionality. Skeptical by design. Catches issues before I review. Single-pass: never put a <code>/goal</code> or <code>/loop</code> on it.</p>
       <p>I do four things: brief, approve, review, merge. I am the only one who pushes to main.</p>
       <ul class="drawer__stats">
         <li><span class="drawer__stat-num">3</span><span class="drawer__stat-label">AI agents</span></li>
@@ -400,7 +400,7 @@
           <p class="d-media__hint" aria-hidden="true">4 surfaces · 1 token pool</p>
         </div>
       </div>
-      <p><strong>Claude Max</strong> ($100/mo) gives me Opus and Sonnet on a shared token pool. Sonnet for planning, content, scaffolding; Opus for sprint builds and evaluator passes.</p>
+      <p><strong>Claude Max</strong> ($100/mo) gives me Opus and Sonnet on a shared token pool. Sonnet for content and scaffolding; Opus for sprint builds; Fable for planning and evaluator passes.</p>
       <p><strong>Claude Design</strong> runs on Opus 4.8 with its own independent weekly limit that does not touch the Max pool. I use it for visual inspiration before committing anything to Figma.</p>
       <p><strong>Cowork</strong> is the Desktop app's third tab. File-based knowledge work — briefs, memory updates, deliverable organization. Same connectors as chat. Remote dispatch from iPhone. Not Claude Code, not Agent View.</p>
       <p><strong>Figma + Figma MCP</strong> are the design system and the agent's interface to it. Sandbox is creative workspace; Production is canonical. <code>generate_figma_design</code> writes approved frames straight to the Production canvas — no manual promotion step. <code>/sync-figma-token</code> pulls tokens from Sandbox into <code>token-map.md</code> — for projects with their own token set; branded properties consume the shared system instead.</p>
@@ -495,7 +495,7 @@ Apply the Shokunin Crafthouse lens — the brief should define who the visitor i
               </button>
               <div class="step__body" id="step-2-body" hidden>
                 <div class="step__body-text">
-                  <p>The Planner runs in the Shokunin Crafthouse project on Claude.ai. Project knowledge carries a verbatim mirror of the studio core plus the learnings index — canonical lives in the folder, and the mirror is never edited in place. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.</p>
+                  <p>The Planner runs on Fable 5 in the Shokunin Crafthouse project on Claude.ai. Project knowledge carries a verbatim mirror of the studio core plus the learnings index — canonical lives in the folder, and the mirror is never edited in place. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.</p>
                   <p><strong>What it returns:</strong> project overview, complete deliverables list, design direction tied to the seven Shokunin principles, technical stack, three to six sprints, and specific success criteria per sprint.</p>
                   <p><strong>Approval gate one — Concept.</strong> I read the spec carefully and edit anything I disagree with before moving on.</p>
                   <p>Before any design work starts, one more decision is logged in <code>decisions/decisions.md</code>: does this project consume the Shokunin shared design system? Branded properties link it and skip token extraction in Step 07. Client work self-hosts. A branded property that bypasses the shared system needs a written reason — logged, not assumed.</p>
@@ -806,15 +806,14 @@ This file is the source of truth for all implementation. No color, font, or spac
                 <div class="step__body-text">
                   <p>The Generator reads the layered chain (<code>CLAUDE.md</code> → <code>WORKSPACE.md</code> → the sprint <code>CONTEXT.md</code> at <code>stages/03-build/[sprint-name]/CONTEXT.md</code>), loads only what the CONTEXT.md Inputs table names, pulls the Sandbox frames via Figma MCP, and proposes a contract. Once I approve, Claude writes the approved contract into the CONTEXT.md Contract field, updates Status to <code>approved</code>, and commits the file before any code lands.</p>
                   <p>Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at <code>/_previews/[N]/</code>. Before opening the PR, Claude runs every item in the CONTEXT.md Audit checklist and updates Status to <code>complete</code>. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.</p>
-                  <p>Dispatched via Agent View as a background session, so the build runs without my attention. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract file is approved and committed. Use <code>/effort xhigh</code> — the effort tier specifically added for coding and agentic tasks on Opus 4.8, sitting between <code>high</code> and <code>max</code>.</p>
+                  <p>Dispatched via Agent View as a background session, so the build runs without my attention. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract file is approved and committed.</p>
                   <p>The build runs under the autonomy contract. Any call that is reversible, within studio standards, and within scope gets made and logged to <code>decisions/decisions.md</code> via <code>sc-adr</code> — not asked. Before the PR opens, <code>sc-verify</code> runs the Gate-3 self-check; failures are fixed or flagged, never silently presented. The PR, preview URL, decisions since the last gate, and verify report arrive together as one gate packet. Scope changes, money, live services, and brand direction still come to me. Always.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-9-prompt" aria-label="Copy prompt">
                     <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
                   </button>
-                  <pre><code id="step-9-prompt">/effort xhigh
-/caveman
+                  <pre><code id="step-9-prompt">/caveman
 
 Read WORKSPACE.md first. Then read the sprint CONTEXT.md at:
 stages/03-build/[sprint-name]/CONTEXT.md
@@ -863,10 +862,10 @@ When complete:
                 <div class="step__body-text">
                   <p>If the Generator needs to apply targeted cleanup before the Evaluator runs, <code>/code-review --fix</code> (v2.1.152+) writes review findings directly to the working tree in one pass. Before the Evaluator session, run <code>/ultrareview</code> on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.</p>
                   <p><code>sc-verify</code> (the Generator's self-check, Step 09) and the Evaluator are complementary, not redundant. Self-verify first — cheap, catches the builder's own obvious failures. Independent audit second — catches what the builder is blind to. A sprint that passes <code>sc-verify</code> can still fail the Evaluator. That is the system working.</p>
-                  <p>A fresh Claude Code session, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
+                  <p>A fresh Claude Code session on Fable 5, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
                   <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.</p>
                   <p>In a team context, the Evaluator pass is necessary but not sufficient. The AI grades Functionality against code and visual snapshots — not against observed behavior. User testing runs here, between the Evaluator result and the merge decision. Which tool depends on company stage.</p>
-                  <p><strong>Never put a <code>/goal</code> on this session.</strong> The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.</p>
+                  <p><strong>Never put a <code>/goal</code> or <code>/loop</code> on this session.</strong> The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-10-prompt" aria-label="Copy prompt">
@@ -1377,7 +1376,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Keep budget low by default</td>
                       <td data-label="Use this">Sonnet 4.6</td>
-                      <td data-label="Why">Default model. Opus only when the task explicitly demands it.</td>
+                      <td data-label="Why">Sonnet 4.6 default. Opus 4.8 for sprint builds. Fable 5 only for Planner and Evaluator passes, the two judgment seats.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1401,7 +1400,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                   <tbody>
                     <tr>
                       <td data-label="If I need to…">Turn a brief into a spec</td>
-                      <td data-label="Use this">Claude.ai Planner</td>
+                      <td data-label="Use this">Claude.ai Planner (Fable 5)</td>
                       <td data-label="Why">Studio context already in project knowledge. One pass.</td>
                     </tr>
                     <tr>
@@ -1430,14 +1429,19 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="Why">Claude Code 2.1.139+. Sets a session-scoped completion condition; Haiku checks every turn. Use for Step 4 scaffold and Step 9 sprints. Never on the Evaluator. Always cap with <em>or stop after N turns</em>.</td>
                     </tr>
                     <tr>
+                      <td data-label="If I need to…">Re-run a check on an interval in-session</td>
+                      <td data-label="Use this"><code>/loop</code> (Claude Code v2.1.71+)</td>
+                      <td data-label="Why">Session-scoped cron. Re-runs a prompt or slash command on an interval; tasks auto-expire after 3 days. In-session monitoring only: CI watch, preview re-checks. Never on the Evaluator. Not a replacement for Cowork scheduled tasks, which persist.</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Monitor multiple sprints at once</td>
                       <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
                       <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
-                      <td data-label="Use this">Evaluator — fresh Claude Code session</td>
-                      <td data-label="Why">Single-pass audit. Never put <code>/goal</code> on it.</td>
+                      <td data-label="Use this">Evaluator, fresh Claude Code session on Fable 5</td>
+                      <td data-label="Why">Single-pass audit. Never put <code>/goal</code> or <code>/loop</code> on it.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Validate decisions with real users</td>
@@ -1576,7 +1580,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                 <li>The Planner-Generator-Evaluator loop standardizes quality without standardizing creativity. Every designer still owns their craft. The system owns the consistency.</li>
                 <li>At this stage the research function exists or is forming. Lyssna sits between guerrilla testing and enterprise contracts — quantitative benchmarking, custom panels, moderated sessions, no six-figure procurement. It runs after the Evaluator and before Gate 03.</li>
                 <li>Sprint contracts and approval gates create the accountability structure design teams at this stage need, without adding process overhead.</li>
-                <li>The token strategy translates to a team budget: Sonnet for the volume work, Opus for the judgment work, Claude Design as a free creative resource on its own clock.</li>
+                <li>The token strategy translates to a team budget: Sonnet for the volume work, Fable for the judgment work, Claude Design as a free creative resource on its own clock.</li>
               </ul>
             </article>
 
