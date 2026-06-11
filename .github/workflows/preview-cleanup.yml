@@ -19,7 +19,7 @@ jobs:
       PREVIEW_PATH: ~/domains/levibahn.com/public_html/ai/_previews/${{ github.event.pull_request.number }}/
     steps:
       - name: Load SSH key
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.HOSTINGER_SSH_KEY }}
 
@@ -29,7 +29,7 @@ jobs:
           ssh-keyscan -p "$REMOTE_PORT" -H "$REMOTE_HOST" >> ~/.ssh/known_hosts
 
       - name: Tear down preview directory (with retry)
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v4
         env:
           REMOTE_USER: ${{ secrets.HOSTINGER_USER }}
         with:
