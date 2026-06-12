@@ -4,8 +4,8 @@
 **Canonical audit file:** `ai-site/content/site-content-audit.md` — stable, version-free name (history = dated copies in `_archive/` + git). Same rule as the weekly update task; `sort -V` resolution retired 2026-06-06.
 
 **Last synced:**
-- studio-memory: `a5c87a6` (2026-06-11 — §6 model-confirm pre-session gate added)
-- ai-site: `2c8a183` (2026-06-11 — v8: model-confirm gate + content-map row updated)
+- studio-memory: `bc40b32` (2026-06-11 — sc-design-crit skill + Step 10 wiring, on branch `feat/sc-design-crit` / PR #37; tree also covers the v2.5 Originality hardening and v2.6 360→390 already merged to main at `541cf0c`)
+- ai-site: `488e8d8` (2026-06-11 — v9: sc-design-crit lens library + Originality gates + 360→390)
 
 ---
 
@@ -31,3 +31,4 @@
 | `playbooks/new-project-setup.md` Steps 9/10/13 (autonomy contract, sc-verify, sc-learn) | Step 09 body (autonomy paragraph); Step 10 body (sc-verify vs Evaluator); Step 13 summary/body/prompt; Tools Row 03 sprint-close row | Workflow Contract v1 §1/§7/§8 — propagated 2026-06-06 |
 | Mirror model (contract §2: core + INDEX into global instructions + claude.ai project) | Step 02 body (mirror sentence); Brain Row 01 desc | Mirrors refreshed by hand via sc-content-sync paste handoffs — check staleness every sync |
 | `studio-memory.md` §6 Planning Context Rules | Workflow section intro (sync-main gate + model-confirm gate) | Two rules: sync main, confirm model. Auto-sync script covers sync-main only; model-confirm propagated manually. |
+| `skills/sc-design-crit/` + `playbooks/new-project-setup.md` Step 10 Evaluator | Step 10 body (lens-library bullet); Step 10 Evaluator prompt (read line + Originality gates); Brain Row 03 Quality-system desc; Tools Row 02 Grade-a-sprint Why | The Evaluator's named lens library for grading criteria 2-4; the Originality hard-gates (slop-blocklist + POV-execution) live in the same Step 10 prompt. Synced v9, 2026-06-11 |
