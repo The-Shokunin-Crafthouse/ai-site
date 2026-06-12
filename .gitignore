@@ -14,7 +14,7 @@ _archive/*
 !_archive/reports/
 _archive/reports/*
 !_archive/reports/.gitkeep
-!_archive/site-content-audit-v*.md
+!_archive/site-content-audit-*.md
 _reports/*
 !_reports/.gitkeep
 content/*
