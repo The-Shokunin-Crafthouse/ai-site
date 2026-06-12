@@ -1,8 +1,9 @@
 # AI.LEVIBAHN.COM — CONTENT AUDIT
 **Last updated:** 2026-06-11
-**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-11 including the Workflow Contract v1 restructure and the Fable 5 model assignment.
+**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-11 including the model-confirm pre-session gate.
 
 **Change log:**
+- 2026-06-11 (v8) — §6 model-confirm pre-session gate propagated (studio-memory `a5c87a6`): model-confirm rule added to Workflow section intro — confirm the selected model before the first prompt of every session, Fable 5 is Planner/Evaluator-only, never the default. Archived v7 → `_archive/site-content-audit-2026-06-11.md`.
 - 2026-06-11 (v7) — Fable 5 model-assignment pass plus runbook copy edits (branch `copy/fable-runbook-updates`). Fable 5 assigned to the Planner and Evaluator seats only: Card 04 (Sonnet/Opus/Fable split), Tools Row 01 "Keep budget low" Why, Tools Row 02 Turn-a-brief (`Claude.ai Planner (Fable 5)`) and Grade-a-sprint cells, Step 02 body, Step 10 body. Generator stays Opus 4.8; Sonnet 4.6 remains default. Step 09: `/effort xhigh` removed from body and prompt (retired). Step 10 "Never put a `/goal` on this session" → "`/goal` or `/loop`", with Card 03 and the Tools Row 02 Grade-a-sprint Why aligned to match. New Tools Row 02 `/loop` row added after `/goal` (session-scoped cron, v2.1.71+, in-session monitoring only, never on the Evaluator). For Hiring Managers: "Opus for the judgment work" → "Fable for the judgment work". Em dashes in all touched copy converted to comma/colon per the no-em-dash rule. Decision logged in `decisions/decisions.md` (2026-06-11). Archived v6 → `_archive/site-content-audit-v6-2026-06-07.md`.
 - 2026-06-07 (v6) — Planning Context Rules §6 propagated (studio-memory `047ec2f`): pre-session main-sync gate added to the Workflow section intro — sync `main` and confirm up to date before any branch or worktree, ahead of every Claude Code session (scaffold, build, evaluate). New §6 surface; no prior audit mention. Archived v5 → `_archive/site-content-audit-v5-2026-06-06.md`. [auto-sync]
 - 2026-06-06 (v5) — Workflow Contract v1 restructure propagated (studio-memory `1682408..3765125`). Card 01 body, Brain Row 01 desc + eyebrow, and Tools Row 01 retold for the split memory: ≤100-line core always loaded, learnings/ (37 files + INDEX.md), playbooks/. Step 13 rewritten to the sc-learn two-tier model — old Part A/B prompt replaced (it cited sections Phase 1 removed). Step 09 body gains the autonomy-contract paragraph (decide-and-log via sc-adr, sc-verify pre-PR, one gate packet). Step 10 body gains the sc-verify-vs-Evaluator distinction. Approval Gates lede §7 → §5; Brain Row 04 source §9 → playbooks/creative-defaults.md; Step 02 “only surface” claim corrected to the mirror model. Reconciliation: content/ v1–v3 strays removed per the 2026-06-03 canonical-file decision; the v4 lineage won the 2026-05-30 retelling conflict; root v2 stray deleted, its archive copy committed.
@@ -144,6 +145,8 @@ Link: "See the full tool tables →"
 **Toolbar:** Expand all / Collapse all · "0 of 13 explored" progress bar
 
 **Planning context — sync main before every session.** Before any Claude Code session in the workflow below — scaffold, build, evaluate — the local repo is synced to `main` (`git checkout main && git pull origin main`) and confirmed up to date with remote before any branch or worktree is created. A required pre-session gate from `studio-memory.md` §6 — not optional, not skipped because a change "looks small."
+
+**Confirm the selected model before the first prompt of every session.** Fable 5 is never the default — it runs only on Planner and Evaluator passes.
 
 ### STEP 01 — Write the brief
 - Badge: You do · Tool: Notes

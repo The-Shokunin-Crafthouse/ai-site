@@ -4,8 +4,8 @@
 **Canonical audit file:** `ai-site/content/site-content-audit.md` — stable, version-free name (history = dated copies in `_archive/` + git). Same rule as the weekly update task; `sort -V` resolution retired 2026-06-06.
 
 **Last synced:**
-- studio-memory: `047ec2f` (2026-06-07 — auto-sync: §6 pre-session main-sync gate)
-- ai-site: `298b2f0` (2026-06-07 — auto-sync propagation; v6 minted in this PR)
+- studio-memory: `a5c87a6` (2026-06-11 — §6 model-confirm pre-session gate added)
+- ai-site: pending commit
 
 ---
 
@@ -30,4 +30,4 @@
 | Canonical template location (`studio-memory/templates/`) for cross-repo workflows/configs | Step 05 body | Update-once-propagate rule; never edited repo by repo |
 | `playbooks/new-project-setup.md` Steps 9/10/13 (autonomy contract, sc-verify, sc-learn) | Step 09 body (autonomy paragraph); Step 10 body (sc-verify vs Evaluator); Step 13 summary/body/prompt; Tools Row 03 sprint-close row | Workflow Contract v1 §1/§7/§8 — propagated 2026-06-06 |
 | Mirror model (contract §2: core + INDEX into global instructions + claude.ai project) | Step 02 body (mirror sentence); Brain Row 01 desc | Mirrors refreshed by hand via sc-content-sync paste handoffs — check staleness every sync |
-| `studio-memory.md` §6 Planning Context Rules | Workflow section intro ("Planning context — sync main before every session") | Pre-session main-sync gate. Auto-propagated by `scripts/sync-content.mjs` via `sync-to-site.yml` |
+| `studio-memory.md` §6 Planning Context Rules | Workflow section intro (sync-main gate + model-confirm gate) | Two rules: sync main, confirm model. Auto-sync script covers sync-main only; model-confirm propagated manually. |
