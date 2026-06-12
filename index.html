@@ -558,7 +558,7 @@ Be ambitious. Look for opportunities where AI-native features would serve the pr
               <div class="step__body" id="step-4-body" hidden>
                 <div class="step__body-text">
                   <p>Claude Code clones the workspace template, creates a private GitHub repo under the studio org, populates <code>WORKSPACE.md</code> with project identity, wires in the Figma file URL, and confirms all four Figma pages exist via MCP.</p>
-                  <p>It also adds a Playwright preview script that captures screenshots at 360, 768, 1024, and 1440 so every PR carries a snapshot record. Optional <code>/goal</code> drives this through to a green build without per-turn prompting.</p>
+                  <p>It also adds a Playwright preview script that captures screenshots at 390, 768, 1024, and 1440 so every PR carries a snapshot record. Optional <code>/goal</code> drives this through to a green build without per-turn prompting.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-4-prompt" aria-label="Copy prompt">
@@ -589,8 +589,8 @@ Be ambitious. Look for opportunities where AI-native features would serve the pr
    - Accepts a sprint name as its only argument
    - Builds the project to its static output directory
    - Serves the build on a local port
-   - Captures full-page screenshots at viewports 360, 768, 1024, and 1440
-   - Saves PNGs to /previews/[sprint-name]/ as 360.png, 768.png, etc.
+   - Captures full-page screenshots at viewports 390, 768, 1024, and 1440
+   - Saves PNGs to /previews/[sprint-name]/ as 390.png, 768.png, etc.
    - If dark mode is in scope, captures both modes (8 PNGs total)
    - Tears the server down on completion or failure (use try/finally)
    Add an npm script: "preview": "node scripts/preview.mjs"
@@ -831,7 +831,7 @@ Before writing any code:
 Implementation requirements:
 - Framework: [Next.js / HTML+CSS / React — pick one]
 - All values must come from token-map.md — do not invent any color, font, or spacing not in that file
-- Mobile-first, all four breakpoints: 360, 768, 1024, 1440
+- Mobile-first, all four breakpoints: 390, 768, 1024, 1440
 - Asset paths must work both at root (production) and at a subpath (PR previews). Use relative paths or read BASE_PATH from env. Do NOT hardcode absolute asset paths like /images/foo.png.
 
 When complete:
@@ -862,8 +862,9 @@ When complete:
                 <div class="step__body-text">
                   <p>If the Generator needs to apply targeted cleanup before the Evaluator runs, <code>/code-review --fix</code> (v2.1.152+) writes review findings directly to the working tree in one pass. Before the Evaluator session, run <code>/ultrareview</code> on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.</p>
                   <p><code>sc-verify</code> (the Generator's self-check, Step 09) and the Evaluator are complementary, not redundant. Self-verify first — cheap, catches the builder's own obvious failures. Independent audit second — catches what the builder is blind to. A sprint that passes <code>sc-verify</code> can still fail the Evaluator. That is the system working.</p>
+                  <p>The Evaluator does not grade on taste. It applies a named lens library, the <code>sc-design-crit</code> skill, that maps each criterion to established frameworks: Nielsen and Norman for Functionality, Gestalt and visual hierarchy for Design Quality, Gerhardt-Powals for Craft judgment, peak-end and Zeigarnik for Originality. Every finding cites its lens and carries a severity, so "this feels off" becomes a defect with a fix instead of an opinion.</p>
                   <p>A fresh Claude Code session on Fable 5, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
-                  <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.</p>
+                  <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail. Originality is gated before it is scored: a slop-blocklist match or an unexecuted POV directive fails it outright.</p>
                   <p>In a team context, the Evaluator pass is necessary but not sufficient. The AI grades Functionality against code and visual snapshots — not against observed behavior. User testing runs here, between the Evaluator result and the merge decision. Which tool depends on company stage.</p>
                   <p><strong>Never put a <code>/goal</code> or <code>/loop</code> on this session.</strong> The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.</p>
                 </div>
@@ -879,6 +880,8 @@ stages/03-build/[sprint-name]/CONTEXT.md
 
 The CONTEXT.md contains the approved sprint contract, the Inputs table (what the Generator was supposed to load), and the pre-output audit checklist (what the Generator was supposed to verify before opening the PR). Read all three sections before grading.
 
+Also apply the sc-design-crit lens library when grading criteria 2-4, and cite each lens by name in your findings.
+
 The Generator just completed Sprint [N].
 Live preview URL: [paste the URL from the bot comment on the PR]
 
@@ -890,7 +893,7 @@ Evaluation order:
 Do NOT spin up a local dev server. The live preview URL is already running on Hostinger.
 
 Grade against our 4 criteria:
-1. Originality — deliberate creative decisions, no AI default patterns (score out of 10)
+1. Originality — two hard gates, then judgment (score out of 10): (a) any match against the slop-blocklist fails this criterion outright; (b) every POV directive for the sprint must be executed, or it fails; (c) only if both pass, judge deliberate creative decisions beyond the POV.
 2. Design Quality — coherent whole, distinct mood, not a template (score out of 10)
 3. Craft — typography, spacing, color harmony, contrast ratios (REQUIRED PASS — cannot ship with craft failures)
 4. Functionality — users can complete tasks without confusion (REQUIRED PASS — cannot ship with broken flows)
@@ -1245,7 +1248,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
               </span>
             </button>
             <div class="brain-row__body" id="brain-row-3-body" hidden>
-              <p class="brain-row__desc">Quality is systematic, not subjective. The Evaluator grades every sprint against four criteria. Two are required passes — sprints cannot ship with failures there. The <a href="#gates">four approval gates</a> protect the system from drift.</p>
+              <p class="brain-row__desc">Quality is systematic, not subjective. Each criterion is graded through a named lens library (the <code>sc-design-crit</code> skill), so every finding cites an established framework rather than a reviewer's taste. The Evaluator grades every sprint against four criteria. Two are required passes — sprints cannot ship with failures there. The <a href="#gates">four approval gates</a> protect the system from drift.</p>
               <div class="brain-row__prompt">
                 <p class="brain-row__eyebrow">The four criteria</p>
                 <ul class="criteria">
@@ -1441,7 +1444,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
                       <td data-label="Use this">Evaluator, fresh Claude Code session on Fable 5</td>
-                      <td data-label="Why">Single-pass audit. Never put <code>/goal</code> or <code>/loop</code> on it.</td>
+                      <td data-label="Why">Single-pass audit. Never put <code>/goal</code> or <code>/loop</code> on it. Grades through the <code>sc-design-crit</code> lens library; findings cite named frameworks.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Validate decisions with real users</td>

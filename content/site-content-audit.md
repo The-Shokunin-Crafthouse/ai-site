@@ -1,8 +1,10 @@
 # AI.LEVIBAHN.COM — CONTENT AUDIT
 **Last updated:** 2026-06-11
-**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-11 including the Workflow Contract v1 restructure and the Fable 5 model assignment.
+**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-11 including the model-confirm pre-session gate and the `sc-design-crit` evaluation lens library.
 
 **Change log:**
+- 2026-06-11 (v9) — `sc-design-crit` evaluation lens library propagated (studio-memory `bc40b32`, PR #37) plus two post-v8 workflow facts. New skill: the Evaluator now grades criteria 2–4 through a named lens library (Nielsen, Gestalt, Gerhardt-Powals, Norman, et al.) and every finding cites its lens — added to Step 10 body, Step 10 Evaluator prompt (read line), Brain Row 03 Quality-system desc, and Tools Row 02 Grade-a-sprint Why. Evaluator Originality criterion hardened (v2.5): Step 10 prompt criterion 1 now gates on slop-blocklist match plus POV-directive execution before scoring, with a Step 10 body sentence to match. Smallest preview breakpoint corrected 360 → 390 in four places (preview-script body, scaffold-prompt viewport + `390.png` filename, Step 09 build-prompt breakpoint line). New-copy em dashes set to comma/colon per the no-em-dash rule. Archived pre-sync state → `_archive/site-content-audit-2026-06-11-pre-sc-design-crit.md`.
+- 2026-06-11 (v8) — §6 model-confirm pre-session gate propagated (studio-memory `a5c87a6`): model-confirm rule added to Workflow section intro — confirm the selected model before the first prompt of every session, Fable 5 is Planner/Evaluator-only, never the default. Archived v7 → `_archive/site-content-audit-2026-06-11.md`.
 - 2026-06-11 (v7) — Fable 5 model-assignment pass plus runbook copy edits (branch `copy/fable-runbook-updates`). Fable 5 assigned to the Planner and Evaluator seats only: Card 04 (Sonnet/Opus/Fable split), Tools Row 01 "Keep budget low" Why, Tools Row 02 Turn-a-brief (`Claude.ai Planner (Fable 5)`) and Grade-a-sprint cells, Step 02 body, Step 10 body. Generator stays Opus 4.8; Sonnet 4.6 remains default. Step 09: `/effort xhigh` removed from body and prompt (retired). Step 10 "Never put a `/goal` on this session" → "`/goal` or `/loop`", with Card 03 and the Tools Row 02 Grade-a-sprint Why aligned to match. New Tools Row 02 `/loop` row added after `/goal` (session-scoped cron, v2.1.71+, in-session monitoring only, never on the Evaluator). For Hiring Managers: "Opus for the judgment work" → "Fable for the judgment work". Em dashes in all touched copy converted to comma/colon per the no-em-dash rule. Decision logged in `decisions/decisions.md` (2026-06-11). Archived v6 → `_archive/site-content-audit-v6-2026-06-07.md`.
 - 2026-06-07 (v6) — Planning Context Rules §6 propagated (studio-memory `047ec2f`): pre-session main-sync gate added to the Workflow section intro — sync `main` and confirm up to date before any branch or worktree, ahead of every Claude Code session (scaffold, build, evaluate). New §6 surface; no prior audit mention. Archived v5 → `_archive/site-content-audit-v5-2026-06-06.md`. [auto-sync]
 - 2026-06-06 (v5) — Workflow Contract v1 restructure propagated (studio-memory `1682408..3765125`). Card 01 body, Brain Row 01 desc + eyebrow, and Tools Row 01 retold for the split memory: ≤100-line core always loaded, learnings/ (37 files + INDEX.md), playbooks/. Step 13 rewritten to the sc-learn two-tier model — old Part A/B prompt replaced (it cited sections Phase 1 removed). Step 09 body gains the autonomy-contract paragraph (decide-and-log via sc-adr, sc-verify pre-PR, one gate packet). Step 10 body gains the sc-verify-vs-Evaluator distinction. Approval Gates lede §7 → §5; Brain Row 04 source §9 → playbooks/creative-defaults.md; Step 02 “only surface” claim corrected to the mirror model. Reconciliation: content/ v1–v3 strays removed per the 2026-06-03 canonical-file decision; the v4 lineage won the 2026-05-30 retelling conflict; root v2 stray deleted, its archive copy committed.
@@ -145,6 +147,8 @@ Link: "See the full tool tables →"
 
 **Planning context — sync main before every session.** Before any Claude Code session in the workflow below — scaffold, build, evaluate — the local repo is synced to `main` (`git checkout main && git pull origin main`) and confirmed up to date with remote before any branch or worktree is created. A required pre-session gate from `studio-memory.md` §6 — not optional, not skipped because a change "looks small."
 
+**Confirm the selected model before the first prompt of every session.** Fable 5 is never the default — it runs only on Planner and Evaluator passes.
+
 ### STEP 01 — Write the brief
 - Badge: You do · Tool: Notes
 - Summary: Four sentences. Who is the visitor, what do they need, what makes this different.
@@ -191,7 +195,7 @@ Link: "See the full tool tables →"
 - Badge: Prompt Claude · Tool: Claude Code
 - Summary: Workspace template, private GitHub repo, branch protection, Playwright preview script.
 - Body: Claude Code clones the workspace template, creates a private GitHub repo under the studio org, populates `WORKSPACE.md` with project identity, wires in the Figma file URL, and confirms all four Figma pages exist via MCP.
-- It also adds a Playwright preview script that captures screenshots at 360, 768, 1024, and 1440 so every PR carries a snapshot record. Optional `/goal` drives this through to a green build without per-turn prompting.
+- It also adds a Playwright preview script that captures screenshots at 390, 768, 1024, and 1440 so every PR carries a snapshot record. Optional `/goal` drives this through to a green build without per-turn prompting.
 - Prompt:
   > Scaffold a new Shokunin Crafthouse project called [project name].
   >
@@ -218,8 +222,8 @@ Link: "See the full tool tables →"
   >    - Accepts a sprint name as its only argument
   >    - Builds the project to its static output directory
   >    - Serves the build on a local port
-  >    - Captures full-page screenshots at viewports 360, 768, 1024, and 1440
-  >    - Saves PNGs to /previews/[sprint-name]/ as 360.png, 768.png, etc.
+  >    - Captures full-page screenshots at viewports 390, 768, 1024, and 1440
+  >    - Saves PNGs to /previews/[sprint-name]/ as 390.png, 768.png, etc.
   >    - If dark mode is in scope, captures both modes (8 PNGs total)
   >    - Tears the server down on completion or failure (use try/finally)
   >    Add an npm script: "preview": "node scripts/preview.mjs"
@@ -374,7 +378,7 @@ Link: "See the full tool tables →"
   > Implementation requirements:
   > - Framework: [Next.js / HTML+CSS / React — pick one]
   > - All values must come from token-map.md — do not invent any color, font, or spacing not in that file
-  > - Mobile-first, all four breakpoints: 360, 768, 1024, 1440
+  > - Mobile-first, all four breakpoints: 390, 768, 1024, 1440
   > - Asset paths must work both at root (production) and at a subpath (PR previews). Use relative paths or read BASE_PATH from env. Do NOT hardcode absolute asset paths like /images/foo.png.
   >
   > When complete:
@@ -391,8 +395,9 @@ Link: "See the full tool tables →"
 - Summary: Fresh session. Single pass. Four criteria scored. PASS or FAIL.
 - Body: If the Generator needs to apply targeted cleanup before the Evaluator runs, `/code-review --fix` (v2.1.152+) writes review findings directly to the working tree in one pass. Before the Evaluator session, run `/ultrareview` on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.
 - `sc-verify` (the Generator's self-check, Step 09) and the Evaluator are complementary, not redundant. Self-verify first — cheap, catches the builder's own obvious failures. Independent audit second — catches what the builder is blind to. A sprint that passes `sc-verify` can still fail the Evaluator. That is the system working.
+- The Evaluator does not grade on taste. It applies a named lens library, the `sc-design-crit` skill, that maps each criterion to established frameworks: Nielsen and Norman for Functionality, Gestalt and visual hierarchy for Design Quality, Gerhardt-Powals for Craft judgment, peak-end and Zeigarnik for Originality. Every finding cites its lens and carries a severity, so "this feels off" becomes a defect with a fix instead of an opinion.
 - A fresh Claude Code session on Fable 5, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.
-- Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.
+- Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail. Originality is gated before it is scored: a slop-blocklist match or an unexecuted POV directive fails it outright.
 - In a team context, the Evaluator pass is necessary but not sufficient. The AI grades Functionality against code and visual snapshots — not against observed behavior. User testing runs here, between the Evaluator result and the merge decision. Which tool depends on company stage.
 - **Never put a `/goal` or `/loop` on this session.** The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.
 - Prompt:
@@ -403,6 +408,8 @@ Link: "See the full tool tables →"
   > stages/03-build/[sprint-name]/CONTEXT.md
   >
   > The CONTEXT.md contains the approved sprint contract, the Inputs table (what the Generator was supposed to load), and the pre-output audit checklist (what the Generator was supposed to verify before opening the PR). Read all three sections before grading.
+  >
+  > Also apply the `sc-design-crit` lens library when grading criteria 2–4, and cite each lens by name in your findings.
   >
   > The Generator just completed Sprint [N].
   > Live preview URL: [paste the URL from the bot comment on the PR]
@@ -415,7 +422,7 @@ Link: "See the full tool tables →"
   > Do NOT spin up a local dev server. The live preview URL is already running on Hostinger.
   >
   > Grade against our 4 criteria:
-  > 1. Originality — deliberate creative decisions, no AI default patterns (score out of 10)
+  > 1. Originality — two hard gates, then judgment (score out of 10): (a) any match against the slop-blocklist fails this criterion outright; (b) every POV directive for the sprint must be executed, or it fails; (c) only if both pass, judge deliberate creative decisions beyond the POV.
   > 2. Design Quality — coherent whole, distinct mood, not a template (score out of 10)
   > 3. Craft — typography, spacing, color harmony, contrast ratios (REQUIRED PASS — cannot ship with craft failures)
   > 4. Functionality — users can complete tasks without confusion (REQUIRED PASS — cannot ship with broken flows)
@@ -526,7 +533,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
     - `decisions.md` — Why we chose what we chose.
 
 ### Brain Row 03 — Quality system
-**Desc:** Quality is systematic, not subjective. The Evaluator grades every sprint against four criteria. Two are required passes — sprints cannot ship with failures there. The four approval gates protect the system from drift.
+**Desc:** Quality is systematic, not subjective. Each criterion is graded through a named lens library (the `sc-design-crit` skill), so every finding cites an established framework rather than a reviewer's taste. The Evaluator grades every sprint against four criteria. Two are required passes — sprints cannot ship with failures there. The four approval gates protect the system from drift.
 
 **Eyebrow:** The four criteria
 
@@ -575,7 +582,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 | Run unattended within a phase | `/goal` after contract approval | Claude Code 2.1.139+. Sets a session-scoped completion condition; Haiku checks every turn. Use for Step 4 scaffold and Step 9 sprints. Never on the Evaluator. Always cap with *or stop after N turns*. |
 | Re-run a check on an interval in-session | `/loop` (Claude Code v2.1.71+) | Session-scoped cron. Re-runs a prompt or slash command on an interval; tasks auto-expire after 3 days. In-session monitoring only: CI watch, preview re-checks. Never on the Evaluator. Not a replacement for Cowork scheduled tasks, which persist. |
 | Monitor multiple sprints at once | Agent View (`claude agents`) | Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. `claude agents --json` (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via `/workflows`. |
-| Grade a sprint | Evaluator, fresh Claude Code session on Fable 5 | Single-pass audit. Never put `/goal` or `/loop` on it. |
+| Grade a sprint | Evaluator, fresh Claude Code session on Fable 5 | Single-pass audit. Never put `/goal` or `/loop` on it. Grades through the `sc-design-crit` lens library; findings cite named frameworks. |
 | Validate decisions with real users | Maze / Lyssna / Dscout | The AI Evaluator grades Functionality from code and snapshots. It cannot replace a real user. Tool scales to company stage — see For Hiring Managers. |
 
 ### Tools Row 03 — Knowledge work
