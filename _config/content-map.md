@@ -5,7 +5,7 @@
 
 **Last synced:**
 - studio-memory: `a5c87a6` (2026-06-11 — §6 model-confirm pre-session gate added)
-- ai-site: pending commit
+- ai-site: `2c8a183` (2026-06-11 — v8: model-confirm gate + content-map row updated)
 
 ---
 
