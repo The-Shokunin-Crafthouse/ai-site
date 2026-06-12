@@ -450,6 +450,12 @@
             </div>
           </div>
 
+          <div class="timeline__planning">
+            <p><strong>Before every session.</strong> Two pre-session gates from <code>studio-memory.md</code> §6, ahead of any Claude Code session below (scaffold, build, evaluate).</p>
+            <p><strong>Sync <code>main</code>.</strong> The local repo is synced to <code>main</code> (<code>git checkout main &amp;&amp; git pull origin main</code>) and confirmed up to date with remote before any branch or worktree is created. Not optional, not skipped because a change "looks small."</p>
+            <p><strong>Confirm the model.</strong> Confirm the selected model before the first prompt. Fable 5 is never the default, it runs only on Planner and Evaluator passes.</p>
+          </div>
+
           <ol class="steps" id="step-rows-hidden" data-steps>
             <li class="step" data-row-hover data-step="1">
               <button class="step__head" type="button" aria-expanded="false" aria-controls="step-1-body">
