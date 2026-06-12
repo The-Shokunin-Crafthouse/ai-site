@@ -1,8 +1,9 @@
 # AI.LEVIBAHN.COM — CONTENT AUDIT
-**Last updated:** 2026-06-07
-**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-06 including the Workflow Contract v1 restructure.
+**Last updated:** 2026-06-11
+**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-11 including the Workflow Contract v1 restructure and the Fable 5 model assignment.
 
 **Change log:**
+- 2026-06-11 (v7) — Fable 5 model-assignment pass plus runbook copy edits (branch `copy/fable-runbook-updates`). Fable 5 assigned to the Planner and Evaluator seats only: Card 04 (Sonnet/Opus/Fable split), Tools Row 01 "Keep budget low" Why, Tools Row 02 Turn-a-brief (`Claude.ai Planner (Fable 5)`) and Grade-a-sprint cells, Step 02 body, Step 10 body. Generator stays Opus 4.8; Sonnet 4.6 remains default. Step 09: `/effort xhigh` removed from body and prompt (retired). Step 10 "Never put a `/goal` on this session" → "`/goal` or `/loop`", with Card 03 and the Tools Row 02 Grade-a-sprint Why aligned to match. New Tools Row 02 `/loop` row added after `/goal` (session-scoped cron, v2.1.71+, in-session monitoring only, never on the Evaluator). For Hiring Managers: "Opus for the judgment work" → "Fable for the judgment work". Em dashes in all touched copy converted to comma/colon per the no-em-dash rule. Decision logged in `decisions/decisions.md` (2026-06-11). Archived v6 → `_archive/site-content-audit-v6-2026-06-07.md`.
 - 2026-06-07 (v6) — Planning Context Rules §6 propagated (studio-memory `047ec2f`): pre-session main-sync gate added to the Workflow section intro — sync `main` and confirm up to date before any branch or worktree, ahead of every Claude Code session (scaffold, build, evaluate). New §6 surface; no prior audit mention. Archived v5 → `_archive/site-content-audit-v5-2026-06-06.md`. [auto-sync]
 - 2026-06-06 (v5) — Workflow Contract v1 restructure propagated (studio-memory `1682408..3765125`). Card 01 body, Brain Row 01 desc + eyebrow, and Tools Row 01 retold for the split memory: ≤100-line core always loaded, learnings/ (37 files + INDEX.md), playbooks/. Step 13 rewritten to the sc-learn two-tier model — old Part A/B prompt replaced (it cited sections Phase 1 removed). Step 09 body gains the autonomy-contract paragraph (decide-and-log via sc-adr, sc-verify pre-PR, one gate packet). Step 10 body gains the sc-verify-vs-Evaluator distinction. Approval Gates lede §7 → §5; Brain Row 04 source §9 → playbooks/creative-defaults.md; Step 02 “only surface” claim corrected to the mirror model. Reconciliation: content/ v1–v3 strays removed per the 2026-06-03 canonical-file decision; the v4 lineage won the 2026-05-30 retelling conflict; root v2 stray deleted, its archive copy committed.
 - 2026-06-05 (v4) — Shared Design System Infrastructure decision propagated (studio-memory `3493459`): shared-system carve-outs added to Step 07 body, Tools Row 02 `/sync-figma-token` row, Card 04 Figma paragraph, and Brain Row 02 desc; kickoff gate sentence added to Step 02 body; canonical-template propagation sentence added to Step 05 body. Mapping manifest bootstrapped at `_config/content-map.md`.
@@ -103,7 +104,7 @@ The **Planner** turns a one-paragraph brief into a full product spec with sprint
 
 The **Generator** builds the sprint. Reads the layered chain — `CLAUDE.md` → `WORKSPACE.md` → the sprint's `CONTEXT.md` — and loads only the files named in that CONTEXT.md's Inputs table. Implements one section, runs the CONTEXT.md audit checklist before opening the PR, ships a PR with a live preview URL and four breakpoint snapshots. Dispatched as a background session in Agent View so it runs without my attention.
 
-The **Evaluator** grades the sprint against Originality, Design Quality, Craft, and Functionality. Skeptical by design. Catches issues before I review. Single-pass: never put a `/goal` on it.
+The **Evaluator** grades the sprint against Originality, Design Quality, Craft, and Functionality. Skeptical by design. Catches issues before I review. Single-pass: never put a `/goal` or `/loop` on it.
 
 I do four things: brief, approve, review, merge. I am the only one who pushes to main.
 
@@ -119,7 +120,7 @@ Link: "See where each agent reads from →"
 ### Card 04 — The Tools (EXPANDED)
 Media: MAX, DESIGN, COWORK, FIGMA quadrants. Hint: "4 surfaces · 1 token pool"
 
-**Claude Max** ($100/mo) gives me Opus and Sonnet on a shared token pool. Sonnet for planning, content, scaffolding; Opus for sprint builds and evaluator passes.
+**Claude Max** ($100/mo) gives me Opus and Sonnet on a shared token pool. Sonnet for content and scaffolding; Opus for sprint builds; Fable for planning and evaluator passes.
 
 **Claude Design** runs on Opus 4.8 with its own independent weekly limit that does not touch the Max pool. I use it for visual inspiration before committing anything to Figma.
 
@@ -159,7 +160,7 @@ Link: "See the full tool tables →"
 ### STEP 02 — Run the Planner
 - Badge: Prompt Claude · Tool: Claude.ai
 - Summary: Brief in, full product spec out. Sprint breakdown, success criteria, tech stack.
-- Body: The Planner runs in the Shokunin Crafthouse project on Claude.ai. Project knowledge carries a verbatim mirror of the studio core plus the learnings index — canonical lives in the folder, and the mirror is never edited in place. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.
+- Body: The Planner runs on Fable 5 in the Shokunin Crafthouse project on Claude.ai. Project knowledge carries a verbatim mirror of the studio core plus the learnings index — canonical lives in the folder, and the mirror is never edited in place. Every Claude Code session uses the layered loader instead (Steps 09 and 10). Here, the full studio context informs spec generation in one shot.
 - **What it returns:** project overview, complete deliverables list, design direction tied to the seven Shokunin principles, technical stack, three to six sprints, and specific success criteria per sprint.
 - **Approval gate one — Concept.** I read the spec carefully and edit anything I disagree with before moving on.
 - Before any design work starts, one more decision is logged in `decisions/decisions.md`: does this project consume the Shokunin shared design system? Branded properties link it and skip token extraction in Step 07. Client work self-hosts. A branded property that bypasses the shared system needs a written reason — logged, not assumed.
@@ -352,10 +353,9 @@ Link: "See the full tool tables →"
 - Summary: Contract file first. Then implementation. PR opens with a live preview URL.
 - Body: The Generator reads the layered chain (`CLAUDE.md` → `WORKSPACE.md` → the sprint `CONTEXT.md` at `stages/03-build/[sprint-name]/CONTEXT.md`), loads only what the CONTEXT.md Inputs table names, pulls the Sandbox frames via Figma MCP, and proposes a contract. Once I approve, Claude writes the approved contract into the CONTEXT.md Contract field, updates Status to `approved`, and commits the file before any code lands.
 - Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at `/_previews/[N]/`. Before opening the PR, Claude runs every item in the CONTEXT.md Audit checklist and updates Status to `complete`. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.
-- Dispatched via Agent View as a background session, so the build runs without my attention. Optional `/goal` drives it through to a ready-to-review PR after the contract file is approved and committed. Use `/effort xhigh` — the effort tier specifically added for coding and agentic tasks on Opus 4.8, sitting between `high` and `max`.
+- Dispatched via Agent View as a background session, so the build runs without my attention. Optional `/goal` drives it through to a ready-to-review PR after the contract file is approved and committed.
 - The build runs under the autonomy contract. Any call that is reversible, within studio standards, and within scope gets made and logged to `decisions/decisions.md` via `sc-adr` — not asked. Before the PR opens, `sc-verify` runs the Gate-3 self-check; failures are fixed or flagged, never silently presented. The PR, preview URL, decisions since the last gate, and verify report arrive together as one gate packet. Scope changes, money, live services, and brand direction still come to me. Always.
 - Prompt:
-  > /effort xhigh
   > /caveman
   >
   > Read WORKSPACE.md first. Then read the sprint CONTEXT.md at:
@@ -391,10 +391,10 @@ Link: "See the full tool tables →"
 - Summary: Fresh session. Single pass. Four criteria scored. PASS or FAIL.
 - Body: If the Generator needs to apply targeted cleanup before the Evaluator runs, `/code-review --fix` (v2.1.152+) writes review findings directly to the working tree in one pass. Before the Evaluator session, run `/ultrareview` on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.
 - `sc-verify` (the Generator's self-check, Step 09) and the Evaluator are complementary, not redundant. Self-verify first — cheap, catches the builder's own obvious failures. Independent audit second — catches what the builder is blind to. A sprint that passes `sc-verify` can still fail the Evaluator. That is the system working.
-- A fresh Claude Code session, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.
+- A fresh Claude Code session on Fable 5, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.
 - Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail.
 - In a team context, the Evaluator pass is necessary but not sufficient. The AI grades Functionality against code and visual snapshots — not against observed behavior. User testing runs here, between the Evaluator result and the merge decision. Which tool depends on company stage.
-- **Never put a `/goal` on this session.** The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.
+- **Never put a `/goal` or `/loop` on this session.** The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.
 - Prompt:
   > /caveman
   >
@@ -561,20 +561,21 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 | Build with the agent | Claude Code (terminal) | All code work — scaffold, build, deploy. Background sessions in Agent View. |
 | Protect main from accidents | GitHub branch ruleset | PR required, force-pushes blocked, deletions restricted. I am the only approver. |
 | Constrain Claude's reach | `~/.claude/settings.json` | Allowed paths only. SSH, keychains, personal docs blocked. |
-| Keep budget low by default | Sonnet 4.6 | Default model. Opus only when the task explicitly demands it. |
+| Keep budget low by default | Sonnet 4.6 | Sonnet 4.6 default. Opus 4.8 for sprint builds. Fable 5 only for Planner and Evaluator passes, the two judgment seats. |
 
 ### Tools Row 02 — Project Workflow
 
 | If I need to… | Use this | Why |
 |---------------|----------|-----|
-| Turn a brief into a spec | Claude.ai Planner | Studio context already in project knowledge. One pass. |
+| Turn a brief into a spec | Claude.ai Planner (Fable 5) | Studio context already in project knowledge. One pass. |
 | Explore visual direction | Claude Design (Opus 4.8) ★ | Separate weekly limit. Does not draw from Max pool. Free creative resource within its own cap. |
 | Translate Figma into code | Claude Code + Figma MCP | Reads Sandbox, writes code. `generate_figma_design` also writes approved frames to the Figma Production page. |
 | Sync Figma tokens into the repo | `/sync-figma-token` | Reads the Sandbox page, extracts tokens, syncs to `_config/design-system/token-map.md`. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting. Bypassed for Shokunin-branded properties, which link the shared CSS from brand.shokunincrafthouse.com instead. |
 | Get a live preview on every PR | GitHub Actions preview workflow | Real URL per PR plus snapshot screenshots in the PR body. |
 | Run unattended within a phase | `/goal` after contract approval | Claude Code 2.1.139+. Sets a session-scoped completion condition; Haiku checks every turn. Use for Step 4 scaffold and Step 9 sprints. Never on the Evaluator. Always cap with *or stop after N turns*. |
+| Re-run a check on an interval in-session | `/loop` (Claude Code v2.1.71+) | Session-scoped cron. Re-runs a prompt or slash command on an interval; tasks auto-expire after 3 days. In-session monitoring only: CI watch, preview re-checks. Never on the Evaluator. Not a replacement for Cowork scheduled tasks, which persist. |
 | Monitor multiple sprints at once | Agent View (`claude agents`) | Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. `claude agents --json` (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via `/workflows`. |
-| Grade a sprint | Evaluator — fresh Claude Code session | Single-pass audit. Never put `/goal` on it. |
+| Grade a sprint | Evaluator, fresh Claude Code session on Fable 5 | Single-pass audit. Never put `/goal` or `/loop` on it. |
 | Validate decisions with real users | Maze / Lyssna / Dscout | The AI Evaluator grades Functionality from code and snapshots. It cannot replace a real user. Tool scales to company stage — see For Hiring Managers. |
 
 ### Tools Row 03 — Knowledge work
@@ -621,7 +622,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 - The Planner-Generator-Evaluator loop standardizes quality without standardizing creativity. Every designer still owns their craft. The system owns the consistency.
 - At this stage the research function exists or is forming. Lyssna sits between guerrilla testing and enterprise contracts — quantitative benchmarking, custom panels, moderated sessions, no six-figure procurement. It runs after the Evaluator and before Gate 03.
 - Sprint contracts and approval gates create the accountability structure design teams at this stage need, without adding process overhead.
-- The token strategy translates to a team budget: Sonnet for the volume work, Opus for the judgment work, Claude Design as a free creative resource on its own clock.
+- The token strategy translates to a team budget: Sonnet for the volume work, Fable for the judgment work, Claude Design as a free creative resource on its own clock.
 
 ### Tab — Enterprise (1000+)
 **Eyebrow:** It's ~~rocket~~ AI science
