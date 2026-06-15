@@ -1,8 +1,11 @@
 # AI.LEVIBAHN.COM — CONTENT AUDIT
-**Last updated:** 2026-06-11
-**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-11 including the model-confirm pre-session gate and the `sc-design-crit` evaluation lens library.
+**Last updated:** 2026-06-14
+**Purpose:** Canonical content record for ai.levibahn.com. Use this file for future content audits, placement analysis, and copy updates. Reflects all edits through 2026-06-14 including sc-reference-review additions.
 
 **Change log:**
+- 2026-06-14 (v11) — sc-reference-review: two new learnings adopted from "I Cancelled Higgsfield & Built This Claude Skill Instead" (Systems by Vic). Added learnings #49 (Playwright MCP as agent hands) and #50 (SESSION-RESUME.md crash recovery) to studio-memory learnings/INDEX.md. Brain Row 01 Learning 3 rotated to showcase Learning #49. Archived pre-edit state → `_archive/site-content-audit-2026-06-14.md`.
+- 2026-06-13 (v10) — Weekly sweep (2026-06-13). Five additions approved: (1) PostToolUse format-on-save hook + conditional `if` field added to Tools Row 01; (2) CLAUDE.md-via-PR-comment pattern added to Brain Row 01 Studio Memory desc; (3) FigJam MCP skills (`figma-use-figjam`, `generate-project-plan`, `get_figjam`) added as new row in Tools Row 02; (4) Combined with item 1. (5) "Agentic engineering" framing from Karpathy added to Card 03 Agents body. Archived pre-edit state → `_archive/site-content-audit-2026-06-13.md`.
+- 2026-06-13 (v10) — Playwright functional testing added to sprint workflow. Generator writes tests per sprint (tests/[section-name].spec.ts) and runs them against the live preview before opening the PR — failures are fixed and retested before the PR opens. CI test.yml workflow added (Workflow 4 in Step 05) blocks merge until tests pass. Evaluator (Step 10) reads the test file and fails Functionality on missing or shallow tests. Step 04 scaffold adds @playwright/test, playwright.config.ts, tests/ directory, and "test" npm script to every new project. Decision logged in decisions/decisions.md.
 - 2026-06-11 (v9) — `sc-design-crit` evaluation lens library propagated (studio-memory `bc40b32`, PR #37) plus two post-v8 workflow facts. New skill: the Evaluator now grades criteria 2–4 through a named lens library (Nielsen, Gestalt, Gerhardt-Powals, Norman, et al.) and every finding cites its lens — added to Step 10 body, Step 10 Evaluator prompt (read line), Brain Row 03 Quality-system desc, and Tools Row 02 Grade-a-sprint Why. Evaluator Originality criterion hardened (v2.5): Step 10 prompt criterion 1 now gates on slop-blocklist match plus POV-directive execution before scoring, with a Step 10 body sentence to match. Smallest preview breakpoint corrected 360 → 390 in four places (preview-script body, scaffold-prompt viewport + `390.png` filename, Step 09 build-prompt breakpoint line). New-copy em dashes set to comma/colon per the no-em-dash rule. Archived pre-sync state → `_archive/site-content-audit-2026-06-11-pre-sc-design-crit.md`.
 - 2026-06-11 (v8) — §6 model-confirm pre-session gate propagated (studio-memory `a5c87a6`): model-confirm rule added to Workflow section intro — confirm the selected model before the first prompt of every session, Fable 5 is Planner/Evaluator-only, never the default. Archived v7 → `_archive/site-content-audit-2026-06-11.md`.
 - 2026-06-11 (v7) — Fable 5 model-assignment pass plus runbook copy edits (branch `copy/fable-runbook-updates`). Fable 5 assigned to the Planner and Evaluator seats only: Card 04 (Sonnet/Opus/Fable split), Tools Row 01 "Keep budget low" Why, Tools Row 02 Turn-a-brief (`Claude.ai Planner (Fable 5)`) and Grade-a-sprint cells, Step 02 body, Step 10 body. Generator stays Opus 4.8; Sonnet 4.6 remains default. Step 09: `/effort xhigh` removed from body and prompt (retired). Step 10 "Never put a `/goal` on this session" → "`/goal` or `/loop`", with Card 03 and the Tools Row 02 Grade-a-sprint Why aligned to match. New Tools Row 02 `/loop` row added after `/goal` (session-scoped cron, v2.1.71+, in-session monitoring only, never on the Evaluator). For Hiring Managers: "Opus for the judgment work" → "Fable for the judgment work". Em dashes in all touched copy converted to comma/colon per the no-em-dash rule. Decision logged in `decisions/decisions.md` (2026-06-11). Archived v6 → `_archive/site-content-audit-v6-2026-06-07.md`.
@@ -70,7 +73,7 @@ Every Claude Code session loads context in five layers, in order: root `CLAUDE.m
 
 The sprint CONTEXT.md is the layer that does the work. It names the exact files (and sections) to load, the contract Claude is held to, and the audit checklist run before the PR opens. `references/` carry stable inputs for the sprint; `output/` carries this-run artifacts.
 
-The memory grows. After each shipped project, `sc-learn` captures real learnings — the Next.js `trailingSlash` trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern — each one a file in `learnings/`, indexed in a single line. The next sprint starts with that knowledge already addressable.
+The memory grows. After each shipped project, `sc-learn` captures real learnings — the Next.js `trailingSlash` trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern — each one a file in `learnings/`, indexed in a single line. The next sprint starts with that knowledge already addressable. CLAUDE.md updates work in team contexts too — tag `@claude` in a GitHub PR review comment with a proposed rule and Claude applies the change to CLAUDE.md automatically, keeping institutional memory current without a separate commit workflow.
 
 Stats: 5 memory layers · 7 design principles · ∞ accumulated learnings
 
@@ -108,7 +111,7 @@ The **Generator** builds the sprint. Reads the layered chain — `CLAUDE.md` →
 
 The **Evaluator** grades the sprint against Originality, Design Quality, Craft, and Functionality. Skeptical by design. Catches issues before I review. Single-pass: never put a `/goal` or `/loop` on it.
 
-I do four things: brief, approve, review, merge. I am the only one who pushes to main.
+I do four things: brief, approve, review, merge. I am the only one who pushes to main. This is agentic engineering — orchestrating agents with the oversight and quality discipline of engineering, not casual prompting.
 
 Stats: 3 AI agents · 1 human approver · 0 merges without me
 
@@ -227,20 +230,28 @@ Link: "See the full tool tables →"
   >    - If dark mode is in scope, captures both modes (8 PNGs total)
   >    - Tears the server down on completion or failure (use try/finally)
   >    Add an npm script: "preview": "node scripts/preview.mjs"
-  > 8. Track /previews/ in the repo (do NOT add it to .gitignore).
-  > 9. Initialize git, commit everything, and push to main on GitHub.
+  > 8. Add @playwright/test as a dev dependency. Create playwright.config.ts at
+  >    the repo root with:
+  >    - testDir: './tests'
+  >    - BASE_URL read from process.env.BASE_URL (no default — must be supplied)
+  >    - One project: chromium only (CI runs headless; local runs can add browsers)
+  >    - Timeout: 30s per test, 60s per expect
+  >    Create a tests/ directory with a .gitkeep so it commits empty.
+  >    Add an npm script: "test": "playwright test"
+  > 9. Track /previews/ and /tests/ in the repo (do NOT add either to .gitignore).
+  > 10. Initialize git, commit everything, and push to main on GitHub.
   >
   > Report the GitHub URL when done.
 
 ### STEP 05 — Wire deploy and preview workflows
 - Badge: Prompt Claude · Tool: Claude Code
-- Summary: Three GitHub Actions: production deploy, PR preview, preview cleanup.
-- Body: Push to main triggers an rsync to Hostinger production. Every PR opens triggers a preview build at `/_previews/[pr-number]/` with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down.
+- Summary: Four GitHub Actions: production deploy, PR preview, preview cleanup, Playwright tests.
+- Body: Push to main triggers an rsync to Hostinger production. Every PR triggers a preview build at `/_previews/[pr-number]/` with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down. A fourth workflow (test.yml) runs Playwright tests against the live preview and must pass before merge is allowed — it is added to the branch protection required status checks after committing.
 - Claude Code prints the predicted preview URL directly in chat and runs `gh run watch` to confirm the deploy succeeded. No GitHub round-trip to find a URL.
 - I review desktop and mobile from the live URL, not screenshots. The PR closes and the preview tears down on its own.
 - The workflow files themselves are sourced from the canonical templates in studio memory — updated once there and propagated, never edited repo by repo.
 - Prompt:
-  > Create three GitHub Actions workflows for this project. The domain for this project is: [your domain]
+  > Create four GitHub Actions workflows for this project. The domain for this project is: [your domain]
   >
   > WORKFLOW 1 — Production deploy
   > File: .github/workflows/deploy.yml
@@ -265,10 +276,23 @@ Link: "See the full tool tables →"
   > - Trigger: pull_request, types [closed], targeting main
   > - Steps: ssh in via appleboy/ssh-action@v1 and `rm -rf ~/domains/[your domain]/public_html/_previews/${{ github.event.pull_request.number }}/`; post a confirmation comment on the PR.
   >
+  > WORKFLOW 4 — Playwright functional tests
+  > File: .github/workflows/test.yml
+  > - Trigger: pull_request, types [opened, synchronize, reopened], targeting main
+  > - needs: preview-deploy (wait for the preview to be live before running tests)
+  > - Steps:
+  >   - Checkout PR head
+  >   - Setup Node 20 + npm ci
+  >   - Install Playwright browsers: npx playwright install --with-deps chromium
+  >   - Run tests: BASE_URL=https://[your domain]/_previews/${{ github.event.pull_request.number }} npm test
+  >   - On failure: upload test-results/ as an artifact named playwright-report
+  > - This workflow must pass before merge is allowed. Add it to the branch
+  >   protection required status checks for main after committing.
+  >
   > For Next.js: also update next.config.js to read basePath and assetPrefix from process.env.BASE_PATH (defaulting to '').
   > For HTML+CSS: ensure all asset paths are relative (./images/ not /images/).
   >
-  > Commit all three workflow files plus any framework config changes to a new branch called add-deploy-and-preview-workflows, and push to GitHub.
+  > Commit all four workflow files plus any framework config changes to a new branch called add-deploy-and-preview-workflows, and push to GitHub.
 
 ### STEP 06 — Explore visual direction in Claude Design
 - Badge: You + Claude · Tool: Claude Design
@@ -381,14 +405,26 @@ Link: "See the full tool tables →"
   > - Mobile-first, all four breakpoints: 390, 768, 1024, 1440
   > - Asset paths must work both at root (production) and at a subpath (PR previews). Use relative paths or read BASE_PATH from env. Do NOT hardcode absolute asset paths like /images/foo.png.
   >
-  > When complete:
-  > - Run `npm run preview [section-name]` to generate snapshot screenshots at all four breakpoints into /previews/[section-name]/
-  > - Create a feature branch called feat/[section-name]
-  > - Before opening the PR, run through every item in the Audit section of stages/03-build/[sprint-name]/CONTEXT.md. Check each item explicitly. If any item fails, fix it first. Update Status to "complete" after all audit items pass.
-  > - Open the PR with: summary, "## Live Preview" placeholder, "## Snapshots" with 4 embedded images
-  > - Print the preview URL in chat as a raw cmd-clickable line: 📱 Preview URL: https://[domain]/_previews/[pr-number]/
-  > - Run `gh run watch --exit-status` on preview-deploy.yml and print ✅ on success / ❌ + failure logs on fail
-  > - Stop and wait — do not proceed to the next section without my approval
+  > When implementation is complete:
+  > 1. Write Playwright tests in tests/[section-name].spec.ts covering:
+  >    - Primary user flows complete without error (navigation works, CTAs are reachable, forms submit or are correctly gated)
+  >    - All interactive elements are reachable at keyboard (tab order, focus states present in DOM)
+  >    - No broken assets (images and fonts return 200, checked via request interception)
+  >    - No console errors on load
+  >    - Page renders without horizontal overflow at 390 and 1440 viewport widths
+  >    Tests run against BASE_URL from env — do not hardcode any URL or localhost.
+  > 2. Create a feature branch called feat/[section-name] and push it
+  > 3. Open a draft PR so the preview-deploy workflow runs and the live preview URL is available
+  > 4. Run `gh run watch --exit-status` on preview-deploy.yml and wait for it to complete
+  > 5. Run the Playwright tests against the live preview:
+  >    BASE_URL=https://[domain]/_previews/[pr-number]/ npm test
+  >    If any test fails: fix the failure, push to the branch, wait for preview to redeploy, rerun tests. Do not proceed until all tests pass against the live preview.
+  > 6. Run `npm run preview [section-name]` to generate snapshot screenshots at all four breakpoints into /previews/[section-name]/
+  > 7. Run through every item in the Audit section of stages/03-build/[sprint-name]/CONTEXT.md. Check each item explicitly. If any item fails, fix it first. Update Status to "complete" after all audit items pass.
+  > 8. Convert the draft PR to ready for review. Update the PR body with: summary, "## Live Preview" with the clickable URL, "## Snapshots" with 4 embedded images, "## Test results" confirming all Playwright tests passed with the test names listed.
+  > 9. Print the preview URL in chat as a raw cmd-clickable line: 📱 Preview URL: https://[domain]/_previews/[pr-number]/
+  > 10. Run `gh run watch --exit-status` on test.yml to confirm CI tests also pass and print ✅ on success / ❌ + failure logs on fail
+  > 11. Stop and wait — do not proceed to the next section without my approval
 
 ### STEP 10 — Evaluate the sprint
 - Badge: Prompt Claude · Tool: Claude Code
@@ -418,6 +454,7 @@ Link: "See the full tool tables →"
   > 1. First, open /previews/[section-name]/ and grade design quality, craft, originality, and functionality from the snapshot images across breakpoints. These are the canonical visual surface — what a real visitor would experience.
   > 2. Second, fetch the live preview URL to confirm: the page returns 200, copy matches the snapshots, asset paths resolve, and there is no obvious structural breakage in the raw HTML. Note: WebFetch returns text only — do not use it to grade any visual criterion.
   > 3. Third, read the code to verify token discipline (every color, font, spacing value comes from token-map.md), accessibility patterns, and that asset paths work both at root and under /_previews/[N]/.
+  > 4. Fourth, read tests/[section-name].spec.ts. Verify the tests cover the primary flows, not just trivial assertions. Flag shallow tests (e.g. "page loads" with no behavioral assertion, tests that always pass regardless of implementation) as a Functionality failure. A test file that does not exist is an automatic Functionality FAIL.
   >
   > Do NOT spin up a local dev server. The live preview URL is already running on Hostinger.
   >
@@ -425,7 +462,7 @@ Link: "See the full tool tables →"
   > 1. Originality — two hard gates, then judgment (score out of 10): (a) any match against the slop-blocklist fails this criterion outright; (b) every POV directive for the sprint must be executed, or it fails; (c) only if both pass, judge deliberate creative decisions beyond the POV.
   > 2. Design Quality — coherent whole, distinct mood, not a template (score out of 10)
   > 3. Craft — typography, spacing, color harmony, contrast ratios (REQUIRED PASS — cannot ship with craft failures)
-  > 4. Functionality — users can complete tasks without confusion (REQUIRED PASS — cannot ship with broken flows)
+  > 4. Functionality — users can complete tasks without confusion, Playwright tests exist and are non-trivial (REQUIRED PASS — cannot ship with broken flows or missing/shallow tests)
   >
   > Be skeptical. Uncertainty = fail. Do not praise mediocre work.
   >
@@ -491,9 +528,9 @@ POST requests get 308-redirected and never reach the handler. Stripe webhooks fa
 **Supabase service role needs explicit `GRANT` even with RLS disabled.**
 Disabling row-level security does not grant table access. Backend writes fail with permission errors until `grant all on table … to service_role;` is added in every table-creation migration.
 
-**Learning 3 — 2026-04-26**
-**Container queries for proportional SVG lockups.**
-SVG headline lockups that scale with their column (not the viewport) want `container-type: inline-size` on the parent + `cqi` sizing on the SVG. Viewport units break at intermediate widths when the column is narrower than the viewport.
+**Learning 3 — 2026-06-14**
+**Playwright MCP as agent hands for web UIs without APIs.**
+When a tool has no API or MCP connector, `claude mcp add playwright npx @playwright/mcp@latest` gives Claude Code a general-purpose browser-control layer. Use it for Cloudinary, Vercel UI, or any SaaS that renders in a browser but exposes no programmatic interface.
 
 ### Brain Row 02 — Workspace architecture
 **Desc:** Every project clones from the same template. `WORKSPACE.md` defines the project. `WORKFLOW.md` defines the stages and approval gates. `token-map.md` is the design system source of truth for projects with an isolated token set; Shokunin-branded properties consume the shared system at brand.shokunincrafthouse.com. Stages live in numbered folders so the lifecycle is visible at a glance.
@@ -568,6 +605,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 | Build with the agent | Claude Code (terminal) | All code work — scaffold, build, deploy. Background sessions in Agent View. |
 | Protect main from accidents | GitHub branch ruleset | PR required, force-pushes blocked, deletions restricted. I am the only approver. |
 | Constrain Claude's reach | `~/.claude/settings.json` | Allowed paths only. SSH, keychains, personal docs blocked. |
+| Automate post-write actions or scope hooks to specific tools | PostToolUse hook + `if` field | A PostToolUse hook fires after every tool call — use it for format-on-save after file writes without IDE dependency. Scope hooks to specific tool patterns with the `if` field: `"if": "Bash(git *)"` fires only on Bash calls matching `git *`. Reduces overhead; hooks run only where they're needed. |
 | Keep budget low by default | Sonnet 4.6 | Sonnet 4.6 default. Opus 4.8 for sprint builds. Fable 5 only for Planner and Evaluator passes, the two judgment seats. |
 
 ### Tools Row 02 — Project Workflow
@@ -577,6 +615,7 @@ SVG headline lockups that scale with their column (not the viewport) want `conta
 | Turn a brief into a spec | Claude.ai Planner (Fable 5) | Studio context already in project knowledge. One pass. |
 | Explore visual direction | Claude Design (Opus 4.8) ★ | Separate weekly limit. Does not draw from Max pool. Free creative resource within its own cap. |
 | Translate Figma into code | Claude Code + Figma MCP | Reads Sandbox, writes code. `generate_figma_design` also writes approved frames to the Figma Production page. |
+| Map a project plan or architecture in FigJam | `figma-use-figjam` MCP skill | Three tools: `figma-use-figjam` writes content into FigJam, `generate-project-plan` builds a structured plan diagram, `get_figjam` reads an existing board. Architecture diagram → FigJam → coding agent: sketch the system structure, then the Generator reads the board as sprint context. |
 | Sync Figma tokens into the repo | `/sync-figma-token` | Reads the Sandbox page, extracts tokens, syncs to `_config/design-system/token-map.md`. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting. Bypassed for Shokunin-branded properties, which link the shared CSS from brand.shokunincrafthouse.com instead. |
 | Get a live preview on every PR | GitHub Actions preview workflow | Real URL per PR plus snapshot screenshots in the PR body. |
 | Run unattended within a phase | `/goal` after contract approval | Claude Code 2.1.139+. Sets a session-scoped completion condition; Haiku checks every turn. Use for Step 4 scaffold and Step 9 sprints. Never on the Evaluator. Always cap with *or stop after N turns*. |
