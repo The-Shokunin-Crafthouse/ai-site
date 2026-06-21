@@ -194,10 +194,25 @@ Nothing this week requires a content change to ai.levibahn.com.
 
 ## STEP 8 — NOTIFY
 
-Send a remote dispatch notification to iOS:
-> "Weekly report ready. [N] recommendations waiting in _pending/weekly-update-[date].md. Reply with the numbers to implement, or 'none'."
+Send the notification via the **sentinel pattern** (write the `.msg`, then the
+non-dotfile trigger `coo.notify-ai-site-weekly-YYYY-MM-DD`; `send-briefing.sh`
+delivers it). Do not use osascript.
 
-**Stop here.** Do not proceed until Levi replies.
+**Tag every numbered item with its rating** so the reply is informed by category —
+one line per item, title only, same numbering as the report:
+
+```
+Weekly ai-site update — [YYYY-MM-DD] · [N] items ([N] 🔴 · [N] 🟡 · [N] ⚪)
+🔴 1. [Short title]
+🔴 2. [Short title]
+🟡 3. [Short title]
+⚪ 4. [Short title]
+Reply with numbers (e.g. "1 3"), "all", or "none".
+```
+
+**Stop here.** Replying to the text is the trigger — `automation/reply-watcher.sh`
+records the reply and launches Steps 9–10 automatically (see
+`studio-memory/automation/README.md`). Do not proceed in this run.
 
 ---
 
@@ -239,20 +254,26 @@ If items approved:
 Fetch https://ai.levibahn.com and compare current live content against the updated files above.
 Identify sections where the live site does not match the updated markdown.
 Generate the minimal code changes required to bring the live site into sync.
-Commit to a feature branch, open a PR. Do not deploy directly to main.
 
-## Approval gate
-Levi must review and merge the PR before changes go live.
+## Deploy (hands-off, 2026-06-21)
+Commit the content + code changes, push, and let the deploy run. If `main` is
+branch-protected, push a branch + open a PR + `gh pr merge --merge --admin` so it
+still lands and deploys. No manual merge step.
 ```
 
 5. **Move processed reports.** Move the `_reports/weekly-report-[date].md` into `_archive/reports/`.
+
+6. **Upload reminder.** The site-content-audit version bump still needs to be mirrored
+   into Claude project knowledge manually — note the new `v[N]` filename in the
+   completion text.
 
 ---
 
 ## STEP 10 — NOTIFY COMPLETION
 
-Send a remote dispatch notification to iOS:
-> "Files updated. Open Claude Code and run: read _pending/approved-[date].md and execute. Also upload site-content-audit-v[N].md to Claude project knowledge and delete the previous version."
+Send the completion notification via the sentinel pattern (non-dotfile trigger
+`coo-apply.notify-ai-site-weekly-apply-YYYY-MM-DD`):
+> "Weekly ai-site apply complete — [N] items written, pushed & deploying. Upload site-content-audit-v[N].md to the Claude project and delete the previous version."
 
 ---
 
@@ -260,7 +281,7 @@ Send a remote dispatch notification to iOS:
 
 - Never modify `content/` files without archiving first.
 - Never delete from `_archive/`.
-- Never proceed past Step 8 without explicit approval from Levi.
-- Never touch code, deployment config, or anything outside `~/Projects/shokunin-crafthouse/ai-site/`.
+- Never proceed past Step 8 without approval. Levi's iMessage reply IS that approval (recorded by `automation/reply-watcher.sh`); the apply pass acts only on the approved numbers.
+- Stay within `~/Projects/shokunin-crafthouse/ai-site/` for content and the site's own code/deploy. Do not touch other repos.
 - One approval cycle per week. If Levi replies to an old notification, check the date before processing.
 - If any file in `content/` is missing or unreadable, stop and report before proceeding.
