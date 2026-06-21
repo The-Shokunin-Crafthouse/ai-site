@@ -925,3 +925,35 @@ Step 10 body, For Hiring Managers. Content audit bumped to v7
 - **Route the Generator to Fable 5 too** — Rejected. Sprint builds are
   token-heavy, multi-turn execution where Opus 4.8's depth earns its
   place; the judgment seats are where Fable's single-pass profile fits.
+
+## 2026-06-20 — Walkthrough film animates on a GSAP timeline used as a deterministic master clock
+**Stage:** 02-design
+**Status:** accepted
+
+**Context.** The new ~90-second walkthrough film (added above the overview rows) needs a
+play/pause/scrub timeline with chapter markers and click-to-jump, scrubbable to any point
+exactly. The site is a no-build static stack whose only motion vocabulary is popmotion
+springs and hand-rolled rAF; it has never loaded GSAP. The film is timeline-heavy,
+layered, multi-scene choreography. Two engine paths were on the table: a hand-rolled rAF
+master clock, or GSAP.
+
+**Decision.** Animate the film on a single `gsap.timeline({ paused: true })` used as the
+master clock — GSAP core only, loaded via import map pinned to an exact CDN version. The
+timeline uses eased tweens (no spring/inertia); scrubbing and chapter jumps drive it via
+`seek()` / `progress()` / labels.
+
+**Consequences.**
+**Easier:** scrub-to-any-point, labels, nesting, and robust cross-browser timing come for
+free instead of as bespoke engine code; less bug surface; richer choreography is tractable;
+GSAP is already studio motion vocabulary.
+**Harder:** first runtime dependency on the vanilla site (a GSAP-core payload to lazy-load
+and a pinned import-map line to maintain); springs/inertia are off-limits on the timeline
+because they are not deterministically scrubbable; paid plugins (MorphSVG, etc.) remain a
+licensing decision, never a free reach.
+
+**Alternatives considered.**
+- **Hand-rolled rAF master clock (zero dependency)** — Rejected. Re-implements a timeline
+  GSAP already does well; more engine code and bug surface for this complexity, with no
+  visual-quality gain (the pixel ceiling is identical either way).
+- **Spring/inertia-physics timeline** — Rejected. Velocity-dependent motion cannot be
+  scrubbed to an arbitrary point, which breaks the core requirement.
