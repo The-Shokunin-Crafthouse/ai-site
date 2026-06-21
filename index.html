@@ -1628,6 +1628,16 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="Why">Allowed paths only. SSH, keychains, personal docs blocked.</td>
                     </tr>
                     <tr>
+                      <td data-label="If I need to…">Block specific tool inputs or subagent models</td>
+                      <td data-label="Use this"><code>Tool(param:value)</code> permission syntax (v2.1.178)</td>
+                      <td data-label="Why">Parameter-level matching. <code>Agent(model:opus)</code> blocks Opus subagents; <code>Bash(command:rm*)</code> blocks destructive shell commands. More surgical than blocking the tool entirely.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Automate post-write actions or scope hooks to specific tools</td>
+                      <td data-label="Use this">PostToolUse hook + <code>if</code> field</td>
+                      <td data-label="Why">A PostToolUse hook fires after every tool call — use it for format-on-save after file writes without IDE dependency. Scope hooks to specific tool patterns with the <code>if</code> field: <code>"if": "Bash(git *)"</code> fires only on Bash calls matching <code>git *</code>. Reduces overhead; hooks run only where they're needed.</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Keep budget low by default</td>
                       <td data-label="Use this">Sonnet 4.6</td>
                       <td data-label="Why">Sonnet 4.6 default. Opus 4.8 for sprint builds. Fable 5 only for Planner and Evaluator passes, the two judgment seats.</td>
@@ -1668,6 +1678,11 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page.</td>
                     </tr>
                     <tr>
+                      <td data-label="If I need to…">Map a project plan or architecture in FigJam</td>
+                      <td data-label="Use this"><code>figma-use-figjam</code> MCP skill</td>
+                      <td data-label="Why">Three tools: <code>figma-use-figjam</code> writes content into FigJam, <code>generate-project-plan</code> builds a structured plan diagram, <code>get_figjam</code> reads an existing board. Architecture diagram → FigJam → coding agent: sketch the system structure, then the Generator reads the board as sprint context. Figma MCP server expanded June 16 to cover Slides, FigJam, Make, and the Figma design agent. <code>download_assets</code> exports production assets directly from any Figma file.</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Sync Figma tokens into the repo</td>
                       <td data-label="Use this"><code>/sync-figma-token</code></td>
                       <td data-label="Why">Reads the Sandbox page, extracts tokens, syncs to <code>_config/design-system/token-map.md</code>. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting. Bypassed for Shokunin-branded properties, which link the shared CSS from brand.shokunincrafthouse.com instead.</td>
@@ -1696,6 +1711,16 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="If I need to…">Grade a sprint</td>
                       <td data-label="Use this">Evaluator, fresh Claude Code session on Fable 5</td>
                       <td data-label="Why">Single-pass audit. Never put <code>/goal</code> or <code>/loop</code> on it. Grades through the <code>sc-design-crit</code> lens library; findings cite named frameworks.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Change any session setting mid-session</td>
+                      <td data-label="Use this"><code>/config key=value</code> (v2.1.181)</td>
+                      <td data-label="Why">Set any config inline: <code>/config thinking=false</code>, <code>/config effort=low</code>. <code>/config --help</code> lists all keys. Faster than menus; takes effect immediately.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Share session output as a live page</td>
+                      <td data-label="Use this">CC Artifacts (beta, Team/Enterprise)</td>
+                      <td data-label="Why">Turns a Claude Code session into a shareable HTML page at a private URL. PR walkthroughs, dashboards, release checklists.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Validate decisions with real users</td>
