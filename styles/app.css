@@ -3730,7 +3730,9 @@ html[data-sheet-open="true"] canvas[data-grain] {
 }
 .film svg .film-svg__display {
   font-family: var(--font-film-display);
-  font-weight: 300;
+  /* v2: Roman (400), not Light — the display words are primary kinetic events
+     now, not ambient labels, so they carry more weight. */
+  font-weight: 400;
   letter-spacing: -0.01em;
 }
 
@@ -3954,5 +3956,34 @@ html[data-sheet-open="true"] canvas[data-grain] {
 /* Hover affordances only on real pointers (match the site's gate). */
 @media (hover: hover) and (pointer: fine) {
   .film__play:hover { background: var(--bg-surface-2); }
+}
+
+/* ===== Film v2 — ambient background motion =====
+   The dot-grid + scan bar (built in walkthrough.js, behind the scenes) animate
+   on infinite CSS keyframes, INDEPENDENT of the GSAP timeline. This keeps the
+   frame alive even while the film is paused or being scrubbed, without making
+   tl.duration() infinite. Reduced-motion disables them entirely (the timeline's
+   own reduced-motion path already delivers the static step-through). */
+.film [data-bg-grid] {
+  animation: film-grid-drift 9s ease-in-out infinite;
+  will-change: transform;
+}
+.film [data-bg-scan] {
+  opacity: 0.06;
+  animation: film-scan 4.5s linear infinite;
+  will-change: transform;
+}
+@keyframes film-grid-drift {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(10px, -8px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes film-scan {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(1370px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .film [data-bg-grid] { animation: none; }
+  .film [data-bg-scan] { animation: none; opacity: 0; }
 }
 
