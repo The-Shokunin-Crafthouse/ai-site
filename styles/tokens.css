@@ -6,6 +6,31 @@
   --font-display: var(--font-body);
   --font-mono: "Cascadia Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
 
+  /* Film-scoped display face (walkthrough section only). Neue Haas Grotesk is
+     the studio brand display face; self-hosted subset declared in app.css.
+     Scoped to its own token so it never rebinds the site-wide --font-display
+     (Inter today — retyping the whole site is a separate decision, not the
+     film's job). NHG Display subsets are self-hosted (app.css @font-face);
+     GentonaLight stays in the chain as the font-display:optional fallback. */
+  --font-film-display: "Neue Haas Grotesk", "GentonaLight", sans-serif;
+
+  /* Walkthrough film STAGE interior — a constant dark "screen" palette,
+     intentionally NOT mode-following: the SVG systems-diagram reads identically
+     in light and dark, like a video frame, while the film's DOM captions +
+     transport below it DO follow page mode via the standard tokens. The site's
+     surface ladder (bg-recessed/surface-2/subtle) collapses to near-identical
+     light grays in light mode, so the diagram needs its own depth ladder to
+     keep filled-plane elevation legible. Warm-dark base per the P3 near-black
+     learning (anchored warmer than pure black). Used only inside #walkthrough.
+     Defined once here and never overridden in .dark — that is the point. */
+  --film-ground: #0d0c0b;    /* stage backdrop */
+  --film-plane-1: #1b1a18;   /* lowest plane */
+  --film-plane-2: #26231f;   /* mid plane */
+  --film-plane-3: #322e29;   /* raised plane */
+  --film-fg: #d0cdca;        /* primary readout text on stage */
+  --film-fg-dim: #a39c93;    /* secondary readout text on stage — AA (>=4.96:1) on every film plane incl. plane-3 */
+  --film-fg-quiet: #545351;  /* tertiary marks / inactive on stage */
+
   /* Typography — weights. Note: --font-light is 100 (Inter Thin) for
      backwards compat with existing rules — not Inter's "Light" 300 cut. */
   --font-light: 100;

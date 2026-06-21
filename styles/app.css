@@ -18,6 +18,31 @@
   src: url("../fonts/Gentona_Light.woff2") format("woff2");
 }
 
+/* Neue Haas Grotesk — display face for the walkthrough film ONLY (referenced
+   via --font-film-display, never the site-wide --font-display). Self-hosted
+   Latin subsets of the NHG Display cuts; font-display:optional so a slow/absent
+   file falls back to Gentona with no FOIT/FOUT. Light (45) → weight 300 for the
+   big editorial display words; Roman (55) → weight 400 for the caption line.
+   Subset (commit only these ~7KB cuts, not the full family) via:
+     python3 -m fontTools.subset \
+       "Neue Haas Grotesk Display Family/NeueHaasGrotDisp-{45Light,55Roman}.woff2" \
+       --flavor=woff2 --layout-features=kern,liga,calt \
+       --unicodes="U+0020-007E,U+00A0-00FF,U+2013,U+2014,U+2018,U+2019,U+201C,U+201D,U+2022,U+2026,U+2192" */
+@font-face {
+  font-display: optional;
+  font-family: "Neue Haas Grotesk";
+  font-weight: 300;
+  font-style: normal;
+  src: url("../fonts/NeueHaasGrotesk-Display-Light.woff2") format("woff2");
+}
+@font-face {
+  font-display: optional;
+  font-family: "Neue Haas Grotesk";
+  font-weight: 400;
+  font-style: normal;
+  src: url("../fonts/NeueHaasGrotesk-Display-Roman.woff2") format("woff2");
+}
+
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; }
 html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote { margin: 0; padding: 0; }
@@ -3599,5 +3624,335 @@ html[data-sheet-open="true"] canvas[data-grain] {
    yellow flash instead. */
 @media (hover: none) and (pointer: coarse) {
   .hover-trace { display: none !important; }
+}
+
+/* ============================================================
+   Walkthrough film (#walkthrough) — additive section between hero
+   and overview. Silent, scrubbable 90-second SVG systems diagram.
+   Engine: scripts/walkthrough.js (GSAP timeline as master clock).
+   Every value resolves to a token; no raw hex. Forms are filled
+   planes with elevation — no outline strokes (studio tell).
+   ============================================================ */
+.film {
+  padding-block: var(--space-20);
+  position: relative;
+  background: var(--bg-base);
+}
+@media (min-width: 768px) {
+  .film { padding-block: var(--space-24); }
+}
+
+/* Lead-in eyebrow — mono, the section's own "system readout" register. */
+.film__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-sm-line);
+  letter-spacing: var(--tracking-eyebrow-strong);
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.film__eyebrow-dot {
+  width: var(--space-1);
+  height: var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+}
+
+/* Stage frame — a recessed, elevated plane that reserves its box so the
+   lazy SVG + late font never shift layout (CLS guard). aspect-ratio
+   matches the SVG viewBox 1200x675 = 16:9, so the box is correct before
+   the SVG paints. */
+.film__stage-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--film-ground);
+  box-shadow: var(--shadow-elevated);
+  contain: layout paint;
+}
+
+/* Visually-hidden text alternative for the film (the SVG stage is aria-hidden;
+   meaning lives here + in the caption rail for AT). Standard clip pattern. */
+.film__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Poster + animated stage stack in the same box; poster is the no-JS /
+   pre-play baseline (real markup, LCP-safe), stage is the GSAP surface. */
+.film__poster,
+.film__stage {
+  position: absolute;
+  inset: 0;
+}
+.film__poster svg,
+.film__stage svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.film__stage {
+  opacity: 0;
+  transition: opacity var(--dur-standard) var(--ease-out-strong);
+}
+.film__poster {
+  opacity: 1;
+  transition: opacity var(--dur-reveal) var(--ease-out-strong);
+}
+/* Once the engine starts (play or reduced-motion step), the stage owns the
+   frame and the poster yields. data-film-ready is set by the engine. */
+.film[data-film-ready="true"] .film__stage { opacity: 1; }
+.film[data-film-ready="true"] .film__poster { opacity: 0; pointer-events: none; }
+
+/* In-SVG annotation labels — mono, the diagram's own readout. Set leading
+   + tracking explicitly so no default leaks. Colors come from per-node
+   fills in the SVG (token vars), not here. */
+.film svg text {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  dominant-baseline: middle;
+  fill: var(--film-fg-dim);
+}
+.film svg .film-svg__display {
+  font-family: var(--font-film-display);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+/* Caption rail — real DOM text (selectable, AT-readable), not baked into
+   the SVG. One chapter title (NHG display) + one mono caption line; only
+   the active chapter's pair is shown. min-height reserves two lines so the
+   rail never reflows as captions swap. */
+.film__captions {
+  margin-top: var(--space-6);
+  min-height: calc(var(--space-12) + var(--space-2));
+  display: grid;
+}
+.film__caption {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-standard) var(--ease-out-strong);
+}
+.film__caption[data-active="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+.film__caption-chapter {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  /* fg-secondary, not fg-tertiary: tertiary fails AA on bg-base (2.54:1 dark) */
+  color: var(--fg-secondary);
+  margin-bottom: var(--space-1);
+}
+.film__caption-line {
+  display: block;
+  font-family: var(--font-film-display);
+  font-weight: var(--font-regular);
+  font-size: var(--text-body-lg-size);
+  line-height: var(--text-body-lg-line);
+  color: var(--fg-primary);
+  max-width: 52ch;
+}
+@media (min-width: 768px) {
+  .film__caption-line {
+    font-size: var(--text-quote-size);
+    line-height: var(--text-quote-line);
+  }
+}
+
+/* ===== Transport (player) ===== */
+.film__transport {
+  margin-top: var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  opacity: 1;
+  transition: opacity var(--dur-standard) var(--ease-out-strong);
+}
+/* Auto-hide while playing + idle. Never hides while paused or focus-within
+   (engine clears data-controls on focusin / pause). */
+.film[data-controls="hidden"] .film__transport {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Play / pause — filled plane, elevation, no stroke. Five states. */
+.film__play {
+  flex: none;
+  width: var(--space-10);
+  height: var(--space-10);
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  color: var(--fg-primary);
+  box-shadow: var(--shadow-elevated);
+  transition: transform var(--dur-fast) var(--ease-out-strong),
+              background-color var(--dur-fast) var(--ease-out-strong);
+}
+.film__play svg { width: 20px; height: 20px; fill: currentColor; }
+.film__play .film__icon-pause { display: none; }
+.film[data-playing="true"] .film__play .film__icon-play { display: none; }
+.film[data-playing="true"] .film__play .film__icon-pause { display: block; }
+.film__play:active { transform: scale(var(--press-scale-button)); }
+.film__play:disabled { opacity: 0.4; cursor: default; }
+
+/* Clock — mono, AA on bg-base. */
+.film__clock {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  line-height: 1;
+  color: var(--fg-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Scrub — role=slider. Track is filled (no stroke); accent fill; ticks are
+   real buttons for direct chapter jump. Generous vertical hit-slop. */
+.film__scrub {
+  position: relative;
+  flex: 1 1 auto;
+  height: var(--space-6);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  touch-action: none;
+}
+.film__scrub-track {
+  position: relative;
+  width: 100%;
+  height: var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--fg-quiet);
+}
+.film__scrub-fill {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 0%;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+}
+.film__scrub-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: var(--space-3);
+  height: var(--space-3);
+  margin-left: calc(var(--space-3) / -2);
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-50%) scale(0.6);
+  opacity: 0;
+  transition: transform var(--dur-fast) var(--ease-out-strong),
+              opacity var(--dur-fast) var(--ease-out-strong);
+  pointer-events: none;
+}
+.film__scrub:hover .film__scrub-thumb,
+.film__scrub:focus-visible .film__scrub-thumb,
+.film[data-scrubbing="true"] .film__scrub-thumb {
+  transform: translateY(-50%) scale(1);
+  opacity: 1;
+}
+.film__scrub:focus-visible {
+  outline: 2px solid var(--fg-primary);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+/* Chapter ticks — small filled marks sitting on the track, each a button.
+   Hit area padded out (44 high) via the ::before, mark stays small. */
+.film__tick {
+  position: absolute;
+  top: 50%;
+  left: var(--at, 0%);
+  width: var(--space-0-5);
+  height: var(--space-2);
+  margin-left: calc(var(--space-0-5) / -2);
+  transform: translateY(-50%);
+  background: var(--fg-tertiary);
+  border-radius: var(--radius-xs);
+  z-index: var(--z-1);
+}
+.film__tick::before {
+  content: "";
+  position: absolute;
+  inset: -18px -8px;
+}
+.film__tick[data-passed="true"] { background: var(--fg-on-accent); }
+.film__tick:focus-visible {
+  outline: 2px solid var(--fg-primary);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
+}
+
+/* Chapter tooltip on tick hover/focus — uses the studio tooltip tokens. */
+.film__tip {
+  position: absolute;
+  bottom: calc(100% + var(--space-2));
+  left: var(--at, 0%);
+  transform: translateX(-50%) translateY(var(--space-1));
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-tooltip);
+  color: var(--fg-tooltip);
+  box-shadow: var(--shadow-tooltip);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-out-strong),
+              transform var(--dur-fast) var(--ease-out-strong);
+  z-index: var(--z-2);
+}
+.film__tip[data-shown="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Reduced-motion: the play control is meaningless (no auto-motion). Hide it,
+   keep chapter ticks + the static stepped frames. Engine also sets
+   data-reduced so it never advances the clock. */
+@media (prefers-reduced-motion: reduce) {
+  .film__play { display: none; }
+  .film__stage { transition: none; }
+  .film__poster { transition: opacity var(--dur-fast) linear; }
+}
+
+/* Coarse pointer — grow the play target and tick hit-slop to >=44px. */
+@media (hover: none) and (pointer: coarse) {
+  .film__play { width: 44px; height: 44px; }
+  .film__scrub { height: 44px; }
+  .film__tick::before { inset: -20px -10px; }
+}
+
+/* Hover affordances only on real pointers (match the site's gate). */
+@media (hover: hover) and (pointer: fine) {
+  .film__play:hover { background: var(--bg-surface-2); }
 }
 
