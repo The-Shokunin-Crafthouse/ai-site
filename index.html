@@ -38,6 +38,19 @@
     })();
   </script>
 
+  <!-- Import map — resolves the bare "gsap" specifier for the walkthrough
+       film's LAZY dynamic import() in scripts/walkthrough.js. GSAP CORE only,
+       pinned to an exact version (no-build import-map pattern; ADR 2026-06-20).
+       The payload is fetched only when the film nears the viewport, so it never
+       blocks first paint. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm"
+    }
+  }
+  </script>
+
   <!-- Inter Variable self-hosted (wght + slnt axes — Google Fonts strips slnt).
        Cascadia Mono (code/prompts) still via Google Fonts. -->
   <link rel="preload" href="./fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
@@ -158,6 +171,238 @@
                Empty wrapper kept so `.hero__inner:has(> .hero__visual[hidden])` still
                drives the single-column hero layout. -->
           <div class="hero__visual reveal" aria-hidden="true" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 1.5 — Walkthrough film
+         A silent, scrubbable 90-second SVG systems diagram: Brain →
+         Workflow → Agents → Tools → lock-up. Additive lead-in; nav-less.
+         Engine: scripts/walkthrough.js (GSAP timeline as master clock).
+         The SVG stage is a constant dark "screen" (film-* tokens); the
+         caption rail + transport below follow page mode. SVG is decorative
+         (aria-hidden) — meaning lives in .film__sr + the caption rail.
+         ============================================================ -->
+    <section class="film" id="walkthrough" data-film aria-label="Watch the system, in 90 seconds">
+      <div class="container">
+        <p class="film__eyebrow"><span class="film__eyebrow-dot" aria-hidden="true"></span>Watch // the system in 90 seconds</p>
+
+        <!-- Text alternative for AT — the SVG is aria-hidden; this carries the
+             full content so screen-reader users get the whole film. -->
+        <p class="film__sr">
+          A ninety-second silent walkthrough of the studio's working system, in four chapters.
+          Chapter one, The Brain: every session starts smarter than the last.
+          Chapter two, The Workflow: thirteen steps to ship, and the gates stay human.
+          Chapter three, The Agents: AI executes; I direct, review, merge.
+          Chapter four, The Tools: no tool does everything, each earns its phase.
+          The four pieces resolve into one working system. Four pieces. One system. Not a slide.
+          Use the transport below to play, pause, scrub, or jump between chapters.
+        </p>
+
+        <div class="film__stage-wrap">
+          <!-- Static poster (no-JS / pre-play baseline) — the lock-up still.
+               Real markup so it costs no layout shift and never blanks. -->
+          <div class="film__poster" data-film-poster>
+            <svg viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <rect x="0" y="0" width="1200" height="675" fill="var(--film-ground)"/>
+              <!-- 2x2 lattice of the four pieces, settled -->
+              <g transform="translate(330 150)">
+                <rect x="0"   y="0"   width="250" height="160" rx="14" fill="var(--film-plane-2)"/>
+                <rect x="290" y="0"   width="250" height="160" rx="14" fill="var(--film-plane-2)"/>
+                <rect x="0"   y="200" width="250" height="160" rx="14" fill="var(--film-plane-2)"/>
+                <rect x="290" y="200" width="250" height="160" rx="14" fill="var(--film-plane-2)"/>
+                <circle cx="28" cy="28" r="6" fill="var(--accent-primary)"/>
+                <circle cx="318" cy="28" r="6" fill="var(--accent-primary)"/>
+                <circle cx="28" cy="228" r="6" fill="var(--accent-primary)"/>
+                <circle cx="318" cy="228" r="6" fill="var(--accent-primary)"/>
+                <text x="28" y="132" fill="var(--film-fg)">BRAIN</text>
+                <text x="318" y="132" fill="var(--film-fg)">WORKFLOW</text>
+                <text x="28" y="332" fill="var(--film-fg)">AGENTS</text>
+                <text x="318" y="332" fill="var(--film-fg)">TOOLS</text>
+              </g>
+              <text class="film-svg__display" x="600" y="600" text-anchor="middle" font-size="52" fill="var(--film-fg)">The working system.</text>
+            </svg>
+          </div>
+
+          <!-- Animated stage. All scenes pre-built; GSAP sets initial states +
+               drives the timeline. Hidden until the engine marks it ready. -->
+          <div class="film__stage" data-film-stage>
+            <svg viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" data-film-svg>
+              <rect x="0" y="0" width="1200" height="675" fill="var(--film-ground)"/>
+
+              <!-- ===== Chapter 01 — The Brain ===== -->
+              <g data-scene="brain">
+                <text class="film-svg__display" data-brain-word x="80" y="150" font-size="130" fill="var(--film-fg-quiet)" opacity="0.16">MEMORY</text>
+                <!-- accreting session layers -->
+                <g data-brain-layers>
+                  <rect data-brain-layer data-i="0" x="430" y="438" width="340" height="16" rx="8" fill="var(--film-plane-1)"/>
+                  <rect data-brain-layer data-i="1" x="430" y="462" width="340" height="16" rx="8" fill="var(--film-plane-1)"/>
+                  <rect data-brain-layer data-i="2" x="430" y="486" width="340" height="16" rx="8" fill="var(--film-plane-1)"/>
+                  <rect data-brain-layer data-i="3" x="430" y="510" width="340" height="16" rx="8" fill="var(--film-plane-1)"/>
+                  <rect data-brain-layer data-i="4" x="430" y="534" width="340" height="16" rx="8" fill="var(--film-plane-1)"/>
+                  <rect data-brain-layer data-i="5" x="430" y="558" width="340" height="16" rx="8" fill="var(--film-plane-1)"/>
+                </g>
+                <!-- memory core -->
+                <g data-brain-core>
+                  <rect x="480" y="300" width="240" height="118" rx="14" fill="var(--film-plane-3)"/>
+                  <circle cx="508" cy="328" r="7" fill="var(--accent-primary)"/>
+                  <text x="528" y="330" fill="var(--film-fg)" font-size="15">STUDIO MEMORY</text>
+                  <text x="504" y="384" fill="var(--film-fg-dim)" font-size="13">memory · context · skills</text>
+                </g>
+                <!-- next session boots pre-loaded -->
+                <g data-brain-next opacity="0">
+                  <rect x="788" y="318" width="172" height="82" rx="12" fill="var(--film-plane-2)"/>
+                  <circle cx="814" cy="344" r="6" fill="var(--accent-primary)"/>
+                  <text x="832" y="346" fill="var(--film-fg)" font-size="13">NEXT SESSION</text>
+                  <text x="812" y="378" fill="var(--film-fg-dim)" font-size="12">boots pre-loaded</text>
+                </g>
+                <text data-brain-note x="80" y="620" fill="var(--film-fg-dim)" font-size="15" opacity="0">every session inherits the last</text>
+              </g>
+
+              <!-- ===== Chapter 02 — The Workflow ===== -->
+              <g data-scene="workflow" opacity="0">
+                <text class="film-svg__display" data-wf-word x="80" y="150" font-size="118" fill="var(--film-fg-quiet)" opacity="0.16">WORKFLOW</text>
+                <rect data-wf-track x="170" y="330" width="860" height="14" rx="7" fill="var(--film-plane-2)"/>
+                <g data-wf-ticks fill="var(--film-fg-quiet)"></g>
+                <g data-wf-gates></g>
+                <text data-wf-note x="170" y="446" fill="var(--film-fg-dim)" font-size="15">13 steps · 4 human gates</text>
+              </g>
+
+              <!-- ===== Chapter 03 — The Agents ===== -->
+              <g data-scene="agents" opacity="0">
+                <text class="film-svg__display" data-agent-word x="80" y="150" font-size="124" fill="var(--film-fg-quiet)" opacity="0.16">AGENTS</text>
+                <g data-agent-lanes>
+                  <g data-agent-lane data-i="0">
+                    <rect x="250" y="210" width="700" height="64" rx="12" fill="var(--film-plane-2)"/>
+                    <text x="278" y="242" fill="var(--film-fg-dim)" font-size="15">PLANNER</text>
+                  </g>
+                  <g data-agent-lane data-i="1">
+                    <rect x="250" y="300" width="700" height="64" rx="12" fill="var(--film-plane-2)"/>
+                    <text x="278" y="332" fill="var(--film-fg-dim)" font-size="15">GENERATOR</text>
+                  </g>
+                  <g data-agent-lane data-i="2">
+                    <rect x="250" y="390" width="700" height="64" rx="12" fill="var(--film-plane-2)"/>
+                    <text x="278" y="422" fill="var(--film-fg-dim)" font-size="15">EVALUATOR</text>
+                  </g>
+                </g>
+                <rect data-agent-token x="540" y="226" width="40" height="32" rx="8" fill="var(--accent-primary)"/>
+                <g data-agent-human>
+                  <rect x="876" y="300" width="54" height="64" rx="12" fill="var(--film-plane-3)"/>
+                  <circle data-agent-human-dot cx="903" cy="332" r="9" fill="var(--hover-mint)"/>
+                </g>
+                <text data-agent-note x="250" y="512" fill="var(--film-fg-dim)" font-size="15">you · direct → review → merge</text>
+              </g>
+
+              <!-- ===== Chapter 04 — The Tools ===== -->
+              <g data-scene="tools" opacity="0">
+                <text class="film-svg__display" data-tools-word x="80" y="150" font-size="128" fill="var(--film-fg-quiet)" opacity="0.16">TOOLS</text>
+                <!-- the workflow track returns (continuity from ch02) -->
+                <rect data-tools-track x="170" y="438" width="860" height="14" rx="7" fill="var(--film-plane-2)"/>
+                <g data-tools-chips>
+                  <g data-tool data-i="0">
+                    <rect x="250" y="214" width="180" height="92" rx="14" fill="var(--film-plane-3)"/>
+                    <circle cx="278" cy="244" r="6" fill="var(--accent-primary)"/>
+                    <text x="296" y="246" fill="var(--film-fg)" font-size="15">CLAUDE</text>
+                    <text x="276" y="282" fill="var(--film-fg-dim)" font-size="12">plan · build · learn</text>
+                  </g>
+                  <g data-tool data-i="1">
+                    <rect x="510" y="214" width="180" height="92" rx="14" fill="var(--film-plane-3)"/>
+                    <circle cx="538" cy="244" r="6" fill="var(--hover-mint)"/>
+                    <text x="556" y="246" fill="var(--film-fg)" font-size="15">FIGMA</text>
+                    <text x="536" y="282" fill="var(--film-fg-dim)" font-size="12">design · spec</text>
+                  </g>
+                  <g data-tool data-i="2">
+                    <rect x="770" y="214" width="180" height="92" rx="14" fill="var(--film-plane-3)"/>
+                    <circle cx="798" cy="244" r="6" fill="var(--accent-primary)"/>
+                    <text x="816" y="246" fill="var(--film-fg)" font-size="15">GITHUB</text>
+                    <text x="796" y="282" fill="var(--film-fg-dim)" font-size="12">ship · review</text>
+                  </g>
+                </g>
+                <text data-tools-note x="170" y="500" fill="var(--film-fg-dim)" font-size="15">right tool · right phase</text>
+              </g>
+
+              <!-- ===== Lock-up ===== -->
+              <g data-scene="lockup" opacity="0">
+                <g data-lockup-grid transform="translate(330 150)">
+                  <g data-lockup-cell data-i="0">
+                    <rect x="0" y="0" width="250" height="160" rx="14" fill="var(--film-plane-2)"/>
+                    <circle cx="28" cy="28" r="6" fill="var(--accent-primary)"/>
+                    <text x="28" y="132" fill="var(--film-fg)" font-size="15">BRAIN</text>
+                  </g>
+                  <g data-lockup-cell data-i="1">
+                    <rect x="290" y="0" width="250" height="160" rx="14" fill="var(--film-plane-2)"/>
+                    <circle cx="318" cy="28" r="6" fill="var(--accent-primary)"/>
+                    <text x="318" y="132" fill="var(--film-fg)" font-size="15">WORKFLOW</text>
+                  </g>
+                  <g data-lockup-cell data-i="2">
+                    <rect x="0" y="200" width="250" height="160" rx="14" fill="var(--film-plane-2)"/>
+                    <circle cx="28" cy="228" r="6" fill="var(--accent-primary)"/>
+                    <text x="28" y="332" fill="var(--film-fg)" font-size="15">AGENTS</text>
+                  </g>
+                  <g data-lockup-cell data-i="3">
+                    <rect x="290" y="200" width="250" height="160" rx="14" fill="var(--film-plane-2)"/>
+                    <circle cx="318" cy="228" r="6" fill="var(--accent-primary)"/>
+                    <text x="318" y="332" fill="var(--film-fg)" font-size="15">TOOLS</text>
+                  </g>
+                </g>
+                <text class="film-svg__display" data-lockup-word x="600" y="600" text-anchor="middle" font-size="52" fill="var(--film-fg)" opacity="0">The working system.</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Caption rail — real DOM text (mono eyebrow + NHG line). Only the
+             active chapter's pair is shown; the engine drives data-active. -->
+        <div class="film__captions" data-film-captions aria-live="off">
+          <p class="film__caption" data-film-caption="0" data-active="true">
+            <span class="film__caption-chapter">01 · The Brain</span>
+            <span class="film__caption-line">Every session starts smarter than the last.</span>
+          </p>
+          <p class="film__caption" data-film-caption="1">
+            <span class="film__caption-chapter">02 · The Workflow</span>
+            <span class="film__caption-line">Thirteen steps to ship. The gates stay human.</span>
+          </p>
+          <p class="film__caption" data-film-caption="2">
+            <span class="film__caption-chapter">03 · The Agents</span>
+            <span class="film__caption-line">AI executes. I direct, review, merge.</span>
+          </p>
+          <p class="film__caption" data-film-caption="3">
+            <span class="film__caption-chapter">04 · The Tools</span>
+            <span class="film__caption-line">No tool does everything. Each earns its phase.</span>
+          </p>
+          <p class="film__caption" data-film-caption="4">
+            <span class="film__caption-chapter">The working system</span>
+            <span class="film__caption-line">Four pieces. One system. Not a slide.</span>
+          </p>
+        </div>
+
+        <!-- Transport — YouTube grammar, all from tokens. role=slider scrub
+             with chapter ticks + tooltip. Engine wires play/scrub/keyboard. -->
+        <div class="film__transport" data-film-transport>
+          <button type="button" class="film__play" data-film-play aria-label="Play" aria-keyshortcuts="Space">
+            <svg class="film__icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="film__icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+          </button>
+          <span class="film__clock" data-film-clock aria-hidden="true">0:00 / 1:30</span>
+          <div
+            class="film__scrub"
+            data-film-scrub
+            role="slider"
+            tabindex="0"
+            aria-label="Seek through the film"
+            aria-valuemin="0"
+            aria-valuemax="90"
+            aria-valuenow="0"
+            aria-valuetext="0:00 of 1:30, Chapter 1: The Brain"
+          >
+            <div class="film__scrub-track" data-film-track>
+              <div class="film__scrub-fill" data-film-fill></div>
+              <div class="film__scrub-thumb" data-film-thumb aria-hidden="true"></div>
+            </div>
+            <!-- chapter ticks injected by the engine (one per marker) -->
+            <div class="film__tip" data-film-tip aria-hidden="true"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1128,9 +1373,9 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <p>Disabling row-level security does not grant table access. Backend writes fail with permission errors until <code>grant all on table … to service_role;</code> is added in every table-creation migration.</p>
                   </li>
                   <li class="learning">
-                    <p class="learning__date">2026-06-14</p>
-                    <p class="learning__head"><strong>Playwright MCP as agent hands for web UIs without APIs.</strong></p>
-                    <p>When a tool has no API or MCP connector, <code>claude mcp add playwright npx @playwright/mcp@latest</code> gives Claude Code a general-purpose browser-control layer — Cloudinary, Vercel UI, any SaaS that renders in a browser but exposes no programmatic interface.</p>
+                    <p class="learning__date">2026-06-20</p>
+                    <p class="learning__head"><strong>A skill isn't done until it fires reliably: self-eval before promotion.</strong></p>
+                    <p>Every <code>sc-*</code> skill runs a quality check before it ships. Anti-patterns first (over-constrained, empty description, missing trigger, bloated, orphan reference), then scored dimensions: triggering accuracy, scope, progressive disclosure, token efficiency. It is the authoring-side counterpart to the verify gate that fronts shipped UI.</p>
                   </li>
                 </ul>
               </div>
@@ -1665,5 +1910,9 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
   <script src="./scripts/tap.js" defer></script>
   <script src="./scripts/grain.js"></script>
   <script src="./scripts/favicon.js" defer></script>
+  <!-- Walkthrough film engine. Classic deferred script (matches the others);
+       lazy-imports GSAP core via the head import map only when the section
+       nears the viewport. Reuses window.AiSiteViewport for breakpoints. -->
+  <script src="./scripts/walkthrough.js" defer></script>
 </body>
 </html>
