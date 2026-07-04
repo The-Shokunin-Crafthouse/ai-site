@@ -194,8 +194,19 @@ Nothing this week requires a content change to ai.levibahn.com.
 
 ## STEP 8 — NOTIFY
 
-Send a remote dispatch notification to iOS:
-> "Weekly report ready. [N] recommendations waiting in _pending/weekly-update-[date].md. Reply with the numbers to implement, or 'none'."
+Send the iMessage via the **two-file sentinel contract** (canonical spec:
+`studio-memory/templates/imessage-notify.md`). Never osascript, never computer-use —
+both fail in scheduled runs. This is TWO SEPARATE FILES:
+
+1. Write the full message body to `_pending/coo.notify-ai-site-weekly-[YYYY-MM-DD].msg`:
+   the categorized item list — one line per item, each tagged 🔴 / 🟡 / ⚪, same
+   numbering as the report, header line with date + counts, closing line
+   `Reply with numbers or "none".`
+2. Only after the `.msg` is confirmed written, create the trigger as an **empty file**:
+   `_pending/coo.notify-ai-site-weekly-[YYYY-MM-DD]` (non-dotfile name, ends in the date).
+3. Verify: `.msg` has the body, trigger is 0 bytes. `send-briefing.sh` (launchd) sends
+   the `.msg` verbatim and stamps `.sent`. A trigger without a `.msg` sends a useless
+   generic fallback text — that is a bug, not a degraded success.
 
 **Stop here.** Do not proceed until Levi replies.
 
