@@ -199,9 +199,12 @@ Send the iMessage via the **two-file sentinel contract** (canonical spec:
 both fail in scheduled runs. This is TWO SEPARATE FILES:
 
 1. Write the full message body to `_pending/coo.notify-ai-site-weekly-[YYYY-MM-DD].msg`:
-   the categorized item list — one line per item, each tagged 🔴 / 🟡 / ⚪, same
-   numbering as the report, header line with date + counts, closing line
-   `Reply with numbers or "none".`
+   the categorized item list — one line per item, each tagged 🔴 / 🟡 / ⚪, header line
+   with date + counts, closing line `Reply with numbers or "none".`
+   **Numbering MUST match `_pending/weekly-update-[YYYY-MM-DD].md` exactly** — the
+   reply is applied against that file's numbered recommendations, so only numbered
+   recommendations get numbers in the text. Skipped findings may follow unnumbered
+   (e.g. `⚪ also seen: …`) or be omitted.
 2. Only after the `.msg` is confirmed written, create the trigger as an **empty file**:
    `_pending/coo.notify-ai-site-weekly-[YYYY-MM-DD]` (non-dotfile name, ends in the date).
 3. Verify: `.msg` has the body, trigger is 0 bytes. `send-briefing.sh` (launchd) sends
