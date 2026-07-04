@@ -372,7 +372,7 @@
       <p>The <strong>Planner</strong> turns a one-paragraph brief into a full product spec with sprint breakdown. Runs in Claude.ai with the studio project active. Cheap. One pass.</p>
       <p>The <strong>Generator</strong> builds the sprint. Reads the layered chain — <code>CLAUDE.md</code> → <code>WORKSPACE.md</code> → the sprint's <code>CONTEXT.md</code> — and loads only the files named in that CONTEXT.md's Inputs table. Implements one section, runs the CONTEXT.md audit checklist before opening the PR, ships a PR with a live preview URL and four breakpoint snapshots. Dispatched as a background session in Agent View so it runs without my attention.</p>
       <p>The <strong>Evaluator</strong> grades the sprint against Originality, Design Quality, Craft, and Functionality. Skeptical by design. Catches issues before I review. Single-pass: never put a <code>/goal</code> or <code>/loop</code> on it.</p>
-      <p>I do four things: brief, approve, review, merge. I am the only one who pushes to main.</p>
+      <p>I do four things: brief, approve, review, merge. I am the only one who pushes to main. This is agentic engineering — orchestrating agents with the oversight and quality discipline of engineering, not casual prompting. A circulating ten-rule extension adds six runtime rules for loop-level self-monitoring — Verification (test before fixing), Debugging discipline, Dependency hygiene, Communication (actionable uncertainty), and four named failure modes (Kitchen Sink, Wrong Abstraction, Optimistic Path, Runaway Refactor) the agent should recognize and stop.</p>
       <ul class="drawer__stats">
         <li><span class="drawer__stat-num">3</span><span class="drawer__stat-label">AI agents</span></li>
         <li><span class="drawer__stat-num">1</span><span class="drawer__stat-label">human approver</span></li>
@@ -1393,14 +1393,19 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="Why">A PostToolUse hook fires after every tool call — use it for format-on-save after file writes without IDE dependency. Scope hooks to specific tool patterns with the <code>if</code> field: <code>"if": "Bash(git *)"</code> fires only on Bash calls matching <code>git *</code>. Reduces overhead; hooks run only where they're needed.</td>
                     </tr>
                     <tr>
+                      <td data-label="If I need to…">Notify an external system when a background agent needs input or finishes</td>
+                      <td data-label="Use this"><code>Notification</code> hook (v2.1.198)</td>
+                      <td data-label="Why">The <code>Notification</code> hook fires on <code>agent_needs_input</code> and <code>agent_completed</code> events — the bridge between a background Claude Code session and any external notification system (iMessage dispatch, Cowork remote, a webhook).</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Run a shell command and have Claude analyze the output</td>
                       <td data-label="Use this"><code>!</code> bash prefix (v2.1.186)</td>
                       <td data-label="Why">Prefix any command with <code>!</code> to run it in bash and have Claude automatically respond to the output — not just add it to context. Opt out with <code>"respondToBashCommands": false</code> in <code>settings.json</code> to restore the previous context-only behavior.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Keep budget low by default</td>
-                      <td data-label="Use this">Sonnet 4.6</td>
-                      <td data-label="Why">Sonnet 4.6 default. Opus 4.8 for sprint builds. Fable 5 only for Planner and Evaluator passes, the two judgment seats.</td>
+                      <td data-label="Use this">Sonnet 5</td>
+                      <td data-label="Why">Sonnet 5 default (1M context; promo pricing through Aug 31). Opus 4.8 for sprint builds. Fable 5 only for Planner and Evaluator passes, the two judgment seats.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1463,9 +1468,14 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="Why">Session-scoped cron. Re-runs a prompt or slash command on an interval; tasks auto-expire after 3 days. In-session monitoring only: CI watch, preview re-checks. Never on the Evaluator. Not a replacement for Cowork scheduled tasks, which persist.</td>
                     </tr>
                     <tr>
+                      <td data-label="If I need to…">Design a chart or dashboard color system</td>
+                      <td data-label="Use this"><code>/dataviz</code> (v2.1.198)</td>
+                      <td data-label="Why">Built-in skill for chart and dashboard design guidance. Ships a runnable color-palette validator — confirms the palette meets contrast requirements before code lands.</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Monitor multiple sprints at once</td>
                       <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
-                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>.</td>
+                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>. Since v2.1.198, agents running in a worktree automatically commit, push, and open a draft PR on completion — no manual step needed.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
