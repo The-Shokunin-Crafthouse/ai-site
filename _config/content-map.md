@@ -4,8 +4,8 @@
 **Canonical audit file:** `ai-site/content/site-content-audit.md` — stable, version-free name (history = dated copies in `_archive/` + git). Same rule as the weekly update task; `sort -V` resolution retired 2026-06-06.
 
 **Last synced:**
-- studio-memory: `bc40b32` (2026-06-11 — sc-design-crit skill + Step 10 wiring, on branch `feat/sc-design-crit` / PR #37; tree also covers the v2.5 Originality hardening and v2.6 360→390 already merged to main at `541cf0c`)
-- ai-site: `488e8d8` (2026-06-11 — v9: sc-design-crit lens library + Originality gates + 360→390)
+- studio-memory: `dc396d0` (2026-07-05 — motion philosophy system, PR #71 merged; main also carries PR #72 skills-lock + creative-defaults cross-ref and the COO learning promotions. Supersedes the stale `bc40b32`/v9 pin; the intervening audit sweeps v10–v16 were site-side CC-version additions and the COO pass, not studio-memory content drift)
+- ai-site: `f8c0ddd` (2026-07-05 — v16 base after the v15-tombstone removal, PR #66; v17 motion-surface sync applied in this commit on `chore/surface-motion-system`)
 
 ---
 
@@ -32,3 +32,4 @@
 | Mirror model (contract §2: core + INDEX into global instructions + claude.ai project) | Step 02 body (mirror sentence); Brain Row 01 desc | Mirrors refreshed by hand via sc-content-sync paste handoffs — check staleness every sync |
 | `studio-memory.md` §6 Planning Context Rules | Workflow section intro (sync-main gate + model-confirm gate) | Two rules: sync main, confirm model. Auto-sync script covers sync-main only; model-confirm propagated manually. |
 | `skills/sc-design-crit/` + `playbooks/new-project-setup.md` Step 10 Evaluator | Step 10 body (lens-library bullet); Step 10 Evaluator prompt (read line + Originality gates); Brain Row 03 Quality-system desc; Tools Row 02 Grade-a-sprint Why | The Evaluator's named lens library for grading criteria 2-4; the Originality hard-gates (slop-blocklist + POV-execution) live in the same Step 10 prompt. Synced v9, 2026-06-11 |
+| `studio-memory.md` §3 Motion + `playbooks/motion-philosophies.md` + `playbooks/creative-defaults.md` "Springs over curves" + `skills/sc-motion*` (5) | Brain Row 04 Springs bullet; Tools Row 02 "Choose a project's motion language" (`sc-motion`) row | Motion philosophy system, ADR-026. Brain Row 04's direct source is `creative-defaults.md` (springs = Systemic Restraint default, cross-reffed to the playbook); the Tools row surfaces the skill family. §3's old 120/220/450 numeric standard was never mirrored — no numeric surface to keep in sync. Synced v17, 2026-07-05 |
