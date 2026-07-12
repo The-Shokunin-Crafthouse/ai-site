@@ -4,8 +4,8 @@
 **Canonical audit file:** `ai-site/content/site-content-audit.md` — stable, version-free name (history = dated copies in `_archive/` + git). Same rule as the weekly update task; `sort -V` resolution retired 2026-06-06.
 
 **Last synced:**
-- studio-memory: `dc396d0` (2026-07-05 — motion philosophy system, PR #71 merged; main also carries PR #72 skills-lock + creative-defaults cross-ref and the COO learning promotions. Supersedes the stale `bc40b32`/v9 pin; the intervening audit sweeps v10–v16 were site-side CC-version additions and the COO pass, not studio-memory content drift)
-- ai-site: `f8c0ddd` (2026-07-05 — v16 base after the v15-tombstone removal, PR #66; v17 motion-surface sync applied in this commit on `chore/surface-motion-system`)
+- studio-memory: `e054f26` (2026-07-12 — HEAD at the COO apply pass; §7 Execution Handoff (PR #73) and oaksun cinematic moves (PR #74) examined this sync. The apply pass's own edits — learnings #103–109, playbook Fable-5 tier fixes — were uncommitted at sync time and land via the Mac committer immediately after)
+- ai-site: `f046c67` (2026-07-12 — HEAD at the v19 sync; v19 itself uncommitted at sync time, lands via the Mac committer)
 
 ---
 
