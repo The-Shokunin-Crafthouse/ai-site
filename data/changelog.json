@@ -1,0 +1,143 @@
+{
+  "note": "Curated site changelog. Newest month first, newest entry first. Appended by the weekly ai-site-update skill (Step 6) — one entry per applied sweep. Entries are editorial summaries of merged PRs, not raw commits.",
+  "months": [
+    {
+      "id": "2026-07",
+      "label": "July 2026",
+      "entries": [
+        {
+          "date": "2026-07-21",
+          "title": "Weekly sweep — /fork becomes /subtask",
+          "detail": "Renamed /fork to /subtask across the workflow copy, documented the permission dir/** syntax with the Write/Glob deprecation note, and recorded the WebSearch and subagent 200-result caps.",
+          "prs": [71, 72]
+        },
+        {
+          "date": "2026-07-12",
+          "title": "COO audit content sync",
+          "detail": "Content sync v19 from the COO audit — Studio Brain Row 01 rotated to learning #100 (cross-repo dispatch via fine-grained PAT).",
+          "prs": [69, 70]
+        },
+        {
+          "date": "2026-07-05",
+          "title": "Motion system surfaced on the site",
+          "detail": "The studio's motion-philosophy system now appears in the site copy; index motion pass v17 landed alongside it.",
+          "prs": [66, 67, 68]
+        },
+        {
+          "date": "2026-07-04",
+          "title": "Weekly sweep batch",
+          "detail": "Six auto-apply PRs from the 2026-07-04 sweep merged in sequence.",
+          "prs": [60, 61, 62, 63, 64, 65]
+        }
+      ]
+    },
+    {
+      "id": "2026-06",
+      "label": "June 2026",
+      "entries": [
+        {
+          "date": "2026-06-29",
+          "title": "Weekly update applied",
+          "detail": "The 2026-06-27 weekly content sweep merged to main.",
+          "prs": [59]
+        },
+        {
+          "date": "2026-06-21",
+          "title": "Walkthrough film removed",
+          "detail": "The SVG walkthrough film section came off main; the week's content sweep landed the same day.",
+          "prs": [56, 57]
+        },
+        {
+          "date": "2026-06-15",
+          "title": "Session-resume learnings",
+          "detail": "Playwright-driven session-resume learnings woven into the workflow copy, following the skill self-evaluation review.",
+          "prs": [53, 54]
+        },
+        {
+          "date": "2026-06-12",
+          "title": "Planning gates + design-crit sync",
+          "detail": "Workflow planning-gate copy corrected; content sync v9 brought the sc-design-crit skill onto the site.",
+          "prs": [51, 52]
+        },
+        {
+          "date": "2026-06-11",
+          "title": "Fable 5 takes the judgment seats",
+          "detail": "Fable 5 assigned to the Planner and Evaluator seats (Generator stays on Opus 4.8); /effort xhigh retired in favor of /loop; CI runtimes bumped to Node 24.",
+          "prs": [48, 49, 50]
+        },
+        {
+          "date": "2026-06-07",
+          "title": "Workflow Contract v1",
+          "detail": "Split memory model, the sc-learn / sc-verify / sc-adr skill trio, and the §5 approval gates written into the site — plus an automated studio-memory → site content-sync workflow.",
+          "prs": [45, 46, 47]
+        },
+        {
+          "date": "2026-06-05",
+          "title": "Deploy hardening + design-system carve-outs",
+          "detail": "Retry-wrapped deploy workflows propagated from the canonical template; shared design-system carve-outs documented.",
+          "prs": [42, 44]
+        }
+      ]
+    },
+    {
+      "id": "2026-05",
+      "label": "May 2026",
+      "entries": [
+        {
+          "date": "2026-05-31",
+          "title": "Opus 4.8 + Dynamic Workflows",
+          "detail": "Site copy updated for Opus 4.8, Dynamic Workflows, and /code-review --fix.",
+          "prs": [41]
+        },
+        {
+          "date": "2026-05-23",
+          "title": "Opus 4.7 additions + context loading",
+          "detail": "/effort xhigh and /ultrareview added to the workflow steps; ICM layered context loading documented; hiring tabs polished; a code-only optimization pass cleared dead code and duplicate tokens.",
+          "prs": [34, 35, 36, 37, 38, 39, 40]
+        },
+        {
+          "date": "2026-05-22",
+          "title": "Mobile bottom sheets",
+          "detail": "Tier-3 spring bottom sheets replaced inline expansion on mobile, with a refreshed 375px layout.",
+          "prs": [32, 33]
+        },
+        {
+          "date": "2026-05-21",
+          "title": "Content source of truth",
+          "detail": "site-content-audit.md established as the canonical content record; user-testing woven through the workflow, gates, and hiring tabs.",
+          "prs": [29, 30, 31]
+        },
+        {
+          "date": "2026-05-20",
+          "title": "Weekly update loop + surface polish",
+          "detail": "The Saturday content-update loop scaffolded (skill + consolidated task file); light-mode UI pass, animated grain overlay, OG image, and favicon landed the same day.",
+          "prs": [21, 23, 24, 25, 26, 27, 28]
+        },
+        {
+          "date": "2026-05-19",
+          "title": "Light mode + type loading",
+          "detail": "Warm-ground light-mode token system with its surface ladder; Gentona switched to font-display: optional; 1440 dark-mode polish and a deploy-hygiene cleanup pass.",
+          "prs": [15, 16, 17, 18, 19, 20, 22]
+        },
+        {
+          "date": "2026-05-18",
+          "title": "Sections built to Figma",
+          "detail": "Sections 01–04 matched to Figma with open/close animation; onload cascade and hover comet added; near-black P3 color drift fixed for Chrome.",
+          "prs": [8, 9, 10, 11, 12, 13, 14]
+        },
+        {
+          "date": "2026-05-16",
+          "title": "Onload screen + deploy previews",
+          "detail": "Onload entrance screen added; token variables synced; preview-deploy workflow fixed.",
+          "prs": [3, 4, 5, 6, 7]
+        },
+        {
+          "date": "2026-05-14",
+          "title": "Site launched",
+          "detail": "First deploy — project spec and deploy workflows in place.",
+          "prs": [1]
+        }
+      ]
+    }
+  ]
+}

@@ -1691,7 +1691,10 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
       <span class="page-footer__sep" aria-hidden="true">→</span>
       <span>Transformation</span>
     </p>
-    <p class="page-footer__copy">© 2026</p>
+    <p class="page-footer__copy">© 2026
+      <span class="page-footer__sep" aria-hidden="true">·</span>
+      <button type="button" class="page-footer__changelog" data-changelog-open>Changelog</button>
+    </p>
   </footer>
 
   <!-- Back to top — appears after scrolling past hero -->
@@ -1713,6 +1716,8 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
   <script src="./scripts/hover.js" defer></script>
   <script src="./scripts/sheet.js" defer></script>
   <script src="./scripts/tap.js" defer></script>
+  <!-- Changelog overlay/sheet — loads after sheet.js so AiSiteSheet exists. -->
+  <script src="./scripts/changelog.js" defer></script>
   <script src="./scripts/grain.js"></script>
   <script src="./scripts/favicon.js" defer></script>
 </body>

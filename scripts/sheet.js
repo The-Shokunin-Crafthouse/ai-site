@@ -534,4 +534,8 @@
   /* Capture-phase so the interception fires before the desktop inline
      expansion handlers in scripts/app.js. */
   document.addEventListener("click", onCapturedClick, true);
+
+  /* Public API — programmatic sheets for consumers outside the trigger
+     table above (changelog.js). openSheet stays mobile-gated internally. */
+  window.AiSiteSheet = { open: openSheet, close: closeSheet };
 })();

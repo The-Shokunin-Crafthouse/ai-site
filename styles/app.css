@@ -3601,3 +3601,285 @@ html[data-sheet-open="true"] canvas[data-grain] {
   .hover-trace { display: none !important; }
 }
 
+
+/* ============================================================
+   Changelog — footer link + overlay panel (desktop) + sheet
+   variant (mobile). scripts/changelog.js · content/changelog.json.
+   Motion: cinematic recipes #1 (clip-path reveal, discrete) and
+   #3 (staggered rise) on the project's named curves — entrance in
+   the orchestrated band, accordions on the site's --ease-collapse
+   idiom, micro-interactions inside the 120–220ms budget.
+   ============================================================ */
+
+/* Footer link — quiet by default, legible on intent. Sits beside the
+   © year at the same 11/14 scale so the footer stays one whisper. */
+.page-footer__changelog {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--fg-quiet);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: color var(--dur-standard) var(--ease-standard),
+              text-decoration-color var(--dur-standard) var(--ease-standard);
+}
+.page-footer__changelog:hover {
+  color: var(--fg-secondary);
+  text-decoration-color: var(--fg-secondary);
+}
+.page-footer__changelog[data-error="true"] {
+  cursor: default;
+  text-decoration: none;
+}
+
+/* ---------- overlay + panel (≥768px surface; JS routes mobile to sheet) */
+.clog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+  background: color-mix(in srgb, var(--bg-base) 15%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: opacity var(--dur-link-click) var(--ease-out-strong),
+              backdrop-filter var(--dur-link-click) var(--ease-out-strong),
+              -webkit-backdrop-filter var(--dur-link-click) var(--ease-out-strong);
+}
+.clog-overlay[data-open="true"] { opacity: 1; }
+
+.clog {
+  width: min(620px, 100%);
+  max-height: min(760px, calc(100vh - 2 * var(--space-6)));
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  /* Entrance — the panel develops into frame: clip-path opens top-down
+     while the box rises. Transform/clip/opacity only. */
+  clip-path: inset(6% 0 14% 0 round var(--radius-lg));
+  transform: translateY(28px);
+  opacity: 0;
+  transition: clip-path var(--dur-reveal) var(--ease-out-strong),
+              transform var(--dur-reveal) var(--ease-out-strong),
+              opacity var(--dur-standard) var(--ease-standard);
+}
+.clog-overlay[data-open="true"] .clog {
+  clip-path: inset(0 0 0 0 round var(--radius-lg));
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.clog__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.clog__eyebrow {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-sm-line);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-accent);
+}
+.clog__lede {
+  margin: 0;
+  font-size: var(--text-link-sm-size);
+  line-height: var(--text-body-base-line);
+  color: var(--fg-secondary);
+  max-width: 42ch;
+}
+.clog__close {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: var(--space-1) var(--space-2);
+  margin: calc(-1 * var(--space-1)) calc(-1 * var(--space-2)) 0 0;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: var(--font-extralight);
+  color: var(--fg-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--dur-micro) var(--ease-standard);
+}
+.clog__close:hover { color: var(--fg-primary); }
+
+.clog__months {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-2) var(--space-6) var(--space-6);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+.clog__months::-webkit-scrollbar { width: 6px; }
+.clog__months::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+.clog__months::-webkit-scrollbar-track { background: transparent; }
+
+.clog-month + .clog-month { border-top: 1px solid var(--border-subtle); }
+.clog-month__heading { margin: 0; }
+.clog-month__head {
+  appearance: none;
+  background: none;
+  border: 0;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  font: inherit;
+  cursor: pointer;
+  color: var(--fg-primary);
+  transition: color var(--dur-micro) var(--ease-standard);
+}
+.clog-month__head:focus-visible { outline: 2px solid var(--fg-primary); outline-offset: -2px; }
+.clog-month__label {
+  font-size: var(--text-body-base-size);
+  line-height: var(--text-body-base-line);
+  font-weight: var(--font-medium);
+}
+.clog-month__count {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  color: var(--fg-secondary);
+  font-feature-settings: "tnum";
+}
+.clog-month__mark {
+  margin-left: auto;
+  position: relative;
+  width: 12px;
+  height: 12px;
+  align-self: center;
+}
+.clog-month__mark::before,
+.clog-month__mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: var(--fg-tertiary);
+  transition: transform var(--dur-standard) var(--ease-standard),
+              background-color var(--dur-micro) var(--ease-standard);
+}
+.clog-month__mark::before { width: 12px; height: 1px; }
+.clog-month__mark::after  { width: 1px; height: 12px; }
+.clog-month__head[aria-expanded="true"] .clog-month__mark::after { transform: scaleY(0); }
+.clog-month__head:hover .clog-month__mark::before,
+.clog-month__head:hover .clog-month__mark::after { background: var(--fg-primary); }
+
+.clog-month__body {
+  overflow: hidden;
+  transition: max-height 520ms var(--ease-collapse);
+}
+.clog-month__body[data-collapsed="true"] { max-height: 0; }
+
+.clog-entries {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.clog-entry {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: var(--space-4);
+}
+.clog-entry--pre { opacity: 0; transform: translateY(14px); }
+.clog-entry--in,
+.clog-entry--pre {
+  transition: opacity 500ms var(--ease-out-strong),
+              transform 500ms var(--ease-out-strong);
+}
+.clog-entry--in { opacity: 1; transform: translateY(0); }
+.clog-entry__date {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-sm-line);
+  color: var(--fg-secondary);
+  font-feature-settings: "tnum";
+  padding-top: 1px;
+}
+.clog-entry__main { min-width: 0; }
+.clog-entry__title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-link-sm-size);
+  line-height: var(--text-body-sm-line);
+  font-weight: var(--font-medium);
+  color: var(--fg-primary);
+}
+.clog-entry__detail {
+  margin: 0;
+  font-size: var(--text-link-sm-size);
+  line-height: var(--text-body-base-line);
+  color: var(--fg-secondary);
+  max-width: 58ch;
+}
+.clog-entry__prs {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-sm-line);
+  color: var(--fg-secondary);
+  font-feature-settings: "tnum";
+}
+
+/* ---------- mobile sheet variant — native <details> inside .sheet */
+.clog-sheet-month { border-bottom: 1px solid var(--border-subtle); }
+.clog-sheet-month__head {
+  list-style: none;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  cursor: pointer;
+}
+.clog-sheet-month__head::-webkit-details-marker { display: none; }
+.clog-sheet-month__label {
+  font-size: var(--text-body-base-size);
+  line-height: var(--text-body-base-line);
+  font-weight: var(--font-medium);
+  color: var(--fg-primary);
+}
+.clog-sheet-month__count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm-size);
+  color: var(--fg-secondary);
+  font-feature-settings: "tnum";
+}
+.clog-sheet-month .clog-entries { padding: 0 0 var(--space-4); gap: var(--space-4); }
+.clog-sheet-month .clog-entry { grid-template-columns: 48px minmax(0, 1fr); gap: var(--space-3); }
+
+/* ---------- reduced motion — final state, no choreography */
+@media (prefers-reduced-motion: reduce) {
+  .clog-overlay,
+  .clog,
+  .clog-month__body,
+  .clog-entry--pre,
+  .clog-entry--in,
+  .clog-month__mark::before,
+  .clog-month__mark::after { transition: none; }
+  .clog { clip-path: none; transform: none; opacity: 1; }
+  .clog-overlay { opacity: 1; }
+  .clog-entry--pre { opacity: 1; transform: none; }
+}
