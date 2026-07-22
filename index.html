@@ -1385,7 +1385,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Block specific tool inputs or subagent models</td>
                       <td data-label="Use this"><code>Tool(param:value)</code> permission syntax (v2.1.178)</td>
-                      <td data-label="Why">Parameter-level matching. <code>Agent(model:opus)</code> blocks Opus subagents; <code>Bash(command:rm*)</code> blocks destructive shell commands. More surgical than blocking the tool entirely.</td>
+                      <td data-label="Why">Parameter-level matching. <code>Agent(model:opus)</code> blocks Opus subagents; <code>Bash(command:rm*)</code> blocks destructive shell commands. More surgical than blocking the tool entirely. <code>dir/**</code> allow rules now match only <code>&lt;cwd&gt;/dir</code>, use <code>**/dir/**</code> for the old any-depth match; <code>Write(path)</code>/<code>Glob(path)</code> rules show a startup deprecation warning, use <code>Edit(path)</code>/<code>Read(path)</code> instead.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Automate post-write actions or scope hooks to specific tools</td>
@@ -1480,7 +1480,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Monitor multiple sprints at once</td>
                       <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
-                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>. Since v2.1.198, agents running in a worktree automatically commit, push, and open a draft PR on completion — no manual step needed.</td>
+                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>. Since v2.1.198, agents running in a worktree automatically commit, push, and open a draft PR on completion — no manual step needed. <code>/fork</code> now spawns a background session with its own row here, not an in-session subagent; <code>/subtask</code> is the new command for that, launching a subagent within the current session. Sessions also default to a 200-call cap on WebSearch and a 200-spawn cap on subagents, tunable if a workflow needs more.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
