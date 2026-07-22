@@ -925,3 +925,41 @@ Step 10 body, For Hiring Managers. Content audit bumped to v7
 - **Route the Generator to Fable 5 too** — Rejected. Sprint builds are
   token-heavy, multi-turn execution where Opus 4.8's depth earns its
   place; the judgment seats are where Fable's single-pass profile fits.
+
+## 2026-07-21 — Footer changelog: sheet/overlay surface, JSON data, weekly-skill upkeep
+**Stage:** design + workflow
+**Status:** accepted
+
+**Context.** The site had no public record of its own evolution. Owner
+requested a changelog with a subtle entrance link, cinematic motion, and
+cognitive-load-first reading (accordions), with clarifying questions
+answered 2026-07-21: entries curated from git/PR history (not raw
+commits), surfaced as a bottom-sheet/overlay (not a separate page),
+wired into the weekly ai-site-update skill, backfilled to launch.
+
+**Decision.** A quiet "Changelog" text button beside the © year in the
+page footer opens the changelog over the current page: on mobile it
+reuses the tier-3 bottom sheet (sheet.js now exposes
+`window.AiSiteSheet`), on desktop a centered dialog panel with a
+clip-path + rise entrance (recipe #1 discrete), per-entry staggered
+reveal (recipe #3), and month accordions on the site's `--ease-collapse`
+idiom. Data lives in `data/changelog.json` — curated months →
+entries (date / title / one-line detail / PR numbers as quiet mono
+metadata, unlinked because the repo is private). Newest month open by
+default. The weekly skill's Step 6 now appends one entry per sweep and
+backfills the PR number at cleanup.
+
+**Consequences.** scripts/changelog.js is lazy — JSON fetches on first
+open, zero cost to initial paint. Reduced motion renders overlay and
+entries in final state with no choreography. sheet.js gains a public
+open/close API; the trigger table is unchanged. The ai-site-update
+skill's "content files only" rule gains one sanctioned exception: the
+changelog JSON is content.
+
+**Alternatives considered.**
+- **Separate changelog.html page** — Rejected by owner; overlay keeps
+  the single-page shape and reuses the sheet primitive.
+- **Raw git log as data source** — Rejected; mechanical subjects read as
+  noise. Curated editorial entries, merged per day/theme.
+- **Linking PR numbers to GitHub** — Rejected for now; repo is private,
+  links would 404 for visitors.

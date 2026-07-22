@@ -98,6 +98,23 @@ git checkout -b copy/[short-description]
 
 Make the minimal edits required — targeted find-and-replace in `index.html` and any directly referenced files. Do not refactor, do not improve, do not touch CSS or JS, do not touch anything outside the scoped diff.
 
+**Changelog entry (required).** Before committing, append one entry for
+this sweep to `data/changelog.json` — the site's footer changelog
+reads it directly:
+
+- Find (or create) the month object for the current month (`id:
+  "YYYY-MM"`, `label: "Month YYYY"`) at the TOP of `months`.
+- Prepend one entry to that month's `entries`: `date` (YYYY-MM-DD),
+  `title` (short editorial headline for the sweep), `detail` (one
+  sentence summarizing what changed, from the handoff summary), `prs`
+  (leave `[]` — the PR number doesn't exist yet; backfill it in the
+  CLEANUP step after merge).
+- Newest month first, newest entry first. Editorial voice, not commit
+  subjects. Validate the JSON parses before committing.
+
+This is the one sanctioned exception to the "content files only" rule —
+the changelog IS content, it just lives in JSON.
+
 No build step. Skip straight to pushing the branch.
 
 ```bash
@@ -183,5 +200,9 @@ mv ~/Projects/shokunin-crafthouse/ai-site/_pending/approved-[date].md \
 git branch -d copy/[short-description]
 git push origin --delete copy/[short-description]
 ```
+
+Then backfill the merged PR number into the changelog entry added in
+Step 6 (`data/changelog.json` → this sweep's entry → `prs: [N]`) and
+land it with the next sweep — no standalone PR for the backfill.
 
 Note: Claude.ai project file sync remains manual. After a successful merge, drag the updated files from `~/Projects/shokunin-crafthouse/ai-site/content/` into the Claude project knowledge and remove the old versions. This takes under two minutes and is the only step in the entire workflow that cannot be automated.
