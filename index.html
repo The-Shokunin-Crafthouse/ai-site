@@ -1405,7 +1405,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Keep budget low by default</td>
                       <td data-label="Use this">Sonnet 5</td>
-                      <td data-label="Why">Sonnet 5 default (1M context; promo pricing through Aug 31). Opus 4.8 for sprint builds. Fable 5 only for Planner and Evaluator passes, the two judgment seats.</td>
+                      <td data-label="Why">Sonnet 5 default (1M context; promo pricing through Aug 31). Opus 5 (1M context) for sprint builds, replacing Opus 4.8. Fable 5 only for Planner and Evaluator passes, the two judgment seats. <code>/fast</code> now covers Opus 5 and Opus 4.8; Opus 4.7 dropped from fast mode.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1445,7 +1445,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Translate Figma into code</td>
                       <td data-label="Use this">Claude Code + Figma MCP</td>
-                      <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page. Figma Motion (June 2026) is MCP-compatible: animated frames are inspectable in Dev Mode and can be passed directly to a coding agent for implementation; copy animation code as CSS, JSON, or framework-ready React.</td>
+                      <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page. Figma Motion (June 2026) is MCP-compatible: animated frames are inspectable in Dev Mode and can be passed directly to a coding agent for implementation; copy animation code as CSS, JSON, or framework-ready React. Since Jul 16, code-to-canvas imports (Make preview, Figma MCP, or the Chrome extension) bind colors, type, and spacing to existing file variables instead of landing as hardcoded values, and frames come in with auto layout, cutting cleanup after code-to-Figma syncs.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Map a project plan or architecture in FigJam</td>
@@ -1480,7 +1480,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Monitor multiple sprints at once</td>
                       <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
-                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>. Since v2.1.198, agents running in a worktree automatically commit, push, and open a draft PR on completion — no manual step needed. <code>/fork</code> now spawns a background session with its own row here, not an in-session subagent; <code>/subtask</code> is the new command for that, launching a subagent within the current session. Sessions also default to a 200-call cap on WebSearch and a 200-spawn cap on subagents, tunable if a workflow needs more.</td>
+                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>. Since v2.1.198, agents running in a worktree automatically commit, push, and open a draft PR on completion — no manual step needed. <code>/fork</code> now spawns a background session with its own row here, not an in-session subagent; <code>/subtask</code> is the new command for that, launching a subagent within the current session. Sessions also default to a 200-call cap on WebSearch and a 200-spawn cap on subagents, tunable if a workflow needs more. Subagents can spawn nested subagents up to depth 3 by default (<code>CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH</code> to change). A <code>workflowSizeGuideline</code> of medium is the default advisory for dynamic workflows, aim for fewer than 15 agents, tunable via <code>/config → Dynamic workflow size</code>.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
@@ -1506,6 +1506,21 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="If I need to…">Validate decisions with real users</td>
                       <td data-label="Use this">Maze / Lyssna / Dscout</td>
                       <td data-label="Why">The AI Evaluator grades Functionality from code and snapshots. It cannot replace a real user. Tool scales to company stage — see For Hiring Managers.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Cut PR complexity or apply one change across many files</td>
+                      <td data-label="Use this"><code>/simplify</code> + <code>/batch</code></td>
+                      <td data-label="Why"><code>/simplify</code> reduces PR complexity before review; <code>/batch</code> runs a single change across many files in one pass. First-party CC skills.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Have a team of agents review every PR</td>
+                      <td data-label="Use this"><code>/code-review</code> (multi-agent)</td>
+                      <td data-label="Why">Runs a background team of agents against every PR rather than a single reviewer pass, the pattern behind Anthropic's internally reported ~200% code output. Runs as a background subagent, so review work never fills the active conversation.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Trim CLAUDE.md to what the agent can't derive</td>
+                      <td data-label="Use this"><code>/doctor</code> (v2.1.205–206)</td>
+                      <td data-label="Why">Proposes cutting content Claude could re-derive from the codebase directly, keeping CLAUDE.md lean without losing standing rules. Run it as a periodic setup-checkup.</td>
                     </tr>
                   </tbody>
                 </table>
