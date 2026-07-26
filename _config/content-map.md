@@ -4,8 +4,8 @@
 **Canonical audit file:** `ai-site/content/site-content-audit.md` — stable, version-free name (history = dated copies in `_archive/` + git). Same rule as the weekly update task; `sort -V` resolution retired 2026-06-06.
 
 **Last synced:**
-- studio-memory: `e054f26` (2026-07-12 — HEAD at the COO apply pass; §7 Execution Handoff (PR #73) and oaksun cinematic moves (PR #74) examined this sync. The apply pass's own edits — learnings #103–109, playbook Fable-5 tier fixes — were uncommitted at sync time and land via the Mac committer immediately after)
-- ai-site: `f046c67` (2026-07-12 — HEAD at the v19 sync; v19 itself uncommitted at sync time, lands via the Mac committer)
+- studio-memory: `4432083` (2026-07-26 — HEAD at the COO apply pass; this sync's own edits — Fixes 1–8, INDEX.md #122, playbook header fixes — were uncommitted at sync time and land via the Mac committer immediately after)
+- ai-site: `511975f` (2026-07-26 — HEAD at the v22 sync; v22 itself uncommitted at sync time, lands via the Mac committer)
 
 ---
 
