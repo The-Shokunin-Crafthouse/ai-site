@@ -1403,6 +1403,11 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="Why">Prefix any command with <code>!</code> to run it in bash and have Claude automatically respond to the output — not just add it to context. Opt out with <code>"respondToBashCommands": false</code> in <code>settings.json</code> to restore the previous context-only behavior.</td>
                     </tr>
                     <tr>
+                      <td data-label="If I need to…">Run Claude Code against private infrastructure</td>
+                      <td data-label="Use this"><code>claude self-hosted-runner</code> (v2.1.224, Team/Enterprise)</td>
+                      <td data-label="Why">Runs Claude Code web, mobile, and desktop sessions on your own machines or containers instead of Anthropic's. The session gets internal network access and whatever custom tooling lives on that box, and the whole execution environment stays inside your own compliance boundary. The path to using an agent against infrastructure that was never going to be reachable from the outside.</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Keep budget low by default</td>
                       <td data-label="Use this">Sonnet 5</td>
                       <td data-label="Why">Sonnet 5 default (1M context; promo pricing through Aug 31). Opus 4.8 for sprint builds. Fable 5 only for Planner and Evaluator passes, the two judgment seats.</td>
@@ -1443,9 +1448,14 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="Why">Selects one of three motion philosophies, Systemic Restraint, Cinematic Direction, or Experiential, plus a shared procedural-animation library, and pins the choice as an ADR at Gate 1. One language per project, held to the end. The invariants hold across all three: reduced-motion stays functional, nothing animates without cause, focus and contrast rules stay untouched.</td>
                     </tr>
                     <tr>
+                      <td data-label="If I need to…">Generate or remix a design inside Figma</td>
+                      <td data-label="Use this">Figma Agent (beta)</td>
+                      <td data-label="Why">Figma's purpose-built design agent, embedded in the canvas rather than bolted on as a sidebar chat. It generates and remixes designs against an existing design system out of the box, so output lands on the studio's own tokens and components instead of generic defaults, and it absorbs the rote construction work between direction and comp. Gradual beta for Full seats on Professional, Organization, and Enterprise plans; no credits consumed while it is in beta.</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Translate Figma into code</td>
                       <td data-label="Use this">Claude Code + Figma MCP</td>
-                      <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page. Figma Motion (June 2026) is MCP-compatible: animated frames are inspectable in Dev Mode and can be passed directly to a coding agent for implementation; copy animation code as CSS, JSON, or framework-ready React.</td>
+                      <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page. Figma Motion (June 2026) is MCP-compatible: animated frames are inspectable in Dev Mode and can be passed directly to a coding agent for implementation; copy animation code as CSS, JSON, or framework-ready React. Code Connect in MCP is what keeps that output specific: it hands the agent production component context during design-to-code, so the agent reaches for the real component instead of regenerating a generic one, and spends fewer tokens doing it (Figma, 2026-08-05).</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Map a project plan or architecture in FigJam</td>
@@ -1480,7 +1490,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Monitor multiple sprints at once</td>
                       <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
-                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>. Since v2.1.198, agents running in a worktree automatically commit, push, and open a draft PR on completion — no manual step needed. <code>/fork</code> now spawns a background session with its own row here, not an in-session subagent; <code>/subtask</code> is the new command for that, launching a subagent within the current session. Sessions also default to a 200-call cap on WebSearch and a 200-spawn cap on subagents, tunable if a workflow needs more.</td>
+                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+) fans work out across tens to hundreds of background agents via <code>/workflows</code>. Background sessions follow the repo's CLAUDE.md git instructions: since v2.1.221 they commit and push to preserve work but open a draft PR only when the task calls for one, not on every completion, which retires the v2.1.198 always-draft-PR behavior and the noise it made on unattended runs. <code>/fork</code> now spawns a background session with its own row here, not an in-session subagent; <code>/subtask</code> is the new command for that, launching a subagent within the current session. Sessions still default to a 200-call cap on WebSearch, but the 200-spawn subagent cap was removed in v2.1.224, so a long orchestration run no longer hits a wall mid-batch; concurrency and depth limits still apply. Sessions can also message each other across machines via <code>SendMessage</code> and <code>ListAgents</code> (v2.1.224/225), so a Remote Control session is reachable by name from another machine instead of only when it initiates contact.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
