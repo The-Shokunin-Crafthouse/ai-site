@@ -4,8 +4,8 @@
 **Canonical audit file:** `ai-site/content/site-content-audit.md` — stable, version-free name (history = dated copies in `_archive/` + git). Same rule as the weekly update task; `sort -V` resolution retired 2026-06-06.
 
 **Last synced:**
-- studio-memory: `e054f26` (2026-07-12 — HEAD at the COO apply pass; §7 Execution Handoff (PR #73) and oaksun cinematic moves (PR #74) examined this sync. The apply pass's own edits — learnings #103–109, playbook Fable-5 tier fixes — were uncommitted at sync time and land via the Mac committer immediately after)
-- ai-site: `f046c67` (2026-07-12 — HEAD at the v19 sync; v19 itself uncommitted at sync time, lands via the Mac committer)
+- studio-memory: `67704fd` (2026-09-06 — HEAD at the COO JLB apply pass; this pass's own edits — mirror regen to #211, learnings #210–211 promoted from copper-and-quartz, INDEX repairs — were uncommitted at sync time and land via the Mac committer immediately after. Manifest had gone unstamped since 2026-07-12; the 09-05 XSB pass folded in the substantive drift but never updated this file, which is how item 7 below survived three audits unnoticed)
+- ai-site: `893f14a` (2026-09-06 — HEAD at v29; v29 itself uncommitted at sync time, lands via the Mac committer)
 
 ---
 
@@ -33,3 +33,5 @@
 | `studio-memory.md` §6 Planning Context Rules | Workflow section intro (sync-main gate + model-confirm gate) | Two rules: sync main, confirm model. Auto-sync script covers sync-main only; model-confirm propagated manually. |
 | `skills/sc-design-crit/` + `playbooks/new-project-setup.md` Step 10 Evaluator | Step 10 body (lens-library bullet); Step 10 Evaluator prompt (read line + Originality gates); Brain Row 03 Quality-system desc; Tools Row 02 Grade-a-sprint Why | The Evaluator's named lens library for grading criteria 2-4; the Originality hard-gates (slop-blocklist + POV-execution) live in the same Step 10 prompt. Synced v9, 2026-06-11 |
 | `studio-memory.md` §3 Motion + `playbooks/motion-philosophies.md` + `playbooks/creative-defaults.md` "Springs over curves" + `skills/sc-motion*` (5) | Brain Row 04 Springs bullet; Tools Row 02 "Choose a project's motion language" (`sc-motion`) row | Motion philosophy system, ADR-026. Brain Row 04's direct source is `creative-defaults.md` (springs = Systemic Restraint default, cross-reffed to the playbook); the Tools row surfaces the skill family. §3's old 120/220/450 numeric standard was never mirrored — no numeric surface to keep in sync. Synced v17, 2026-07-05 |
+| `plugins/sc-hygiene/` (`drift_check` + `deadcode_check`, shipped 2026-08-16) | Tools Row 02 "Check Gate-3 tokens and dead code before a PR" row | Referenced from `sc-verify`'s own Gate-3 pass; flagged in the 08-29 content-sync report as item 7, not folded into the 09-05 XSB pass. Synced v29, 2026-09-06 |
+| `skills/sc-premortem/` (ADR-070) | Tools Row 02 "Stress-test a plan before work starts" row | Runs automatically on every `sc-council` PROCEED / PROCEED-WITH-CONDITIONS verdict; on-demand otherwise. Synced v29, 2026-09-06 |
