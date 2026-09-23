@@ -1410,7 +1410,12 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Keep budget low by default</td>
                       <td data-label="Use this">Sonnet 5</td>
-                      <td data-label="Why">Sonnet 5 default (1M context; promo pricing through Aug 31). Opus 4.8 for sprint builds. Fable 5 only for Planner and Evaluator passes, the two judgment seats.</td>
+                      <td data-label="Why">Sonnet 5 default (1M context). Opus 4.8 for sprint builds, pinned deliberately by ADR regardless of Anthropic's own tier default. Fable 5 only for Planner and Evaluator passes, the two judgment seats. Anthropic's own Claude Code default Opus model moved to Opus 5.5 in v2.1.280 (20% cheaper, $4/$20 per Mtok); Pro and Team Standard plans now default to Opus 5.5 instead of Sonnet, a breaking change for anyone relying on the prior default.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Respond to a permission dialog</td>
+                      <td data-label="Use this">Enter / Esc (v2.1.280)</td>
+                      <td data-label="Why">The y/n keybindings were removed from permission dialog bindings, approve with Enter, decline with Esc. Hook setups: <code>agent-type</code> hooks were removed from <code>PermissionRequest</code>, use <code>command</code> or <code>http</code> hook types instead.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Tune instructions for Claude 5 models</td>
