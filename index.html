@@ -1410,7 +1410,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Keep budget low by default</td>
                       <td data-label="Use this">Sonnet 5</td>
-                      <td data-label="Why">Sonnet 5 default (1M context). Opus 4.8 for sprint builds, pinned deliberately by ADR regardless of Anthropic's own tier default. Fable 5 only for Planner and Evaluator passes, the two judgment seats. Anthropic's own Claude Code default Opus model moved to Opus 5.5 in v2.1.280 (20% cheaper, $4/$20 per Mtok); Pro and Team Standard plans now default to Opus 5.5 instead of Sonnet, a breaking change for anyone relying on the prior default.</td>
+                      <td data-label="Why">Sonnet 5 default (1M context). Opus 4.8 for sprint builds, pinned deliberately by ADR regardless of Anthropic's own tier default. Fable 5 only for Planner and Evaluator passes, the two judgment seats. Anthropic's own Claude Code default Opus model moved to Opus 5.5 in v2.1.280 (20% cheaper, $4/$20 per Mtok); Pro and Team Standard plans now default to Opus 5.5 instead of Sonnet, a breaking change for anyone relying on the prior default. Independent benchmark from Boris Cherny (bcherny): a HAProxy C-to-Rust migration ran 9.5h on Opus 5.5 versus 12h on the prior default, at 51% lower cost, evidence worth weighing specifically for large multi-file migrations and long sprint runs; the studio's own Opus 4.8 pin for sprint builds stays the deliberate ADR-backed choice until that changes.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Respond to a permission dialog</td>
@@ -1465,7 +1465,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Translate Figma into code</td>
                       <td data-label="Use this">Claude Code + Figma MCP</td>
-                      <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page. Figma Motion (June 2026) is MCP-compatible: animated frames are inspectable in Dev Mode and can be passed directly to a coding agent for implementation; copy animation code as CSS, JSON, or framework-ready React. Code Connect in MCP is what keeps that output specific: it hands the agent production component context during design-to-code, so the agent reaches for the real component instead of regenerating a generic one, and spends fewer tokens doing it (Figma, 2026-08-05).</td>
+                      <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page. Figma Motion (June 2026) is MCP-compatible: animated frames are inspectable in Dev Mode and can be passed directly to a coding agent for implementation; copy animation code as CSS, JSON, or framework-ready React. Code Connect in MCP is what keeps that output specific: it hands the agent production component context during design-to-code, so the agent reaches for the real component instead of regenerating a generic one, and spends fewer tokens doing it (Figma, 2026-08-05). Auto layout also gained vertical wrap (Sept 2026): a column-direction container now wraps to a new column the way <code>flex-wrap: column</code> does in CSS, closing a gap that previously needed a manual workaround for responsive component layouts.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Map a project plan or architecture in FigJam</td>
@@ -1526,6 +1526,16 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="If I need to…">Validate decisions with real users</td>
                       <td data-label="Use this">Maze / Lyssna / Dscout</td>
                       <td data-label="Why">The AI Evaluator grades Functionality from code and snapshots. It cannot replace a real user. Tool scales to company stage — see For Hiring Managers.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Verify complex async or concurrent state formally</td>
+                      <td data-label="Use this">Formal verification with Claude + Lean/TLA+</td>
+                      <td data-label="Why">Two short prompts is enough to get started, no prior Lean or TLA+ knowledge required: describe the state machine or concurrency property, then ask Claude to prove it. Boris Cherny's report: a two-prompt pass produced 16 PRs fixing bugs and race conditions. Reach for it on complex async state and concurrency specifically, not as a default technique.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Audit CLAUDE.md files, skills, and agents for quality</td>
+                      <td data-label="Use this"><code>/doctor prompt-audit</code> (v2.1.283)</td>
+                      <td data-label="Why">Complements <code>/skill-doctor</code>: audits CLAUDE.md files, skills, and agents for quality issues rather than token usage. Run it after writing or editing a skill, and before a Gate 3 review.</td>
                     </tr>
                   </tbody>
                 </table>
