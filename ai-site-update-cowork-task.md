@@ -3,6 +3,30 @@
 
 ---
 
+## RUN STRUCTURE (model routing, ADR-028)
+> One scheduled task, two tiers. The scheduled task itself runs on **Fable 5.1** and acts as
+> orchestrator and evaluator. It never fetches a source itself. Fetching, extracting and
+> diffing are dispatched to **Sonnet 5 subagents**, one batch of sources each. Scoring,
+> the report, and the recommendations stay in the Fable session, which has read the
+> FACT BASE below before it judges anything.
+
+| Step | Who runs it | Model | Why (ADR-028 class) |
+|---|---|---|---|
+| 1 Check snapshots | Fable session | Fable 5.1 | trivial read; stays with the orchestrator |
+| 2 Fetch each source | subagents, 3-4 sources per batch | Sonnet 5 | content extraction and sync |
+| 3 Diff against snapshots | inside each fetch subagent, re-checked by the Fable session | Sonnet 5 / Fable 5.1 | mechanical, with one cheap guard |
+| 4 Score relevance | Fable session | Fable 5.1 | evaluation against the studio's current setup |
+| 5 Write the report | Fable session | Fable 5.1 | evaluation output |
+| 6 Update snapshots | Fable session | Fable 5.1 | file write of merged lists |
+| 7 Recommendations | Fable session | Fable 5.1 | evaluation; weighs consequences |
+| 8 Notify | Fable session | Fable 5.1 | sentinel write |
+
+The report's footer logs this routing (`task → model → why`, one line per tier) so the run is
+auditable the way ADRs are. If the Agent tool is unavailable in a run, the Fable session fetches
+the sources itself and the footer says so; it never downgrades Steps 4 or 7.
+
+---
+
 ## SOURCES
 > This is the only section you need to edit to add or remove sources.
 > Add a new block below to include a new source. Remove a block to stop monitoring it.
@@ -277,6 +301,26 @@ Focus: Research-backed AI UX frameworks (disclosure, evaluating AI output, proto
 
 ---
 
+## FACT BASE
+> Read in full by the Fable session **before Step 4**, never by a fetch subagent. A score or a
+> recommendation that was not weighed against these files is a guess (studio learning #123:
+> an answer is capped by the fact base it is handed).
+
+Resolve `studio-memory` by folder name next to `ai-site` (fallback `~/Projects/shokunin-crafthouse/studio-memory/`).
+
+1. `ai-site/content/site-content-audit.md`: what the site currently claims, row by row, and the change log of past sweeps. Every recommendation names the row or card it would change.
+2. `studio-memory/studio-memory.md`: the studio core: stack defaults, design criteria, gates, the model rule ("Fable is never the default").
+3. `studio-memory/playbooks/business-runbook.md`, **Section 16 only** (the model-routing table): the current model pins. Do not read the rest of the file.
+4. `studio-memory/decisions/decisions.md`, **the index table at the top only** (every row of the form `| [ADR-NNN](#adr-nnn) | ... |`). Read one ADR body only when an item touches that decision.
+5. The four most recent `ai-site/_pending/weekly-update-*.md` files (check `_archive/` if fewer than four are in `_pending/`): what was recommended, approved or skipped in the last month.
+
+Rules the fact base enforces:
+- A claim about a model, version, price or product default becomes a recommendation only after it is checked against a primary source (the vendor's announcement or docs), not the post that reported it. The sweep once recommended "Opus 5 replaces Opus 4.8" against a deliberate pin, from a secondary mention.
+- Anything that contradicts a pinned decision (an ADR, a model pin in Section 16, a stack default in the core) is never 🔴 or 🟡. It goes to **Needs ADR** in the report and the pending file, unnumbered, so a numbered reply cannot apply it. Levi decides it in a session.
+- An item skipped in the last four weeks is not re-recommended unless the new post adds a fact the earlier skip did not have. Say which fact.
+
+---
+
 ## STEP 1 — CHECK SNAPSHOTS
 
 Create `~/Projects/shokunin-crafthouse/ai-site/_snapshots/` if it doesn't exist.
@@ -292,9 +336,16 @@ If a snapshot file doesn't exist, treat everything found as new.
 
 ---
 
-## STEP 2 — FETCH EACH SOURCE
+## STEP 2 — FETCH EACH SOURCE (Sonnet 5 subagents)
 
-For each source in SOURCES:
+The Fable session does not fetch. Group the SOURCES into batches of 3-4 and dispatch one subagent per batch with the Agent tool, `model: sonnet`, all batches in parallel. Each dispatch carries:
+
+- The full SOURCE blocks for its batch, verbatim (URLs, search queries, Fetch note, Focus)
+- Each source's current `seenItems` list from Step 1 (or "no snapshot" if the file is missing)
+- Today's date
+- The fetch rules and the return format below
+
+Fetch rules the subagent follows for each source in its batch:
 
 1. Fetch each URL listed
 2. Run each search query listed
@@ -302,27 +353,46 @@ For each source in SOURCES:
 4. For X/Twitter: use search snippets and cached results — use what's publicly accessible
 5. For docs and blogs: read the page content directly, look for recent additions or changed sections
 6. If a source block carries a `Fetch note:` line, follow it: it names which feed to use, what to filter out, or what to scrape when the site has no feed
+7. Diff against `seenItems` (Step 3) before returning: return only items not already seen
 
-Extract from each item:
+Extract from each new item:
 - A one-line summary distinct enough to match against the snapshot
-- The actionable content (tip, feature, pattern, workflow change)
-- A link if available
+- The actionable content (tip, feature, pattern, workflow change), two to four sentences, with any number, version or command quoted exactly
+- A link if available, and the post date if visible
+
+Return format, one block per source, nothing else:
+```
+SOURCE: <name>
+Fetched: <URLs that loaded> | Failed: <URL + HTTP status or error, or "none">
+Items checked: <N> | New: <N>
+- NEW: <one-line summary> | <date or "undated"> | <link>
+  <actionable content>
+```
+
+The subagent returns only the blocks above. It does not score, does not rate, does not recommend, and does not write any file. A source whose every URL failed is reported as `Failed`, never as "nothing new" (studio learning #235: a bot checkpoint reads as an empty page).
 
 ---
 
 ## STEP 3 — DIFF AGAINST SNAPSHOTS
 
-For each source, compare extracted summaries against `seenItems` in its snapshot file.
+The fetch subagents already diffed against `seenItems`. The Fable session re-checks each returned `NEW` line against the snapshot once (a cheap guard against a subagent that ignored its list) and drops any match.
 
-Only carry forward items not already seen. If a source has nothing new, note it and move on.
+Only carry forward items not already seen. If a source has nothing new, note it and move on. If a source came back `Failed`, carry that forward to the "Sources checked" list as a fetch failure, not as "nothing new".
 
 ---
 
-## STEP 4 — SCORE RELEVANCE
+## STEP 4 — SCORE RELEVANCE (Fable session)
 
-For each new item across all sources, apply the rating scale from RELEVANCE PROFILE.
+Read the FACT BASE in full first. Then, for each new item across all sources, apply the rating scale from RELEVANCE PROFILE.
 
 Flag items as optimization opportunities even if the feature is already in use — if the source suggests a meaningfully better way to use it, that is a 🔴 or 🟡.
+
+For every 🔴 and 🟡, write down before moving on:
+- **Touches:** the site row or card (from the content audit) it would change, or "new row" plus where it belongs
+- **Conflicts with:** the ADR, model pin, stack default or existing site claim it contradicts, or "none found" after checking
+- **If adopted:** what else must change to stay consistent (another row, a skill, a runbook line, a scheduled task), or "nothing else"
+
+An item whose "Conflicts with" names a pinned decision moves to **Needs ADR** regardless of how strong the post is. An item that rests on a model, version or price claim is held at ⚪ until the claim is checked against a primary source in this same run; if it checks out, score it; if it does not, say so in the report and leave it ⚪.
 
 ---
 
@@ -343,6 +413,9 @@ Format:
 
 ## ⚪ Noted
 - **[Source] [One-line summary]**
+
+## Needs ADR
+- **[Source] [One-line summary]**: conflicts with [ADR-NNN / pin / site claim]. Not numbered; decide in a session.
 
 ---
 
@@ -372,6 +445,12 @@ Format:
 - Matt Ström-Awn: [N new / nothing new]
 - Nielsen Norman Group: [N new / nothing new]
 
+(A source whose fetch failed reads `[fetch failed: <status>]`, never `nothing new`.)
+
+## Routing (ADR-028)
+- Fetch, extract, diff → Sonnet 5 subagents ([N] dispatched, batches of [M]) → content extraction tier
+- Score, report, recommendations, notify → Fable 5.1 (this session) → evaluation tier
+
 _Generated: YYYY-MM-DD_
 ```
 
@@ -385,9 +464,9 @@ For each source, write an updated snapshot file:
 
 ---
 
-## STEP 7 — GENERATE RECOMMENDATIONS
+## STEP 7 — GENERATE RECOMMENDATIONS (Fable session)
 
-Read the report just written. For each 🔴 and 🟡 item, evaluate whether it requires a content change to ai.levibahn.com.
+Read the report just written. For each 🔴 and 🟡 item, evaluate whether it requires a content change to ai.levibahn.com. Carry the Touches / Conflicts with / If adopted lines from Step 4 into the pending file; they are what Levi reads before replying.
 
 Write recommendations to:
 `~/Projects/shokunin-crafthouse/ai-site/_pending/weekly-update-[YYYY-MM-DD].md`
@@ -405,7 +484,15 @@ Format:
 **[N]. [Feature or change name]**
 Why it fits: [one sentence]
 What changes: [one sentence describing the content edit needed]
+Touches: [site row or card, from the content audit]
+Conflicts with: [ADR / pin / site claim, or "none found"]
+If adopted: [what else must change, or "nothing else"]
 Effort: [Low / Medium / High]
+
+---
+
+## Needs ADR (not numbered; a reply cannot approve these)
+- [item]: conflicts with [ADR-NNN / pin / claim]; [one sentence on what the decision would be]
 
 ---
 
@@ -433,7 +520,8 @@ both fail in scheduled runs. This is TWO SEPARATE FILES:
    **Numbering MUST match `_pending/weekly-update-[YYYY-MM-DD].md` exactly** — the
    reply is applied against that file's numbered recommendations, so only numbered
    recommendations get numbers in the text. Skipped findings may follow unnumbered
-   (e.g. `⚪ also seen: …`) or be omitted.
+   (e.g. `⚪ also seen: …`) or be omitted. Needs-ADR items appear unnumbered as
+   `⚪ needs ADR: …` so a numbered reply can never apply one.
 2. Only after the `.msg` is confirmed written, create the trigger as an **empty file**:
    `_pending/coo.notify-ai-site-weekly-[YYYY-MM-DD]` (non-dotfile name, ends in the date).
 3. Verify: `.msg` has the body, trigger is 0 bytes. `send-briefing.sh` (launchd) sends
@@ -512,3 +600,5 @@ Send the completion text via the **two-file sentinel contract** (`studio-memory/
 - Stay within `~/Projects/shokunin-crafthouse/ai-site/` for content and the site's own code/deploy. Do not touch other repos.
 - One approval cycle per week. If Levi replies to an old notification, check the date before processing.
 - If any file in `content/` is missing or unreadable, stop and report before proceeding.
+- Steps 4 and 7 run in the Fable session, never in a subagent and never on a smaller model. Step 2 runs in Sonnet subagents whenever the Agent tool is available. The report footer records which tier did what.
+- Step 4 starts only after the FACT BASE has been read in this run. A score written before that read is discarded and redone.
