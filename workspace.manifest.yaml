@@ -1,0 +1,26 @@
+# ============================================================
+# workspace.manifest.yaml
+# ============================================================
+# Minimal manifest (project block only). Written 2026-09-02 for Studio PM
+# (decision F, ADR-073: every repo carries a manifest). This repo does not use the
+# five-stage project-template layout, so only the keys the studio's tooling reads
+# are set. Grow it toward templates/project-template/workspace.manifest.yaml when
+# the repo is brought onto the template. Do not delete keys — mark deprecated.
+# ============================================================
+
+schema_version: 1
+studio: "The Shokunin Crafthouse"
+template_version: "1.1.0"
+
+project:
+  name: "ai.levibahn.com"
+  client: "Internal — Levi Bahn"
+  kind: "site"
+  stage: "05-launch"   # live site under weekly update loop (#24); proposed, confirm
+  lead: ""
+  started: "2026-05-14"
+  target_launch: ""
+  status: "active"    # active | paused | closed
+
+identity:
+  decisions: decisions/decisions.md
