@@ -21,3 +21,5 @@ content/*
 !content/.gitkeep
 !content/site-content-audit.md
 !content/site-content-audit-v*.md
+_snapshots/
+.playwright-mcp/
