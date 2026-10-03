@@ -45,6 +45,90 @@ URLs:
   - https://code.claude.com/docs/en/overview
 Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/claude-code-docs.json
 Focus: New features, new flags, new slash commands, hooks, skills, sub-agents, CLAUDE.md guidance
+
+SOURCE: Luke Wroblewski
+Type: Blog (RSS)
+URLs:
+  - https://www.lukew.com/ff/
+  - https://www.lukew.com/ff/rss.asp
+Search queries:
+  - site:lukew.com agents design system
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/lukew.json
+Focus: Design systems as a steering layer for agent-generated code, AGENTS.md patterns, agent UX findings from shipped builds, prompting styles for design work. About 8 posts a month, all on topic.
+
+SOURCE: Nathan Curtis
+Type: Newsletter (Substack, RSS)
+URLs:
+  - https://nathanacurtis.substack.com/
+  - https://nathanacurtis.substack.com/feed
+Search queries:
+  - site:nathanacurtis.substack.com
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/nathan-curtis.json
+Focus: Spec-driven component development, Figma + code + agent handoff, component specs as data, design-system governance for agents. About 2 posts a month. Maps to Tools Row 02 (Figma MCP, tokens) and Workflow Step 07.
+
+SOURCE: Emil Kowalski
+Type: Blog (no feed; scrape the homepage list) + GitHub skills repo
+URLs:
+  - https://emilkowal.ski
+  - https://github.com/emilkowalski/skills
+Search queries:
+  - site:emilkowal.ski
+  - emilkowalski skills claude code
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/emil-kowalski.json
+Fetch note: no RSS and no dates on the page. Diff the ordered title list on the homepage against seenItems; a new title at the top is a new post. Also diff the skills repo commit list.
+Focus: Motion taste encoded as Claude Code skill files, animation duration and easing rules, when NOT to animate, component craft. About 1 post every 2 months, every one usable.
+
+SOURCE: Hamel Husain
+Type: Blog (RSS)
+URLs:
+  - https://hamel.dev
+  - https://hamel.dev/index.xml
+Search queries:
+  - site:hamel.dev evals
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/hamel-husain.json
+Focus: Evals for coding agents and skills, error analysis before writing evals, critiques of auto-eval tooling, LLM-as-judge limits. About 1 post a month. Feeds the Evaluator (Step 10) and the measure-before-you-change-a-skill rule.
+
+SOURCE: Simon Willison
+Type: Blog (Atom, long-form entries only)
+URLs:
+  - https://simonwillison.net/atom/entries/
+Search queries:
+  - site:simonwillison.net "Claude Code"
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/simon-willison.json
+Fetch note: use /atom/entries/ only. The /atom/everything/ feed is 40+ items a month of links and quotes and will flood the report.
+Focus: Claude Code behavior changes, agent sandboxing and permission safety, model release analysis, agent tooling patterns. About 4-6 long-form posts a month.
+
+SOURCE: Jesse Vincent (Superpowers)
+Type: Blog (RSS)
+URLs:
+  - https://blog.fsck.com
+  - https://blog.fsck.com/feed/feed.xml
+Search queries:
+  - site:blog.fsck.com superpowers
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/jesse-vincent.json
+Focus: Skill library design for Claude Code (Superpowers), skill-update patterns, agent memory, build-in-public experiments. About 2 posts a month. Closest public analogue to the studio's skills + memory system.
+
+SOURCE: Anthropic Engineering + Claude Code posts on claude.com/blog
+Type: Blog index (no feed on either; fetch the index pages)
+URLs:
+  - https://www.anthropic.com/engineering
+  - https://claude.com/blog
+Search queries:
+  - site:anthropic.com/engineering
+  - site:claude.com/blog "Claude Code"
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/anthropic-engineering.json
+Fetch note: the engineering index shows dates; read the top 6 and diff titles. On claude.com/blog keep only posts that name Claude Code, mods, plugins, skills, hooks, or agents; skip enterprise and announcement posts.
+Focus: Harness design for long-running agents, auto mode safety, eval noise, Claude Code quality reports, mods and plugin guidance. Primary source for the Agents and Tools sections.
+
+SOURCE: Adrian Roselli
+Type: Blog (RSS rate-limits; fetch the year archive page instead)
+URLs:
+  - https://adrianroselli.com/2026
+Search queries:
+  - site:adrianroselli.com
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/adrian-roselli.json
+Fetch note: /feed/ returned HTTP 429 on repeated attempts. Fetch the dated archive page and diff titles. Roll the year in the URL each January.
+Focus: Screen-reader-tested accessibility with WCAG citations, dialog and focus behavior, success-criterion interpretation, overlay-vendor warnings. About 2 posts a month. Feeds Gate 3 and the Quality system row.
 ```
 
 ---
@@ -93,6 +177,7 @@ For each source in SOURCES:
 3. Collect all posts, articles, changelog entries, or doc changes accessible from results
 4. For X/Twitter: use search snippets and cached results — use what's publicly accessible
 5. For docs and blogs: read the page content directly, look for recent additions or changed sections
+6. If a source block carries a `Fetch note:` line, follow it: it names which feed to use, what to filter out, or what to scrape when the site has no feed
 
 Extract from each item:
 - A one-line summary distinct enough to match against the snapshot
@@ -142,6 +227,14 @@ Format:
 - Andrej Karpathy (@karpathy): [N new / nothing new]
 - Figma Blog: [N new / nothing new]
 - Claude Code Docs: [N new / nothing new]
+- Luke Wroblewski: [N new / nothing new]
+- Nathan Curtis: [N new / nothing new]
+- Emil Kowalski: [N new / nothing new]
+- Hamel Husain: [N new / nothing new]
+- Simon Willison: [N new / nothing new]
+- Jesse Vincent (Superpowers): [N new / nothing new]
+- Anthropic Engineering + claude.com/blog: [N new / nothing new]
+- Adrian Roselli: [N new / nothing new]
 
 _Generated: YYYY-MM-DD_
 ```
