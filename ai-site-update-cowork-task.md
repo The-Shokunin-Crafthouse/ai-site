@@ -129,6 +129,130 @@ Search queries:
 Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/adrian-roselli.json
 Fetch note: /feed/ returned HTTP 429 on repeated attempts. Fetch the dated archive page and diff titles. Roll the year in the URL each January.
 Focus: Screen-reader-tested accessibility with WCAG citations, dialog and focus behavior, success-criterion interpretation, overlay-vendor warnings. About 2 posts a month. Feeds Gate 3 and the Quality system row.
+
+SOURCE: Maggie Appleton
+Type: Blog (RSS)
+URLs:
+  - https://maggieappleton.com
+  - https://maggieappleton.com/rss.xml
+Search queries:
+  - site:maggieappleton.com agents
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/maggie-appleton.json
+Focus: Planning interfaces for coding agents, boundary objects instead of text plans, agent UX theory with built prototypes. About 1 post every 2 months. Feeds Step 02 (Planner) and the Agents card.
+
+SOURCE: Birgitta Böckeler (Thoughtworks, "Exploring Gen AI" on martinfowler.com)
+Type: Blog (Atom; filter to the series)
+URLs:
+  - https://martinfowler.com/feed.atom
+  - https://martinfowler.com/articles/exploring-gen-ai.html
+Search queries:
+  - site:martinfowler.com/articles/exploring-gen-ai
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/exploring-gen-ai.json
+Fetch note: the feed carries all of martinfowler.com. Keep only items whose URL contains /articles/exploring-gen-ai. Other authors now write in the series too; keep them.
+Focus: Measured experiments on agentic coding, TDD inside the agent loop, local models for coding. About 1 post a month across the series. Credible citation for the hiring-manager section.
+
+SOURCE: Dex Horthy / HumanLayer
+Type: Blog index (no feed; scrape)
+URLs:
+  - https://www.humanlayer.dev/blog
+Search queries:
+  - site:humanlayer.dev/blog
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/humanlayer.json
+Fetch note: the index page shows dated post cards; diff titles. Skip the "All Resources" chronology entry.
+Focus: Context engineering for coding agents, getting Claude to read CLAUDE.md, context forking, harness-engineering skills. About 1 post a month, irregular. Vendor blog; take the pattern, skip the product pitch.
+
+SOURCE: Armin Ronacher
+Type: Blog (Atom; filter)
+URLs:
+  - https://lucumr.pocoo.org
+  - https://lucumr.pocoo.org/feed.atom
+Search queries:
+  - site:lucumr.pocoo.org agent
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/armin-ronacher.json
+Fetch note: about half the posts are Rust internals. Skip those by title; keep anything on agents, coding with LLMs, or tooling.
+Focus: Skeptical, specific essays on agentic coding and agent harnesses (co-founder of Earendil, which ships the pi coding agent). About 2-3 posts a month.
+
+SOURCE: Drew Breunig
+Type: Blog (RSS)
+URLs:
+  - https://www.dbreunig.com
+  - https://www.dbreunig.com/feed.xml
+Search queries:
+  - site:dbreunig.com harness
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/drew-breunig.json
+Focus: Taxonomy of agent harness layers, system-prompt analysis, how harness products differ. About 1-2 posts a month. Analyst rather than builder; clear and sourced.
+
+SOURCE: Ahmad Shadeed
+Type: Blog (RSS)
+URLs:
+  - https://ishadeed.com
+  - https://ishadeed.com/feed.xml
+Search queries:
+  - site:ishadeed.com
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/ahmad-shadeed.json
+Focus: Visual, worked CSS layout articles (container queries, subgrid, the lh unit, overlap detection). About 1-2 posts a month. Feeds Creative defaults and the CSS token layer.
+
+SOURCE: Josh W. Comeau
+Type: Blog (RSS)
+URLs:
+  - https://www.joshwcomeau.com
+  - https://www.joshwcomeau.com/rss.xml
+Search queries:
+  - site:joshwcomeau.com
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/josh-comeau.json
+Focus: Interactive deep dives on CSS, scroll-driven animation, anchor positioning, with fallbacks and browser-support numbers. About 1 post every 6 weeks. Feeds Motion and Creative defaults.
+
+SOURCE: Una Kravets
+Type: Blog (RSS)
+URLs:
+  - https://una.im
+  - https://una.im/rss.xml
+Search queries:
+  - site:una.im
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/una-kravets.json
+Focus: Platform CSS for theming and accessible color (light-dark(), contrast-color(), style queries). About 1 post a month, quiet since June 2026. Feeds tokens and Gate 3 contrast.
+
+SOURCE: Maxime Heckel
+Type: Blog (RSS)
+URLs:
+  - https://blog.maximeheckel.com
+  - https://blog.maximeheckel.com/rss.xml
+Search queries:
+  - site:blog.maximeheckel.com
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/maxime-heckel.json
+Focus: Long React Three Fiber, TSL and WebGPU shader essays with live demos. About 1 post a quarter. The strongest WebGL writer active in 2026. Feeds Three.js work and Motion.
+
+SOURCE: Motion blog (Matt Perry)
+Type: Blog (RSS; filter)
+URLs:
+  - https://motion.dev/blog
+  - https://motion.dev/magazine/rss.xml
+Search queries:
+  - site:motion.dev
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/motion-blog.json
+Fetch note: skip product-launch posts (titles starting "Introducing"). Keep the engineering posts.
+Focus: Animation engineering for the Framer Motion stack (View Transitions, hover detection, performance). About 1 post every 2 months.
+
+SOURCE: Matt Ström-Awn
+Type: Blog (Atom)
+URLs:
+  - https://mattstromawn.com
+  - https://mattstromawn.com/feed.xml
+Search queries:
+  - site:mattstromawn.com
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/matt-strom-awn.json
+Focus: Measured design engineering (categorical color algorithms with benchmarks, design quality, strategy). About 1 post a quarter. Feeds Creative defaults.
+
+SOURCE: Nielsen Norman Group
+Type: Blog (RSS)
+URLs:
+  - https://www.nngroup.com/articles/
+  - https://www.nngroup.com/feed/rss/
+Search queries:
+  - site:nngroup.com AI
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/nngroup.json
+Fetch note: keep AI, agent, and design-process articles; skip course and event announcements.
+Focus: Research-backed AI UX frameworks (disclosure, evaluating AI output, prototyping with AI). About 6 posts a month, nearly all AI now. Quotable for the hiring-manager section.
 ```
 
 ---
@@ -235,6 +359,18 @@ Format:
 - Jesse Vincent (Superpowers): [N new / nothing new]
 - Anthropic Engineering + claude.com/blog: [N new / nothing new]
 - Adrian Roselli: [N new / nothing new]
+- Maggie Appleton: [N new / nothing new]
+- Birgitta Böckeler (Exploring Gen AI): [N new / nothing new]
+- Dex Horthy / HumanLayer: [N new / nothing new]
+- Armin Ronacher: [N new / nothing new]
+- Drew Breunig: [N new / nothing new]
+- Ahmad Shadeed: [N new / nothing new]
+- Josh W. Comeau: [N new / nothing new]
+- Una Kravets: [N new / nothing new]
+- Maxime Heckel: [N new / nothing new]
+- Motion blog: [N new / nothing new]
+- Matt Ström-Awn: [N new / nothing new]
+- Nielsen Norman Group: [N new / nothing new]
 
 _Generated: YYYY-MM-DD_
 ```
