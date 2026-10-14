@@ -12,6 +12,9 @@ schema_version: 1
 studio: "The Shokunin Crafthouse"
 template_version: "1.1.0"
 
+# Which learnings index CLAUDE.md imports beside the global INDEX-process.md (ADR-121).
+surface: "web-static" # web | web-static | physical | process -- must match the CLAUDE.md import
+
 project:
   name: "ai.levibahn.com"
   client: "Internal — Levi Bahn"
