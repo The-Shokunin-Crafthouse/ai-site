@@ -31,7 +31,7 @@ Add these to every new repo. Values never change — same across all projects.
 | Secret Name | Value | Where to get it |
 |---|---|---|
 | `HOSTINGER_SSH_KEY` | Your private SSH key | Run `cat ~/.ssh/hostinger_deploy \| pbcopy` in Terminal |
-| `HOSTINGER_HOST` | `62.72.50.159` | Your Hostinger server IP |
+| `HOSTINGER_HOST` | `<hostinger-server-ip>` | Your Hostinger server IP |
 | `HOSTINGER_USER` | Your Hostinger SSH username | hPanel → SSH Access |
 
 **How to add secrets to a repo:**
