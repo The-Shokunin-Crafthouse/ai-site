@@ -44,6 +44,20 @@ Search queries:
 Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/bcherny.json
 Focus: Claude Code tips, workflow optimizations, CLAUDE.md patterns, hooks, MCP usage, sub-agents
 
+SOURCE: Felix Rieseberg
+Type: X/Twitter profile + GitHub profile (Claude updates posted from either)
+Handle: @felixrieseberg (X); github.com/felixrieseberg (GitHub)
+URLs:
+  - https://x.com/felixrieseberg
+  - https://github.com/felixrieseberg
+Search queries:
+  - site:x.com/felixrieseberg claude
+  - "felixrieseberg" claude code OR cowork OR claude desktop
+  - from:felixrieseberg claude
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/felixrieseberg.json
+Fetch note: X blocks direct fetches (robots); use search snippets and cached results. On GitHub, check recent activity on Claude-related repos only. Skip personal or non-Claude posts.
+Focus: Claude desktop app and Cowork updates, Claude Code releases, agent and desktop workflow changes, plugin or mod guidance
+
 SOURCE: Andrej Karpathy
 Type: X/Twitter profile
 Handle: @karpathy
@@ -422,6 +436,7 @@ Format:
 ## Sources checked
 - Boris Cherny (@bcherny): [N new / nothing new]
 - Andrej Karpathy (@karpathy): [N new / nothing new]
+- Felix Rieseberg (@felixrieseberg, GitHub): [N new / nothing new]
 - Figma Blog: [N new / nothing new]
 - Claude Code Docs: [N new / nothing new]
 - Luke Wroblewski: [N new / nothing new]
