@@ -69,6 +69,18 @@ Search queries:
 Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/karpathy.json
 Focus: AI workflow patterns, coding with LLMs, prompt engineering, agentic patterns
 
+SOURCE: trq212
+Type: X/Twitter profile
+Handle: @trq212
+URLs: https://x.com/trq212
+Search queries:
+  - site:x.com/trq212 claude
+  - "trq212" claude code twitter OR x.com
+  - from:trq212 claude
+Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/trq212.json
+Fetch note: X blocks direct fetches (robots); use search snippets and cached results. Skip personal or non-Claude posts.
+Focus: Claude Code tips, skills, hooks, agent and workflow patterns
+
 SOURCE: Figma Blog
 Type: Blog
 URLs:
@@ -436,6 +448,7 @@ Format:
 ## Sources checked
 - Boris Cherny (@bcherny): [N new / nothing new]
 - Andrej Karpathy (@karpathy): [N new / nothing new]
+- trq212 (@trq212): [N new / nothing new]
 - Felix Rieseberg (@felixrieseberg, GitHub): [N new / nothing new]
 - Figma Blog: [N new / nothing new]
 - Claude Code Docs: [N new / nothing new]
