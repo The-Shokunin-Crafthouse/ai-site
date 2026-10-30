@@ -167,7 +167,7 @@ Search queries:
   - site:anthropic.com/engineering
   - site:claude.com/blog "Claude Code"
 Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/anthropic-engineering.json
-Fetch note: the engineering index shows dates; read the top 6 and diff titles. On claude.com/blog keep only posts that name Claude Code, mods, plugins, skills, hooks, or agents; skip enterprise and announcement posts.
+Fetch note: the engineering index shows dates; read the top 6 and diff titles. On claude.com/blog keep only posts that name Claude Code, Cowork, Claude Desktop, mods, plugins, skills, hooks, or agents; skip other enterprise and announcement posts. (Cowork and Claude Desktop added 2026-10-28, packet S89: the Sep 16 Cowork-and-chat merge post was invisible to six sweeps.)
 Focus: Harness design for long-running agents, auto mode safety, eval noise, Claude Code quality reports, mods and plugin guidance. Primary source for the Agents and Tools sections.
 
 SOURCE: Adrian Roselli
