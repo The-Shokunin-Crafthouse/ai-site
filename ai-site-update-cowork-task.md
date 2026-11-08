@@ -32,54 +32,26 @@ the sources itself and the footer says so; it never downgrades Steps 4 or 7.
 > Add a new block below to include a new source. Remove a block to stop monitoring it.
 
 ```
-SOURCE: Boris Cherny
-Type: X/Twitter profile
-Handle: @bcherny
-URLs: https://x.com/bcherny
-Search queries:
-  - site:x.com/bcherny claude
-  - "bcherny" claude code twitter OR x.com
-  - Boris Cherny claude code tips
-  - from:bcherny claude
-Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/bcherny.json
-Focus: Claude Code tips, workflow optimizations, CLAUDE.md patterns, hooks, MCP usage, sub-agents
-
 SOURCE: Felix Rieseberg
-Type: X/Twitter profile + GitHub profile (Claude updates posted from either)
-Handle: @felixrieseberg (X); github.com/felixrieseberg (GitHub)
+Type: GitHub profile
+Handle: github.com/felixrieseberg
 URLs:
-  - https://x.com/felixrieseberg
   - https://github.com/felixrieseberg
 Search queries:
-  - site:x.com/felixrieseberg claude
   - "felixrieseberg" claude code OR cowork OR claude desktop
-  - from:felixrieseberg claude
 Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/felixrieseberg.json
-Fetch note: X blocks direct fetches (robots); use search snippets and cached results. On GitHub, check recent activity on Claude-related repos only. Skip personal or non-Claude posts.
+Fetch note: X is not read (robots block, 2026-11-08). Check recent activity on Claude-related repos only. Skip personal or non-Claude items.
 Focus: Claude desktop app and Cowork updates, Claude Code releases, agent and desktop workflow changes, plugin or mod guidance
 
 SOURCE: Andrej Karpathy
-Type: X/Twitter profile
-Handle: @karpathy
-URLs: https://x.com/karpathy
+Type: Blog (RSS)
+URLs:
+  - https://karpathy.bearblog.dev/feed/
 Search queries:
-  - site:x.com/karpathy claude
-  - "karpathy" claude code OR AI workflow twitter OR x.com
-  - from:karpathy claude code
+  - site:karpathy.bearblog.dev
 Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/karpathy.json
+Fetch note: X is not read (robots block, 2026-11-08); the blog feed is the only channel. About 1 post a quarter. Keep only posts on LLM workflow, agents, or coding with LLMs.
 Focus: AI workflow patterns, coding with LLMs, prompt engineering, agentic patterns
-
-SOURCE: trq212
-Type: X/Twitter profile
-Handle: @trq212
-URLs: https://x.com/trq212
-Search queries:
-  - site:x.com/trq212 claude
-  - "trq212" claude code twitter OR x.com
-  - from:trq212 claude
-Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/trq212.json
-Fetch note: X blocks direct fetches (robots); use search snippets and cached results. Skip personal or non-Claude posts.
-Focus: Claude Code tips, skills, hooks, agent and workflow patterns
 
 SOURCE: Figma Blog
 Type: Blog
@@ -93,7 +65,9 @@ SOURCE: Claude Code Docs
 Type: Documentation
 URLs:
   - https://code.claude.com/docs/en/overview
+  - https://code.claude.com/docs/en/changelog
 Snapshot file: ~/Projects/shokunin-crafthouse/ai-site/_snapshots/claude-code-docs.json
+Fetch note: the changelog lists newest versions first and is long; read the top 5 entries and diff version numbers against seenItems. It replaces the Claude Code team's X posts, which cannot be read. GitHub releases (anthropics/claude-code) is also robots-blocked.
 Focus: New features, new flags, new slash commands, hooks, skills, sub-agents, CLAUDE.md guidance
 
 SOURCE: Luke Wroblewski
@@ -376,7 +350,7 @@ Fetch rules the subagent follows for each source in its batch:
 1. Fetch each URL listed
 2. Run each search query listed
 3. Collect all posts, articles, changelog entries, or doc changes accessible from results
-4. For X/Twitter: use search snippets and cached results — use what's publicly accessible
+4. X/Twitter is not a source: x.com is blocked by robots and web search returns no x.com pages. Do not list x.com URLs or X-style queries (`from:`) in a SOURCE block. Do not use mirror sites to read X posts.
 5. For docs and blogs: read the page content directly, look for recent additions or changed sections
 6. If a source block carries a `Fetch note:` line, follow it: it names which feed to use, what to filter out, or what to scrape when the site has no feed
 7. Diff against `seenItems` (Step 3) before returning: return only items not already seen
@@ -446,10 +420,8 @@ Format:
 ---
 
 ## Sources checked
-- Boris Cherny (@bcherny): [N new / nothing new]
-- Andrej Karpathy (@karpathy): [N new / nothing new]
-- trq212 (@trq212): [N new / nothing new]
-- Felix Rieseberg (@felixrieseberg, GitHub): [N new / nothing new]
+- Andrej Karpathy (blog): [N new / nothing new]
+- Felix Rieseberg (GitHub): [N new / nothing new]
 - Figma Blog: [N new / nothing new]
 - Claude Code Docs: [N new / nothing new]
 - Luke Wroblewski: [N new / nothing new]
