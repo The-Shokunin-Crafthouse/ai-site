@@ -7,6 +7,12 @@
       "entries": [
         {
           "date": "2026-11-11",
+          "title": "Weekly sweep v39 — Fable 5.2 and mods",
+          "detail": "The budget row names Fable 5.2 and Anthropic's measured case for changing effort before model, and the Claude Mods row now says an ask rule no longer fences a mod after v2.1.321.",
+          "prs": [103]
+        },
+        {
+          "date": "2026-11-11",
           "title": "Page caught up with the record",
           "detail": "Every audit change since August now renders on the page: 18 missing tool-table rows, the Playwright test workflow in Steps 04, 05, 09 and 10, card and step copy, and this changelog backfill. The weekly apply now edits index.html and the changelog, not just the audit.",
           "prs": [100]
