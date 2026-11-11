@@ -9,7 +9,7 @@
           "date": "2026-11-11",
           "title": "Weekly sweep v39 — Fable 5.2 and mods",
           "detail": "The budget row names Fable 5.2 and Anthropic's measured case for changing effort before model, and the Claude Mods row now says an ask rule no longer fences a mod after v2.1.321.",
-          "prs": []
+          "prs": [103]
         },
         {
           "date": "2026-11-11",
