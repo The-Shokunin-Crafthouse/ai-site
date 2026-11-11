@@ -312,7 +312,7 @@
       </div>
       <p>Every Claude Code session loads context in five layers, in order: root <code>CLAUDE.md</code> → project <code>WORKSPACE.md</code> → sprint <code>CONTEXT.md</code> → <code>references/</code> → <code>output/</code>. Studio identity, principles, and gates live in <code>studio-memory.md</code> — a core capped at 100 lines, loaded whole at every session start because it is small enough to afford. Everything deeper — accumulated learnings, code standards, creative defaults — loads on demand, named by the sprint CONTEXT.md Inputs table.</p>
       <p>The sprint <code>CONTEXT.md</code> is the layer that does the work. It names the exact files (and sections) to load, the contract Claude is held to, and the audit checklist run before the PR opens. <code>references/</code> carry stable inputs for the sprint; <code>output/</code> carries this-run artifacts.</p>
-      <p>The memory grows. After each shipped project, <code>sc-learn</code> captures real learnings — the Next.js <code>trailingSlash</code> trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern — each one a file in <code>learnings/</code>, indexed in a single line. The next sprint starts with that knowledge already addressable.</p>
+      <p>The memory grows. After each shipped project, <code>sc-learn</code> captures real learnings — the Next.js <code>trailingSlash</code> trap, the Supabase service-role GRANT lesson, the CSS-only layout reflow pattern — each one a file in <code>learnings/</code>, indexed in a single line. Anthropic calls this kind of pass dreaming: an agent rereads its logs to fix mistakes and write new notes (Nov 2026). The next sprint starts with that knowledge already addressable. CLAUDE.md updates work in team contexts too — tag <code>@claude</code> in a GitHub PR review comment with a proposed rule and Claude applies the change to CLAUDE.md automatically, keeping institutional memory current without a separate commit workflow.</p>
       <ul class="drawer__stats">
         <li><span class="drawer__stat-num">5</span><span class="drawer__stat-label">memory layers</span></li>
         <li><span class="drawer__stat-num">7</span><span class="drawer__stat-label">design principles</span></li>
@@ -372,7 +372,7 @@
       <p>The <strong>Planner</strong> turns a one-paragraph brief into a full product spec with sprint breakdown. Runs in Claude.ai with the studio project active. Cheap. One pass.</p>
       <p>The <strong>Generator</strong> builds the sprint. Reads the layered chain — <code>CLAUDE.md</code> → <code>WORKSPACE.md</code> → the sprint's <code>CONTEXT.md</code> — and loads only the files named in that CONTEXT.md's Inputs table. Implements one section, runs the CONTEXT.md audit checklist before opening the PR, ships a PR with a live preview URL and four breakpoint snapshots. Dispatched as a background session in Agent View so it runs without my attention.</p>
       <p>The <strong>Evaluator</strong> grades the sprint against Originality, Design Quality, Craft, and Functionality. Skeptical by design. Catches issues before I review. Single-pass: never put a <code>/goal</code> or <code>/loop</code> on it.</p>
-      <p>I do four things: brief, approve, review, merge. I am the only one who pushes to main. This is agentic engineering — orchestrating agents with the oversight and quality discipline of engineering, not casual prompting. A circulating ten-rule extension adds six runtime rules for loop-level self-monitoring — Verification (test before fixing), Debugging discipline, Dependency hygiene, Communication (actionable uncertainty), and four named failure modes (Kitchen Sink, Wrong Abstraction, Optimistic Path, Runaway Refactor) the agent should recognize and stop.</p>
+      <p>I do four things: brief, approve, review, merge. I am the only one who pushes to main. This is agentic engineering — orchestrating agents with the oversight and quality discipline of engineering, not casual prompting. The three-agent split stays only while it beats one plain session on the same cases (ADR-146), in line with Anthropic's Oct 2026 guidance to fold subagents into the main loop unless an eval shows the split wins; the Evaluator stays separate because it is a contamination boundary, not a specialist. A circulating ten-rule extension adds six runtime rules for loop-level self-monitoring — Verification (test before fixing), Debugging discipline, Dependency hygiene, Communication (actionable uncertainty), and four named failure modes (Kitchen Sink, Wrong Abstraction, Optimistic Path, Runaway Refactor) the agent should recognize and stop. Above that per-sprint loop, I run a second layer that decides what gets built at all: intake, a five-seat blind council, commissioning, and a night-runner queue that dispatches and verifies work on its own.</p>
       <ul class="drawer__stats">
         <li><span class="drawer__stat-num">3</span><span class="drawer__stat-label">AI agents</span></li>
         <li><span class="drawer__stat-num">1</span><span class="drawer__stat-label">human approver</span></li>
@@ -400,9 +400,9 @@
           <p class="d-media__hint" aria-hidden="true">4 surfaces · 1 token pool</p>
         </div>
       </div>
-      <p><strong>Claude Max</strong> ($100/mo) gives me Opus and Sonnet on a shared token pool. Sonnet for content and scaffolding; Opus for sprint builds; Fable for planning and evaluator passes.</p>
-      <p><strong>Claude Design</strong> runs on Opus 4.8 with its own independent weekly limit that does not touch the Max pool. I use it for visual inspiration before committing anything to Figma.</p>
-      <p><strong>Cowork</strong> is the Desktop app's third tab. File-based knowledge work — briefs, memory updates, deliverable organization. Same connectors as chat. Remote dispatch from iPhone. Not Claude Code, not Agent View.</p>
+      <p><strong>Claude Max</strong> ($100/mo) gives me Opus, Sonnet, and Haiku on a shared token pool. Sonnet for content and scaffolding; Opus for sprint builds; Haiku for high-volume mechanical passes; Fable for planning and evaluator passes. Since Oct 7, the plan also includes $100 per month of Claude Platform API credits ($200 on Max 20x), a separate pool from the chat and Code token pool, usable for scripted runs and <code>claude -p</code> dispatches.</p>
+      <p><strong>Claude Design</strong> runs on Opus 4.8. Since Sep 16 it also works inside every Claude conversation, and since Oct 8 Docs, Slides and Design are out of beta on every plan. The standalone app at claude.ai/design closes Dec 14. The standalone app has its own independent weekly limit that does not touch the Max pool. I use it for visual inspiration before committing anything to Figma.</p>
+      <p><strong>Cowork</strong> and chat are one Claude on web, desktop, and mobile since Sep 16. Agentic work runs in a cloud sandbox created for each session and destroyed when it ends, so a task keeps going after I close the laptop. The Desktop app is the bridge to local files and apps while it is open. File-based knowledge work — briefs, memory updates, deliverable organization. Same connectors as chat. Remote dispatch from iPhone. Not Claude Code, not Agent View.</p>
       <p><strong>Figma + Figma MCP</strong> are the design system and the agent's interface to it. Sandbox is creative workspace; Production is canonical. <code>generate_figma_design</code> writes approved frames straight to the Production canvas — no manual promotion step. <code>/sync-figma-token</code> pulls tokens from Sandbox into <code>token-map.md</code> — for projects with their own token set; branded properties consume the shared system instead.</p>
       <p><strong>GitHub Actions + Hostinger</strong> handle deploys. Every PR opens a live preview at a real URL.</p>
       <ul class="drawer__stats">
@@ -451,9 +451,10 @@
           </div>
 
           <div class="timeline__planning">
-            <p><strong>Before every session.</strong> Two pre-session gates from <code>studio-memory.md</code> §6, ahead of any Claude Code session below (scaffold, build, evaluate).</p>
+            <p><strong>Before every session.</strong> Three pre-session gates from <code>studio-memory.md</code> §6, ahead of any Claude Code session below (scaffold, build, evaluate).</p>
             <p><strong>Sync <code>main</code>.</strong> The local repo is synced to <code>main</code> (<code>git checkout main &amp;&amp; git pull origin main</code>) and confirmed up to date with remote before any branch or worktree is created. Not optional, not skipped because a change "looks small."</p>
             <p><strong>Confirm the model.</strong> Confirm the selected model before the first prompt. Fable is never the default, it runs only on Planner and Evaluator passes.</p>
+            <p><strong>Confirm Claude Code Desktop is on <code>main</code>.</strong> CC Desktop auto-spawns a worktree off the active branch; confirm the primary checkout is on <code>main</code> (no <code>.claude/worktrees/</code> in the path) before pasting a prompt, or edits never reach the running server. Clean up a stray worktree with <code>git worktree remove</code>, never <code>rm -rf</code>.</p>
           </div>
 
           <ol class="steps" id="step-rows-hidden" data-steps>
@@ -600,8 +601,16 @@ Be ambitious. Look for opportunities where AI-native features would serve the pr
    - If dark mode is in scope, captures both modes (8 PNGs total)
    - Tears the server down on completion or failure (use try/finally)
    Add an npm script: "preview": "node scripts/preview.mjs"
-8. Track /previews/ in the repo (do NOT add it to .gitignore).
-9. Initialize git, commit everything, and push to main on GitHub.
+8. Add @playwright/test as a dev dependency. Create playwright.config.ts at
+   the repo root with:
+   - testDir: './tests'
+   - BASE_URL read from process.env.BASE_URL (no default — must be supplied)
+   - One project: chromium only (CI runs headless; local runs can add browsers)
+   - Timeout: 30s per test, 60s per expect
+   Create a tests/ directory with a .gitkeep so it commits empty.
+   Add an npm script: "test": "playwright test"
+9. Track /previews/ and /tests/ in the repo (do NOT add either to .gitignore).
+10. Initialize git, commit everything, and push to main on GitHub.
 
 Report the GitHub URL when done.</code></pre>
                 </div>
@@ -613,7 +622,7 @@ Report the GitHub URL when done.</code></pre>
                 <span class="step__num" data-row-accent>05</span>
                 <span class="step__main">
                   <span class="step__title">Wire deploy and preview workflows</span>
-                  <span class="step__summary">Three GitHub Actions: production deploy, PR preview, preview cleanup.</span>
+                  <span class="step__summary">Four GitHub Actions: production deploy, PR preview, preview cleanup, Playwright tests.</span>
                 </span>
                 <span class="step__meta">
                   <span class="step__badge step__badge--prompt">Prompt Claude</span>
@@ -622,7 +631,7 @@ Report the GitHub URL when done.</code></pre>
               </button>
               <div class="step__body" id="step-5-body" hidden>
                 <div class="step__body-text">
-                  <p>Push to main triggers an rsync to Hostinger production. Every PR opens triggers a preview build at <code>/_previews/[pr-number]/</code> with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down.</p>
+                  <p>Push to main triggers an rsync to Hostinger production. Every PR triggers a preview build at <code>/_previews/[pr-number]/</code> with a sticky comment dropping the live URL into the PR. Close the PR and the cleanup workflow tears the directory down. A fourth workflow (<code>test.yml</code>) runs Playwright tests against the live preview and must pass before merge is allowed — it is added to the branch protection required status checks after committing.</p>
                   <p>Claude Code prints the predicted preview URL directly in chat and runs <code>gh run watch</code> to confirm the deploy succeeded. No GitHub round-trip to find a URL.</p>
                   <p>I review desktop and mobile from the live URL, not screenshots. The PR closes and the preview tears down on its own.</p>
                   <p>The workflow files themselves are sourced from the canonical templates in studio memory — updated once there and propagated, never edited repo by repo.</p>
@@ -631,7 +640,7 @@ Report the GitHub URL when done.</code></pre>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-5-prompt" aria-label="Copy prompt">
                     <svg class="icon" aria-hidden="true"><use href="#ph-copy"/></svg>
                   </button>
-                  <pre><code id="step-5-prompt">Create three GitHub Actions workflows for this project. The domain for this project is: [your domain]
+                  <pre><code id="step-5-prompt">Create four GitHub Actions workflows for this project. The domain for this project is: [your domain]
 
 WORKFLOW 1 — Production deploy
 File: .github/workflows/deploy.yml
@@ -656,10 +665,23 @@ File: .github/workflows/preview-cleanup.yml
 - Trigger: pull_request, types [closed], targeting main
 - Steps: ssh in via appleboy/ssh-action@v1 and `rm -rf ~/domains/[your domain]/public_html/_previews/${{ github.event.pull_request.number }}/`; post a confirmation comment on the PR.
 
+WORKFLOW 4 — Playwright functional tests
+File: .github/workflows/test.yml
+- Trigger: pull_request, types [opened, synchronize, reopened], targeting main
+- needs: preview-deploy (wait for the preview to be live before running tests)
+- Steps:
+  - Checkout PR head
+  - Setup Node 20 + npm ci
+  - Install Playwright browsers: npx playwright install --with-deps chromium
+  - Run tests: BASE_URL=https://[your domain]/_previews/${{ github.event.pull_request.number }} npm test
+  - On failure: upload test-results/ as an artifact named playwright-report
+- This workflow must pass before merge is allowed. Add it to the branch
+  protection required status checks for main after committing.
+
 For Next.js: also update next.config.js to read basePath and assetPrefix from process.env.BASE_PATH (defaulting to '').
 For HTML+CSS: ensure all asset paths are relative (./images/ not /images/).
 
-Commit all three workflow files plus any framework config changes to a new branch called add-deploy-and-preview-workflows, and push to GitHub.</code></pre>
+Commit all four workflow files plus any framework config changes to a new branch called add-deploy-and-preview-workflows, and push to GitHub.</code></pre>
                 </div>
               </div>
             </li>
@@ -678,7 +700,7 @@ Commit all three workflow files plus any framework config changes to a new branc
               </button>
               <div class="step__body" id="step-6-body" hidden>
                 <div class="step__body-text">
-                  <p>Claude Design runs on Opus 4.8 with its own independent weekly limit that does not touch the Max pool. I treat it as a free creative resource for exploration before committing anything to Figma.</p>
+                  <p>Claude Design runs on Opus 4.8, and since Sep 16 it also works inside every Claude conversation. The standalone app closes Dec 14. The standalone app has its own independent weekly limit that does not touch the Max pool. I treat it as a free creative resource for exploration before committing anything to Figma.</p>
                   <p>The pattern is two opposing directions: my instinct, then its opposite. The contrast forces a decision about point of view. Output saves to <code>stages/02-design/claude-design/</code>.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
@@ -812,8 +834,8 @@ This file is the source of truth for all implementation. No color, font, or spac
                 <div class="step__body-text">
                   <p>The Generator reads the layered chain (<code>CLAUDE.md</code> → <code>WORKSPACE.md</code> → the sprint <code>CONTEXT.md</code> at <code>stages/03-build/[sprint-name]/CONTEXT.md</code>), loads only what the CONTEXT.md Inputs table names, pulls the Sandbox frames via Figma MCP, and proposes a contract. Once I approve, Claude writes the approved contract into the CONTEXT.md Contract field, updates Status to <code>approved</code>, and commits the file before any code lands.</p>
                   <p>Implementation is mobile-first across all four breakpoints. Asset paths must work both at root and at <code>/_previews/[N]/</code>. Before opening the PR, Claude runs every item in the CONTEXT.md Audit checklist and updates Status to <code>complete</code>. The PR opens with four snapshot screenshots embedded and a sticky comment carrying the live preview URL.</p>
-                  <p>Dispatched via Agent View as a background session, so the build runs without my attention. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract file is approved and committed.</p>
-                  <p>The build runs under the autonomy contract. Any call that is reversible, within studio standards, and within scope gets made and logged to <code>decisions/decisions.md</code> via <code>sc-adr</code> — not asked. Before the PR opens, <code>sc-verify</code> runs the Gate-3 self-check; failures are fixed or flagged, never silently presented. The PR, preview URL, decisions since the last gate, and verify report arrive together as one gate packet. Scope changes, money, live services, and brand direction still come to me. Always. Auto mode (v2.1.183+) enforces additional guardrails in unattended sessions: <code>git reset --hard</code>, <code>git clean -fd</code>, <code>git stash drop</code>, <code>git commit --amend</code> (on commits not made this session), and infrastructure teardown commands (<code>terraform destroy</code>, <code>pulumi destroy</code>, <code>cdk destroy</code>) are blocked unless the prompt explicitly requests the destructive action — the agent pauses rather than proceeds.</p>
+                  <p>Dispatched via Agent View as a background session, so the build runs without my attention — pinned, since the daemon stops an unpinned idle background session after about an hour and the build pauses here waiting on my contract approval. Optional <code>/goal</code> drives it through to a ready-to-review PR after the contract file is approved and committed.</p>
+                  <p>The build runs under the autonomy contract. Any call that is reversible, within studio standards, and within scope gets made and logged to <code>decisions/decisions.md</code> via <code>sc-adr</code> — not asked. Before the PR opens, <code>sc-verify</code> runs the Gate-3 self-check; failures are fixed or flagged, never silently presented. The PR, preview URL, decisions since the last gate, and verify report arrive together as one gate packet. Scope changes, money, live services, and brand direction still come to me. Always. Auto mode is now the default start state for interactive terminal and VS Code sessions whenever no permission mode is configured (v2.1.284), not an opt-in guardrail; run <code>/auto-mode-setup</code> once per repo (v2.1.304) so auto mode knows the project's own destructive paths. Permission prompts also gained a "Yes, but ask again next time" option. Auto mode (v2.1.183+) enforces additional guardrails in unattended sessions: <code>git reset --hard</code>, <code>git clean -fd</code>, <code>git stash drop</code>, <code>git commit --amend</code> (on commits not made this session), and infrastructure teardown commands (<code>terraform destroy</code>, <code>pulumi destroy</code>, <code>cdk destroy</code>) are blocked unless the prompt explicitly requests the destructive action — the agent pauses rather than proceeds.</p>
                 </div>
                 <div class="step__prompt" data-prompt-block>
                   <button type="button" class="copy-btn btn-press" data-copy data-copy-target="step-9-prompt" aria-label="Copy prompt">
@@ -840,14 +862,26 @@ Implementation requirements:
 - Mobile-first, all four breakpoints: 390, 768, 1024, 1440
 - Asset paths must work both at root (production) and at a subpath (PR previews). Use relative paths or read BASE_PATH from env. Do NOT hardcode absolute asset paths like /images/foo.png.
 
-When complete:
-- Run `npm run preview [section-name]` to generate snapshot screenshots at all four breakpoints into /previews/[section-name]/
-- Create a feature branch called feat/[section-name]
-- Before opening the PR, run through every item in the Audit section of stages/03-build/[sprint-name]/CONTEXT.md. Check each item explicitly. If any item fails, fix it first. Update Status to "complete" after all audit items pass.
-- Open a PR with: summary, "## Live Preview" placeholder, "## Snapshots" with 4 embedded images
-- Print the preview URL in chat as a raw cmd-clickable line: 📱 Preview URL: https://[domain]/_previews/[pr-number]/
-- Run `gh run watch --exit-status` on preview-deploy.yml and print ✅ on success / ❌ + failure logs on fail
-- Stop and wait — do not proceed to the next section without my approval</code></pre>
+When implementation is complete:
+1. Write Playwright tests in tests/[section-name].spec.ts covering:
+   - Primary user flows complete without error (navigation works, CTAs are reachable, forms submit or are correctly gated)
+   - All interactive elements are reachable at keyboard (tab order, focus states present in DOM)
+   - No broken assets (images and fonts return 200, checked via request interception)
+   - No console errors on load
+   - Page renders without horizontal overflow at 390 and 1440 viewport widths
+   Tests run against BASE_URL from env — do not hardcode any URL or localhost.
+2. Create a feature branch called feat/[section-name] and push it
+3. Open a draft PR so the preview-deploy workflow runs and the live preview URL is available
+4. Run `gh run watch --exit-status` on preview-deploy.yml and wait for it to complete
+5. Run the Playwright tests against the live preview:
+   BASE_URL=https://[domain]/_previews/[pr-number]/ npm test
+   If any test fails: fix the failure, push to the branch, wait for preview to redeploy, rerun tests. Do not proceed until all tests pass against the live preview.
+6. Run `npm run preview [section-name]` to generate snapshot screenshots at all four breakpoints into /previews/[section-name]/
+7. Run through every item in the Audit section of stages/03-build/[sprint-name]/CONTEXT.md. Check each item explicitly. If any item fails, fix it first. Update Status to "complete" after all audit items pass.
+8. Convert the draft PR to ready for review. Update the PR body with: summary, "## Live Preview" with the clickable URL, "## Snapshots" with 4 embedded images, "## Test results" confirming all Playwright tests passed with the test names listed.
+9. Print the preview URL in chat as a raw cmd-clickable line: 📱 Preview URL: https://[domain]/_previews/[pr-number]/
+10. Run `gh run watch --exit-status` on test.yml to confirm CI tests also pass and print ✅ on success / ❌ + failure logs on fail
+11. Stop and wait — do not proceed to the next section without my approval</code></pre>
                 </div>
               </div>
             </li>
@@ -867,9 +901,9 @@ When complete:
               <div class="step__body" id="step-10-body" hidden>
                 <div class="step__body-text">
                   <p>If the Generator needs to apply targeted cleanup before the Evaluator runs, <code>/code-review --fix</code> (v2.1.152+) writes review findings directly to the working tree in one pass. Before the Evaluator session, run <code>/ultrareview</code> on the open PR branch. It spins up parallel cloud reviewer agents against the diff, independently verifies every finding, and surfaces only confirmed bugs — catching code-level issues before design review begins. It reviews code correctness only; the Evaluator session runs after.</p>
-                  <p><code>sc-verify</code> (the Generator's self-check, Step 09) and the Evaluator are complementary, not redundant. Self-verify first — cheap, catches the builder's own obvious failures. Independent audit second — catches what the builder is blind to. A sprint that passes <code>sc-verify</code> can still fail the Evaluator. That is the system working.</p>
+                  <p><code>sc-verify</code> (the Generator's self-check, Step 09) and the Evaluator are complementary, not redundant. Self-verify first — cheap, catches the builder's own obvious failures. Independent audit second — catches what the builder is blind to. A sprint that passes <code>sc-verify</code> can still fail the Evaluator. That is the system working. A measured case for the split: one backend service, 10 runs per model — the frontier model passed every acceptance test with or without a verification harness but paid 6.6x more for it ($0.406 to $2.679 per run), while the cheaper model went from 3-of-10 to 10-of-10 with the harness at $0.273 per run, about a third of the frontier model's unharnessed cost (Naresh Jain, Thoughtworks, Oct 13; one service, non-Claude models, API-equivalent costs). Run the harness throughout on the cheap tier; on the judgment tier, the same tests serve as one final gate.</p>
                   <p>The Evaluator does not grade on taste. It applies a named lens library, the <code>sc-design-crit</code> skill, that maps each criterion to established frameworks: Nielsen and Norman for Functionality, Gestalt and visual hierarchy for Design Quality, Gerhardt-Powals for Craft judgment, peak-end and Zeigarnik for Originality. Every finding cites its lens and carries a severity, so "this feels off" becomes a defect with a fix instead of an opinion.</p>
-                  <p>A fresh Claude Code session on Fable, deliberately uncontaminated by the build context. It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
+                  <p>A fresh Claude Code session on Fable, deliberately uncontaminated by the build context. The failure a fresh session avoids has a name: context inertia, an agent's tendency to keep pursuing an earlier hypothesis after the evidence has changed, which compaction alone does not clear (Drew Breunig, Oct 14). It reads the snapshots, fetches the live preview to confirm structural integrity, then audits the code for token discipline and accessibility patterns.</p>
                   <p>Grades against Originality, Design Quality, Craft, Functionality. Craft and Functionality are required passes — sprints cannot ship with failures there. Skeptical by design: uncertainty equals fail. Originality is gated before it is scored: a slop-blocklist match or an unexecuted POV directive fails it outright.</p>
                   <p>In a team context, the Evaluator pass is necessary but not sufficient. The AI grades Functionality against code and visual snapshots — not against observed behavior. User testing runs here, between the Evaluator result and the merge decision. Which tool depends on company stage.</p>
                   <p><strong>Never put a <code>/goal</code> or <code>/loop</code> on this session.</strong> The Evaluator is single-pass by design; a goal would loop it on itself and defeat the audit.</p>
@@ -895,6 +929,7 @@ Evaluation order:
 1. First, open /previews/[section-name]/ and grade design quality, craft, originality, and functionality from the snapshot images across breakpoints. These are the canonical visual surface — what a real visitor would experience.
 2. Second, fetch the live preview URL to confirm: the page returns 200, copy matches the snapshots, asset paths resolve, and there is no obvious structural breakage in the raw HTML. Note: WebFetch returns text only — do not use it to grade any visual criterion.
 3. Third, read the code to verify token discipline (every color, font, spacing value comes from token-map.md), accessibility patterns, and that asset paths work both at root and under /_previews/[N]/.
+4. Fourth, read tests/[section-name].spec.ts. Verify the tests cover the primary flows, not just trivial assertions. Flag shallow tests (e.g. "page loads" with no behavioral assertion, tests that always pass regardless of implementation) as a Functionality failure. A test file that does not exist is an automatic Functionality FAIL.
 
 Do NOT spin up a local dev server. The live preview URL is already running on Hostinger.
 
@@ -902,7 +937,7 @@ Grade against our 4 criteria:
 1. Originality — two hard gates, then judgment (score out of 10): (a) any match against the slop-blocklist fails this criterion outright; (b) every POV directive for the sprint must be executed, or it fails; (c) only if both pass, judge deliberate creative decisions beyond the POV.
 2. Design Quality — coherent whole, distinct mood, not a template (score out of 10)
 3. Craft — typography, spacing, color harmony, contrast ratios (REQUIRED PASS — cannot ship with craft failures)
-4. Functionality — users can complete tasks without confusion (REQUIRED PASS — cannot ship with broken flows)
+4. Functionality — users can complete tasks without confusion, Playwright tests exist and are non-trivial (REQUIRED PASS — cannot ship with broken flows or missing/shallow tests)
 
 Be skeptical. Uncertainty = fail. Do not praise mediocre work.
 
@@ -1029,7 +1064,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                   <tr>
                     <th scope="row"><span class="gates__num">04</span> Delivery</th>
                     <td>Production deploy</td>
-                    <td>Staging review signed off, analytics live, error monitoring on, metadata and redirects confirmed, legal artifacts in place.</td>
+                    <td>Staging review signed off, analytics live, error monitoring on, metadata and redirects confirmed, legal artifacts in place, security pass run (scanners everywhere, adversarial authz where credentials, data, or payments are held), load tested at realistic concurrency on any server or database surface.</td>
                   </tr>
                 </tbody>
               </table>
@@ -1113,7 +1148,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
               </span>
             </button>
             <div class="brain-row__body" id="brain-row-1-body" hidden>
-              <p class="brain-row__desc"><code>studio-memory.md</code> is the studio's core institutional memory — identity, design principles, quality criteria, stack defaults, and approval gates, capped at 100 lines and loaded at the start of every session. Depth lives beside it, not inside it: accumulated learnings in <code>learnings/</code> (one file per lesson, indexed one line each), code standards and creative defaults in <code>playbooks/</code>. Sessions read a detail file only when the work calls for it. The next sprint starts with the relevant learnings already addressable, without paying for the rest in context tokens. NN/G's study of Claude power users names the same structure in research vocabulary: the core is global context, the sprint <code>CONTEXT.md</code> is local, and build logs and inboxes are ambient — kept separate on purpose. A follow-on NN/G study (Oct 9) of how power users maintain their context libraries over time names the same discipline this file runs: files capped at a few hundred lines, one index file per folder, loading scoped to the project at hand, and a periodic audit against real transcripts to catch drift.</p>
+              <p class="brain-row__desc"><code>studio-memory.md</code> is the studio's core institutional memory — identity, design principles, quality criteria, stack defaults, and approval gates, capped at 100 lines and loaded at the start of every session. Depth lives beside it, not inside it: accumulated learnings in <code>learnings/</code> (one file per lesson, indexed one line each), code standards and creative defaults in <code>playbooks/</code>. Sessions read a detail file only when the work calls for it. The next sprint starts with the relevant learnings already addressable, without paying for the rest in context tokens. NN/G's study of Claude power users names the same structure in research vocabulary: the core is global context, the sprint <code>CONTEXT.md</code> is local, and build logs and inboxes are ambient — kept separate on purpose. A follow-on NN/G study (Oct 9) of how power users maintain their context libraries over time names the same discipline this file runs: files capped at a few hundred lines, one index file per folder, loading scoped to the project at hand, and a periodic audit against real transcripts to catch drift. Anthropic's own memory research (Nov 6) measured the same shape: one page per subject, each written by one agent, kept 57 of 57 facts where agents sharing one table kept 41 of 57, and Claude Code's auto memory loads only the first 200 lines or 25 KB of <code>MEMORY.md</code> as an index. As an offline pass that rereads past sessions and corrects the notes scaled from 2 sessions to 128, the score on a 25-question eval rose from 13% to 48% of graded criteria.</p>
               <div class="brain-row__prompt">
                 <p class="brain-row__eyebrow">Three real entries from <code>learnings/</code></p>
                 <ul class="learnings">
@@ -1145,7 +1180,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
               </span>
             </button>
             <div class="brain-row__body" id="brain-row-2-body" hidden>
-              <p class="brain-row__desc">Every project clones from the same template. <code>WORKSPACE.md</code> defines the project. <code>WORKFLOW.md</code> defines the stages and approval gates. <code>token-map.md</code> is the design system source of truth for projects with an isolated token set; Shokunin-branded properties consume the shared system at brand.shokunincrafthouse.com. Stages live in numbered folders so the lifecycle is visible at a glance. Agents read <code>token-map.md</code> on every run, the way Luke Wroblewski's AGENTS.md pattern argues a steering document should work, so it cannot drift the way an unread design doc can (LukeW, 2026-10).</p>
+              <p class="brain-row__desc">Every project clones from the same template. <code>WORKSPACE.md</code> defines the project. <code>WORKFLOW.md</code> defines the stages and approval gates. <code>token-map.md</code> is the design system source of truth for projects with an isolated token set; Shokunin-branded properties consume the shared system at brand.shokunincrafthouse.com. Stages live in numbered folders so the lifecycle is visible at a glance. Agents read <code>token-map.md</code> on every run, the way Luke Wroblewski's AGENTS.md pattern argues a steering document should work, so it cannot drift the way an unread design doc can (LukeW, 2026-10). In his Nov 3 follow-up, the design system plus agent instructions gets a first pass about 90% of the way (50 to 60% with earlier models), and the rest is closed by showing the agent where things do not line up, on a marked-up screenshot or in Figma comments, which is what the Evaluator's breakpoint snapshot pass does here.</p>
               <div class="brain-row__prompt">
                 <p class="brain-row__eyebrow">Open any folder below to see what's inside</p>
 
@@ -1375,12 +1410,12 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Protect main from accidents</td>
                       <td data-label="Use this">GitHub branch ruleset</td>
-                      <td data-label="Why">PR required, force-pushes blocked, deletions restricted. I am the only approver. The ruleset is what makes an agent's merge safe at all: required checks enforced server-side, not merely agreed to — an AI colleague merged over its operator's objection on a repo with no branch protection and no required checks (Jesse Vincent, Oct 2026 post-mortem).</td>
+                      <td data-label="Why">PR required, force-pushes blocked, deletions restricted. I am the only approver. The ruleset is what makes an agent's merge safe at all: required checks enforced server-side, not merely agreed to — an AI colleague merged over its operator's objection on a repo with no branch protection and no required checks (Jesse Vincent, Oct 2026 post-mortem). Anthropic's own repos keep the same floor: any CI workflow file always needs a person to approve (Oct 15).</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Constrain Claude's reach</td>
                       <td data-label="Use this"><code>~/.claude/settings.json</code></td>
-                      <td data-label="Why">Allowed paths only. SSH, keychains, personal docs blocked.</td>
+                      <td data-label="Why">Allowed paths only. SSH, keychains, personal docs blocked. <code>permissions.blockWritesOutsideWorkingDirectories</code> (v2.1.314) makes Write, Edit and NotebookEdit refuse paths outside the working directories in every permission mode.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Block specific tool inputs or subagent models</td>
@@ -1410,7 +1445,12 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Keep budget low by default</td>
                       <td data-label="Use this">Sonnet</td>
-                      <td data-label="Why">Sonnet by default; Opus for sprint builds; Fable only for the Planner and Evaluator seats — each named by its CLI alias so the tier follows the installed release (ADR-112). The Sonnet tier currently resolves to Sonnet 5.5 (1M context, $2/$10 per Mtok, $0.20 cache reads, v2.1.284). The Haiku tier currently resolves to Haiku 5.5 ($0.10/$0.50 per Mtok up to 100K tokens of prompt, $0.50/$2.50 above, cache reads $0.01, 1M context, v2.1.293); its newer tokenizer counts about 30% more tokens than Haiku 4.5, so per-call cost is not a straight comparison. Opus and Fable stay pinned by ADR regardless of Anthropic's own tier default. Anthropic's own Claude Code default Opus model moved to Opus 5.5 in v2.1.280 (20% cheaper, $4/$20 per Mtok); Pro and Team Standard plans now default to Opus 5.5 instead of Sonnet, a breaking change for anyone relying on the prior default. Independent benchmark from Boris Cherny (bcherny): a HAProxy C-to-Rust migration ran 9.5h on Opus 5.5 versus 12h on the prior default, at 51% lower cost, evidence worth weighing specifically for large multi-file migrations and long sprint runs; the studio's own Opus pin for sprint builds stays the deliberate ADR-backed choice until that changes.</td>
+                      <td data-label="Why">Sonnet by default; Opus for sprint builds; Fable only for the Planner and Evaluator seats — each named by its CLI alias so the tier follows the installed release (ADR-112); since v2.1.301 the <code>fable</code> alias also retries on the previous Fable release when the newest is unavailable, so an alias-named session degrades one release rather than failing outright. The Sonnet tier currently resolves to Sonnet 5.5 (1M context, $2/$10 per Mtok, $0.20 cache reads, v2.1.284). The Haiku tier currently resolves to Haiku 5.5 ($0.10/$0.50 per Mtok up to 100K tokens of prompt, $0.50/$2.50 above, cache reads $0.01, 1M context, v2.1.293); its newer tokenizer counts about 30% more tokens than Haiku 4.5, so per-call cost is not a straight comparison. Opus and Fable stay pinned by ADR regardless of Anthropic's own tier default. Opus 5.5 cached reads run about 60% cheaper and typical token-billed work about 40% cheaper than Opus 5 (Anthropic, Sep 24). Anthropic's own Claude Code default Opus model moved to Opus 5.5 in v2.1.280 (20% cheaper, $4/$20 per Mtok); Pro and Team Standard plans now default to Opus 5.5 instead of Sonnet, a breaking change for anyone relying on the prior default. Independent benchmark from Boris Cherny (bcherny): a HAProxy C-to-Rust migration ran 9.5h on Opus 5.5 versus 12h on the prior default, at 51% lower cost, evidence worth weighing specifically for large multi-file migrations and long sprint runs; the studio's own Opus pin for sprint builds stays the deliberate ADR-backed choice until that changes.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Keep a long session cheap</td>
+                      <td data-label="Use this"><code>/usage</code> + <code>/compact</code> before stepping away</td>
+                      <td data-label="Why">Five habits from Anthropic's own cache-hygiene practice (Sep 24): <code>/usage</code> shows the cached-read share, pick the model at session start rather than switching mid-session, run <code>/compact</code> before stepping away rather than after returning, an effort change mid-session no longer resets the cache on Opus 5.5 and Fable 5.1, and forked subagents start from the parent's cache instead of rebuilding it. Since v2.1.299, a session that sits idle past 200K tokens for about 54 minutes compacts itself unless <code>"idleCompaction": false</code> is set in <code>settings.json</code>. Since Nov 2026 Claude Code sends only the new messages each turn through message threads (public beta, on by default for most Claude Code users): median time to first token drops about 35% at 500K to 1M tokens, and token usage does not change, because Claude still reads the whole conversation.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Respond to a permission dialog</td>
@@ -1420,7 +1460,27 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Tune instructions for Claude 5 models</td>
                       <td data-label="Use this">Prune, don't expand</td>
-                      <td data-label="Why">Shorter CLAUDE.md files and skills outperform verbose ones on Sonnet 5, Fable 5, and Mythos 5+. Anthropic cut Claude Code's own system prompt 80% (800 → 164 tokens) with no measured performance loss (claude.com/blog, 2026-08-13). The finding inverts the instinct to add more guidance — prune and distill existing instructions rather than expanding them. Anthropic's own Fable 5.1 system-prompt diff dropped a numeric "5 to 10 tool calls" target in favor of "as many as needed, and no more"; numeric quality targets in CLAUDE.md and skills get over-followed on Claude 5 models (Drew Breunig) — state the outcome, not a count.</td>
+                      <td data-label="Why">Shorter CLAUDE.md files and skills outperform verbose ones on Sonnet 5, Fable 5.1, and Mythos 5+. Anthropic cut Claude Code's own system prompt 80% (800 → 164 tokens) with no measured performance loss (claude.com/blog, 2026-08-13). The finding inverts the instinct to add more guidance — prune and distill existing instructions rather than expanding them. Anthropic's own Fable 5.1 system-prompt diff dropped a numeric "5 to 10 tool calls" target in favor of "as many as needed, and no more"; numeric quality targets in CLAUDE.md and skills get over-followed on Claude 5 models (Drew Breunig) — state the outcome, not a count.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Work fullscreen in a large terminal</td>
+                      <td data-label="Use this"><code>/tui fullscreen</code></td>
+                      <td data-label="Why">Renders Claude Code across the whole terminal window instead of the default inline view. <code>CLAUDE_CODE_SCROLL_SPEED</code> tunes scroll sensitivity; <code>Ctrl+O</code> opens transcript mode to review the full session history without leaving the pane.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Cut Claude's response verbosity</td>
+                      <td data-label="Use this"><code>"outputStyle": "Concise"</code> (settings.json or <code>/config</code>)</td>
+                      <td data-label="Why">Claude leads with the result and skips narration. Errors and destructive-action warnings still get full content. v2.1.237.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Lock down tool surface for automated tasks</td>
+                      <td data-label="Use this"><code>CLAUDE_CODE_RESTRICTED=1</code> or <code>--restricted</code> (v2.1.248)</td>
+                      <td data-label="Why">Removes Bash, code-execution, and WebFetch tools unless explicitly named, restricts file tools to the working directory, and ignores user, project, and local settings files. Right-sized for headless pipelines and cron-driven sessions. Since v2.1.319, <code>permissions.denyInsteadOfPrompting</code> denies a tool call that would wait on a permission prompt, so an unattended turn keeps going instead of hanging. Since v2.1.318, <code>claude auth status</code> reports when the stored claude.ai sign-in ends (<code>loginExpiresAt</code>), <code>claude -p</code> JSON results carry <code>credential_expires_at</code>, and <code>claude -p</code> text output warns on stderr starting 10 days before the sign-in ends.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Customize how Claude Code itself behaves</td>
+                      <td data-label="Use this">Claude Mods (v2.1.287)</td>
+                      <td data-label="Why">Small TypeScript functions that change how Claude Code works: rewrite a prompt before the model sees it, block, rewrite, or retry a tool call, redact secrets from tool output, draw UI, or replace a built-in feature. Ship inside plugins, the CLI, and the desktop app — unsandboxed, so only from trusted sources. The built-in "You should know" side-agent mod ships as the reference example (<code>/plugin enable cc-plugin-you-should-know@builtin</code>). A mod is a plugin: a <code>.claude-plugin/plugin.json</code> manifest plus <code>hooks/hooks.json</code> naming one module that exports <code>register(on, options)</code>. Build it with <code>claude --plugin-dir</code>, check it with <code>claude plugin validate</code> and <code>claude plugin test</code>, and it hot-reloads in the session (Oct 1 tutorial). Anthropic's three reference mods are in <code>anthropics/claude-code-playground</code>: Token Weather (a context-window meter above the prompt), Blast Radius (a Proceed/Cancel hold on <code>rm -rf</code>, <code>git reset --hard</code>, <code>git clean</code>, force pushes and migrations) and Replay Theater (steps through a turn's edits). Blast Radius states the limit: it reads command text, so <code>$(…)</code>, aliases and scripts get past it. A mod observes or softens; a hard block still lives in permission rules.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1443,14 +1503,29 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                   </thead>
                   <tbody>
                     <tr>
+                      <td data-label="If I need to…">Vet a new idea before committing to it</td>
+                      <td data-label="Use this">Council pipeline (<code>sc-intake</code> → <code>sc-council</code> → <code>sc-commission</code> → <code>sc-orchestrate</code>)</td>
+                      <td data-label="Why">Five blind seats (market, craft, ops, risk, finance) review the brief anonymized, debate, and return a verdict: proceed, proceed with conditions, park, or kill, logged as a decision record. An approved idea gets mapped to templates and skills, commissioned into a brief and contracts, then dispatched and verified by a queue-driven runner that works unattended between my sign-offs.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Draft UI artboard options from the terminal</td>
+                      <td data-label="Use this"><code>/design &lt;brief&gt;</code> (research preview, Pro/Max/Team/Enterprise, v2.1.233+)</td>
+                      <td data-label="Why">Publishes a canvas of editable artboards as an artifact straight from a CLI prompt. I pick one and tell Claude to implement it. Bridges Gate 1 ideation and Gate 2 Figma work without opening a browser.</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Turn a brief into a spec</td>
                       <td data-label="Use this">Claude.ai Planner (Fable)</td>
                       <td data-label="Why">Studio context already in project knowledge. One pass.</td>
                     </tr>
                     <tr>
+                      <td data-label="If I need to…">Prune unused skills from a loaded session</td>
+                      <td data-label="Use this"><code>/skill-doctor</code> (v2.1.261)</td>
+                      <td data-label="Why">Lists every loaded skill that went unused in the session and how many tokens each consumed. Prune the plugin inventory with data instead of guessing.</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Explore visual direction</td>
                       <td data-label="Use this">Claude Design (Opus 4.8) <span class="tool-table__star" aria-hidden="true">★</span></td>
-                      <td data-label="Why">Separate weekly limit. Does not draw from Max pool. Free creative resource within its own cap.</td>
+                      <td data-label="Why">Inside every Claude conversation since Sep 16; out of beta on every plan since Oct 8. The standalone app closes Dec 14. Standalone app: separate weekly limit, does not draw from Max pool, a free creative resource within its own cap.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Choose a project's motion language</td>
@@ -1465,7 +1540,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Translate Figma into code</td>
                       <td data-label="Use this">Claude Code + Figma MCP</td>
-                      <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page. Figma Motion (June 2026) is MCP-compatible: animated frames are inspectable in Dev Mode and can be passed directly to a coding agent for implementation; copy animation code as CSS, JSON, or framework-ready React. Code Connect in MCP is what keeps that output specific: it hands the agent production component context during design-to-code, so the agent reaches for the real component instead of regenerating a generic one, and spends fewer tokens doing it (Figma, 2026-08-05). Auto layout also gained vertical wrap (Sept 2026): a column-direction container now wraps to a new column the way <code>flex-wrap: column</code> does in CSS, closing a gap that previously needed a manual workaround for responsive component layouts.</td>
+                      <td data-label="Why">Reads Sandbox, writes code. <code>generate_figma_design</code> also writes approved frames to the Figma Production page. Figma Motion is now in open beta (confirmed Sep 30): custom animation styles save variable-backed easing and duration, publish to libraries the way any other style does, and reach a coding agent through MCP or Skills; supported animations export as Lottie or dotLottie, and animated frames stay inspectable in Dev Mode, with animation code copyable as CSS, JSON, or framework-ready React. Code Connect in MCP is what keeps that output specific: it hands the agent production component context during design-to-code, so the agent reaches for the real component instead of regenerating a generic one, and spends fewer tokens doing it (Figma, 2026-08-05). Figma MCP now binds variables and applies auto layout directly on the code-to-canvas sync, so a design pushed from code lands on live tokens and a real layout system instead of static values. Auto layout also gained vertical wrap (Sept 2026): a column-direction container now wraps to a new column the way <code>flex-wrap: column</code> does in CSS, closing a gap that previously needed a manual workaround for responsive component layouts.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Map a project plan or architecture in FigJam</td>
@@ -1476,6 +1551,21 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="If I need to…">Sync Figma tokens into the repo</td>
                       <td data-label="Use this"><code>/sync-figma-token</code></td>
                       <td data-label="Why">Reads the Sandbox page, extracts tokens, syncs to <code>_config/design-system/token-map.md</code>. First run is clean; later runs show ADDED / REMOVED / CHANGED before overwriting. Bypassed for Shokunin-branded properties, which link the shared CSS from brand.shokunincrafthouse.com instead.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Alias a color's opacity without breaking the link</td>
+                      <td data-label="Use this">Figma Opacity in Variables</td>
+                      <td data-label="Why">Binds a number variable to a color variable's opacity, so the alias tracks opacity while the base color stays linked to its own variable. Scoped for the studio's overlay, scrim, and disabled-state tokens, closing the gap flagged since learning #15 (channel-triplet <code>rgba()</code> tokens). The REST Variables API now reads and writes color and opacity channels independently (<code>VariableComposedColor</code>), and float variables gain a <code>COLOR_OPACITY</code> scope, so token export can carry the composed opacity too (Sep 17).</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Score a plugin before shipping it</td>
+                      <td data-label="Use this"><code>claude plugin eval</code></td>
+                      <td data-label="Why">Runs a plugin's own eval suite and returns scored JSON/HTML results against a no-plugin baseline. The built-in version of the studio's own discipline (learning #197): measure a skill before you change it, five fixed runs, keep the change only if nothing got worse. Directly usable against <code>sc-hygiene</code>, <code>sc-instructions</code>, and the rest of the studio's shipped plugins.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Build an eval from real traces, then tune against it</td>
+                      <td data-label="Use this"><code>claude-api build-eval</code> + <code>claude-api hillclimb</code> + <code>claude-api cost-optimize</code> + <code>claude-api latency-optimize</code></td>
+                      <td data-label="Why"><code>build-eval</code> interviews you and builds the eval inside the codebase with approval pauses; <code>hillclimb</code> iterates prompts, skills, tools, and harness code against it (Sep 28); Anthropic's Oct 22 guidance names <code>cost-optimize</code> in the same command family, beside <code>build-eval</code>, <code>prompt-audit</code>, and <code>hillclimb</code>. <code>latency-optimize</code> (v2.1.319) joins them: it finds where Claude API code makes people wait and tries faster settings against the eval. Hamel Husain's caution applies: look at the traces first, the tool bundles failure types, hold off until data review sits at the center. ADR-071 (five-run baseline), ADR-099 (no-skill arm), and ADR-091 (named trap) bind any hillclimb run on a studio skill.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Get a live preview on every PR</td>
@@ -1490,7 +1580,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Re-run a check on an interval in-session</td>
                       <td data-label="Use this"><code>/loop</code> (Claude Code v2.1.71+)</td>
-                      <td data-label="Why">Session-scoped cron. Re-runs a prompt or slash command on an interval; tasks auto-expire after 3 days. In-session monitoring only: CI watch, preview re-checks. Never on the Evaluator. Not a replacement for Cowork scheduled tasks, which persist.</td>
+                      <td data-label="Why">Session-scoped cron. Re-runs a prompt or slash command on an interval; tasks auto-expire after 3 days. Since v2.1.319 a self-paced loop ends when a turn finishes without rescheduling itself (<code>CLAUDE_CODE_LOOP_KEEPALIVE=1</code> keeps the old behavior), so 3 days is the ceiling, not the usual end. In-session monitoring only: CI watch, preview re-checks. Never on the Evaluator. Not a replacement for Cowork scheduled tasks, which persist. Claude Code's own cloud scheduled tasks (<code>/schedule</code>, formerly routines; <code>/routines</code> still works) are the CLI's persistent equivalent: a saved prompt runs in the cloud on a schedule, an API call, or a GitHub PR or release event (100 runs per hour per account, 30 per task); the fired payload arrives wrapped as untrusted, and a cloud scheduled task has no device-folder access (learning #119). Since v2.1.317 <code>/schedule</code> warns when a new cloud scheduled task gets connectors you did not ask for, and says how to remove them.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Design a chart or dashboard color system</td>
@@ -1500,7 +1590,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Monitor multiple sprints at once</td>
                       <td data-label="Use this">Agent View (<code>claude agents</code>)</td>
-                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude agents --json</code> (v2.1.145+) outputs live sessions as JSON for scripting into tmux status bars or session pickers. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+; fully documented at v2.1.296) fans work out across background agents via <code>/workflows</code>, triggered with "ultracode": size tiers run small (under 5 agents), medium (under 10), or large (under 50); 16 concurrent agents by default, 1,000 per run; state a token budget in the prompt (e.g. "use 10k tokens") to cap spend; <code>CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL=sonnet</code> pins every agent in the run to one alias. Background sessions follow the repo's CLAUDE.md git instructions: since v2.1.221 they commit and push to preserve work but open a draft PR only when the task calls for one, not on every completion, which retires the v2.1.198 always-draft-PR behavior and the noise it made on unattended runs. <code>/fork</code> now spawns a background session with its own row here, not an in-session subagent, and inherits the full conversation plus prompt cache by default, cutting context-rebuild cost for branched work; <code>/subtask</code> is the new command for launching a subagent within the current session, and non-teammate subagents spawned in interactive sessions now run in the background by default. Subagents now accept an <code>effort</code> parameter per dispatch (v2.1.292), so an extraction subagent can run low while the orchestrator stays high. <code>/code-review</code> at high, xhigh, or max effort now runs as a background agent too, not just at lower effort levels. Sessions default to a 200-call cap on WebSearch that now refills at 100 calls per hour (<code>CLAUDE_CODE_WEB_SEARCH_REFILLS_PER_HOUR</code> sets the rate, v2.1.290), and the 200-spawn subagent cap was removed in v2.1.224, so a long orchestration run no longer hits a wall mid-batch; concurrency and depth limits still apply. <code>claude attach &lt;name&gt;</code> and <code>claude logs &lt;name&gt;</code> (v2.1.290) now take part of a session's name in place of its id. Sessions can also message each other across machines via <code>SendMessage</code> and <code>ListAgents</code> (v2.1.224/225), so a Remote Control session is reachable by name from another machine instead of only when it initiates contact. Typing <code>@</code> in the prompt mentions another live session by name and routes the message via <code>SendMessage</code> directly, no confirm step.</td>
+                      <td data-label="Why">Claude Code 2.1.139+. One screen for every background session — running, waiting, completed, failed. <code>claude --bg "&lt;prompt&gt;"</code> launches a background session straight from the shell; <code>claude agents --json --all</code> (v2.1.145+) exposes each session's <code>state</code> and <code>waitingFor</code> fields for scripting into tmux status bars or session pickers, and <code>claude stop</code>/<code>claude respawn</code>/<code>claude rm</code> manage a named session directly. A background session that goes idle unpinned is stopped by a daemon after about an hour, so a session waiting on input needs to be pinned to survive the wait. I cap parallel sessions at 2–3. For larger orchestrated flows, Dynamic Workflows (v2.1.154+; fully documented at v2.1.296) fans work out across background agents via <code>/workflows</code>, triggered with "ultracode": size tiers run small (under 5 agents), medium (under 10), or large (under 50); 16 concurrent agents by default, 1,000 per run; state a token budget in the prompt (e.g. "use 10k tokens") to cap spend; <code>CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL=sonnet</code> pins every agent in the run to one alias. Background sessions follow the repo's CLAUDE.md git instructions: since v2.1.221 they commit and push to preserve work but open a draft PR only when the task calls for one, not on every completion, which retires the v2.1.198 always-draft-PR behavior and the noise it made on unattended runs. <code>/fork</code> now spawns a background session with its own row here, not an in-session subagent, and inherits the full conversation plus prompt cache by default, cutting context-rebuild cost for branched work; <code>/subtask</code> is the new command for launching a subagent within the current session, and non-teammate subagents spawned in interactive sessions now run in the background by default. <code>/tasks</code> lists finished subagents under "Earlier in this session", so one can be reopened and messaged after it leaves the list, and MCP tasks in the terminal move to the background at once and report back when done (v2.1.319; <code>CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND</code> keeps the old wait). Subagents now accept an <code>effort</code> parameter per dispatch (v2.1.292), so an extraction subagent can run low while the orchestrator stays high. <code>CLAUDE_CODE_SUBAGENT_EFFORT</code> (v2.1.316) sets the effort of every subagent that names none, in place of inheriting the session's, and background subagents move a shell command to the background after 3 minutes so the prompt cache does not expire while it runs (v2.1.318). <code>/code-review</code> at high, xhigh, or max effort now runs as a background agent too, not just at lower effort levels. Sessions default to a 200-call cap on WebSearch that now refills at 100 calls per hour (<code>CLAUDE_CODE_WEB_SEARCH_REFILLS_PER_HOUR</code> sets the rate, v2.1.290), and the 200-spawn subagent cap was removed in v2.1.224, so a long orchestration run no longer hits a wall mid-batch; concurrency and depth limits still apply. <code>claude attach &lt;name&gt;</code> and <code>claude logs &lt;name&gt;</code> (v2.1.290) now take part of a session's name in place of its id. Sessions can also message each other across machines via <code>SendMessage</code> and <code>ListAgents</code> (v2.1.224/225), so a Remote Control session is reachable by name from another machine instead of only when it initiates contact. Typing <code>@</code> in the prompt mentions another live session by name and routes the message via <code>SendMessage</code> directly, no confirm step. Subagents default to a nesting depth of 3 (<code>CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH</code>), and a <code>workflowSizeGuideline</code> setting advises when a workflow is getting too large to run in one pass. A Project is one conversation that spawns parallel cloud threads sharing repos, instructions, and memory; a thread can run on my own machine via Remote Control (public beta, Pro and Max). Remote Control is now GA (<code>claude remote-control</code>): my machine appears as a device card at the top of the Code tab on mobile, tap to pick a directory and start a session there, or change the effort level and it applies to the running session.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Grade a sprint</td>
@@ -1508,9 +1598,19 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                       <td data-label="Why">Single-pass audit. Never put <code>/goal</code> or <code>/loop</code> on it. Grades through the <code>sc-design-crit</code> lens library; findings cite named frameworks.</td>
                     </tr>
                     <tr>
+                      <td data-label="If I need to…">Check Gate-3 tokens and dead code before a PR</td>
+                      <td data-label="Use this"><code>sc-hygiene</code> (drift + deadcode checkers)</td>
+                      <td data-label="Why">Two zero-dependency checkers referenced from <code>sc-verify</code>'s own Gate-3 pass. <code>drift_check</code> flags styling values that bypass the token file — raw hex, off-grid spacing, magic z-index — across CSS, SCSS, CSS Modules, CSS-in-JS, and Tailwind arbitrary values. <code>deadcode_check</code> finds unused exports, unused files, and import cycles, grading every finding proven or unproven so only a proof gates a PR.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Stress-test a plan before work starts</td>
+                      <td data-label="Use this"><code>sc-premortem</code></td>
+                      <td data-label="Why">Assumes the plan already failed and works backward to graded failure modes, hidden assumptions, owners, early-warning signals, and kill criteria. Runs automatically on every <code>sc-council</code> PROCEED / PROCEED-WITH-CONDITIONS verdict, and on demand for any other plan.</td>
+                    </tr>
+                    <tr>
                       <td data-label="If I need to…">Change any session setting mid-session</td>
                       <td data-label="Use this"><code>/config key=value</code> (v2.1.181)</td>
-                      <td data-label="Why">Set any config inline: <code>/config thinking=false</code>, <code>/config effort=low</code>. <code>/config --help</code> lists all keys. Faster than menus; takes effect immediately.</td>
+                      <td data-label="Why">Set any config inline: <code>/config thinking=false</code>, <code>/config effort=low</code>. <code>/config --help</code> lists all keys. Faster than menus; takes effect immediately. Typing <code>ultrathink</code> in a prompt runs that one turn at xhigh effort without changing the session's effort tier (v2.1.311).</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Recover context lost to <code>/clear</code></td>
@@ -1525,7 +1625,27 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Validate decisions with real users</td>
                       <td data-label="Use this">Maze / Lyssna / Dscout</td>
-                      <td data-label="Why">The AI Evaluator grades Functionality from code and snapshots. It cannot replace a real user. Tool scales to company stage — see For Hiring Managers.</td>
+                      <td data-label="Why">The AI Evaluator grades Functionality from code and snapshots. It cannot replace a real user. NN/g's Oct 2026 comparison of 604 humans against 120 synthetic respondents on one open question found synthetic answers converge on about a dozen labels where humans produced 50+ and over-use expected vocabulary — useful for hypothesis generation, not for the finding itself. Tool scales to company stage — see For Hiring Managers.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Cut PR complexity or apply one change across many files</td>
+                      <td data-label="Use this"><code>/simplify</code> + <code>/batch</code></td>
+                      <td data-label="Why"><code>/simplify</code> reduces PR complexity before review; <code>/batch</code> runs a single change across many files in one pass. First-party CC skills.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Have a team of agents review every PR</td>
+                      <td data-label="Use this"><code>/code-review</code> (multi-agent)</td>
+                      <td data-label="Why">Runs a background team of agents against every PR rather than a single reviewer pass. It runs as a background subagent by default and never fills the active conversation. Anthropic's own numbers (Oct 15): Claude writes about 90% of Claude Code's code, merged PRs more than doubled from June to September while the reverted share fell by more than 40%, and after the review-convergence work the first-round pass rate rose from 65% to 78% and mean reviews to pass fell from 2.08 to 1.32. A classifier sets each change's risk tier: Low merges with no person once automated review and security checks are green, Medium needs one person, High needs two, and an agent's approval never counts as a person's. Code owners write a <code>REVIEW.md</code> that the reviewer reads, and after three rounds the reviewer asks the author to reconsider the approach. Hosted Code Review is Team and Enterprise only (GA Oct 15); <code>/code-review</code> runs locally on Max.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Run a full project-health checkup</td>
+                      <td data-label="Use this"><code>/checkup</code> (renamed from <code>/doctor</code>, v2.1.205–206)</td>
+                      <td data-label="Why">Splits a bloated root CLAUDE.md into nested files plus skills automatically, deduplicates the local CLAUDE.md against the checked-in version, removes unused MCPs/skills/plugins, disables slow hooks, and enables auto mode — five checks in one periodic run, not just the CLAUDE.md-trim piece.</td>
+                    </tr>
+                    <tr>
+                      <td data-label="If I need to…">Add or coordinate an MCP server without stateful session overhead</td>
+                      <td data-label="Use this">MCP spec 2026-07-28 (stateless protocol + Apps/Tasks)</td>
+                      <td data-label="Why">Largest MCP revision since launch: servers move from stateful sessions to stateless request/response, so they can run serverless. New MCP Apps/Tasks extensions standardize richer UI and long-running-task integrations. Figma is a named launch partner — directly affects the studio's Figma MCP connection. Local (stdio) MCP connections negotiate the 2026-07-28 spec by default since v2.1.292 (<code>MCP_PROTOCOL_NEGOTIATION=legacy</code> opts out); tool descriptions loaded through tool search now carry up to 16,384 characters.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Verify complex async or concurrent state formally</td>
@@ -1580,12 +1700,12 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
                     <tr>
                       <td data-label="If I need to…">Dispatch a task from iPhone</td>
                       <td data-label="Use this">Cowork remote dispatch</td>
-                      <td data-label="Why">iOS app → Mac runs the task. Mac stays awake.</td>
+                      <td data-label="Why">iOS app → the task runs in a Cowork cloud sandbox. The Mac is needed only when the task touches local files, and then only while the Desktop app is online.</td>
                     </tr>
                     <tr>
                       <td data-label="If I need to…">Run a scheduled morning briefing</td>
                       <td data-label="Use this">Cowork scheduled task</td>
-                      <td data-label="Why">Reads <code>WORKSPACE.md</code> across all active projects. Unattended.</td>
+                      <td data-label="Why">Reads <code>WORKSPACE.md</code> across all active projects. Unattended. Claude Code's own cloud scheduled tasks (<code>/schedule</code>, formerly routines) are the CLI equivalent — cloud-run on a schedule, an API call, or a GitHub event, with no device-folder access.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1688,7 +1808,7 @@ Show me the promotion candidates before promoting any to studio-memory/learnings
               <ul class="hiring__points">
                 <li>This system is the governance model that scales craft across business units without creating a bureaucracy.</li>
                 <li>Studio memory at this scale is a design knowledge graph. Principles, patterns, component decisions, and accumulated learnings any team in the org can query.</li>
-                <li>The agent architecture maps to enterprise roles: Planner is strategic design, Generator is the production team, Evaluator is the design quality function. AI makes each layer faster without collapsing the separation of concerns.</li>
+                <li>The agent architecture maps to enterprise roles: Planner is strategic design, Generator is the production team, Evaluator is the design quality function. AI makes each layer faster without collapsing the separation of concerns. NN/g's Oct 2026 review of the AI-native development playbooks from Anthropic, Google and OpenAI found that all three sideline UX, and that Anthropic's gives UX no stage and no approval gate. Here a designer holds all four gates.</li>
                 <li>Approval gates align naturally with enterprise review cadences. Design review, accessibility audit, brand compliance, legal. No new sequential bottlenecks.</li>
                 <li>At this scale, user research is a governance problem, not a tooling problem. Dscout replaces the standard UserTesting and UserZoom stack with diary studies and longitudinal on-demand research. Behavioral signals over time, not just session recordings. It maps to the design knowledge graph the way the Evaluator maps to internal design review.</li>
                 <li>The token model translates directly to enterprise AI budgeting. Right-size the model to the task. Preserve capacity for high-judgment work.</li>
