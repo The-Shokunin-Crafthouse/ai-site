@@ -2,9 +2,159 @@
   "note": "Curated site changelog. Newest month first, newest entry first. Appended by the weekly ai-site-update skill (Step 6) — one entry per applied sweep. Entries are editorial summaries of merged PRs, not raw commits.",
   "months": [
     {
+      "id": "2026-11",
+      "label": "November 2026",
+      "entries": [
+        {
+          "date": "2026-11-11",
+          "title": "Page caught up with the record",
+          "detail": "Every audit change since August now renders on the page: 18 missing tool-table rows, the Playwright test workflow in Steps 04, 05, 09 and 10, card and step copy, and this changelog backfill. The weekly apply now edits index.html and the changelog, not just the audit.",
+          "prs": [100]
+        },
+        {
+          "date": "2026-11-11",
+          "title": "Weekly sweep v38 — memory research, unattended guardrails",
+          "detail": "Anthropic's Nov 6 memory research on Studio Memory and the dreaming pass on Card 01; denyInsteadOfPrompting, sign-in expiry and blockWritesOutsideWorkingDirectories guardrails; self-paced /loop end and the /schedule connector warning; subagent effort, /tasks reopen and MCP background tasks in Agent View; latency-optimize; message threads.",
+          "prs": [100]
+        },
+        {
+          "date": "2026-11-08",
+          "title": "Sweep sources trimmed",
+          "detail": "The weekly sweep stops listing X sources the run cannot read.",
+          "prs": [101]
+        },
+        {
+          "date": "2026-11-01",
+          "title": "Weekly sweep v37 — review at Anthropic's scale",
+          "detail": "The /code-review row rewritten around Anthropic's Oct 15 review numbers and risk tiers, a CI-workflow clause on Protect main, the mod build-and-test path with three reference mods, Claude Design inside Claude and the Dec 14 standalone closure, and NN/g's agentic-playbooks finding on the Enterprise tab.",
+          "prs": [99]
+        }
+      ]
+    },
+    {
+      "id": "2026-10",
+      "label": "October 2026",
+      "entries": [
+        {
+          "date": "2026-10-30",
+          "title": "Weekly sweep v36 — Cowork in the cloud",
+          "detail": "Card 04 rewritten for Cowork's per-session cloud sandbox, the iPhone dispatch row updated, routines renamed cloud scheduled tasks, /auto-mode-setup, ultrathink per-turn effort, the ADR-146 split sentence, and cost-optimize.",
+          "prs": [98]
+        },
+        {
+          "date": "2026-10-28",
+          "title": "Weekly sources: @trq212",
+          "detail": "Added to the Saturday sweep sources.",
+          "prs": [97]
+        },
+        {
+          "date": "2026-10-19",
+          "title": "Weekly sources: Felix Rieseberg",
+          "detail": "Added to the weekly sweep sources.",
+          "prs": [96]
+        },
+        {
+          "date": "2026-10-18",
+          "title": "Weekly sweep v35 — cache hygiene",
+          "detail": "Cache-hygiene habits row, Figma Motion open beta, Agent View --bg and idle-stop with the Step 09 pin clause, /schedule, the fable-alias fallback, idle compaction, Thoughtworks' harness-cost case, context inertia, and NN/g's synthetic-users finding.",
+          "prs": [95]
+        },
+        {
+          "date": "2026-10-16",
+          "title": "Ready for a public repo",
+          "detail": "Author allowlist check added and the server IP removed from the setup guide.",
+          "prs": [94]
+        },
+        {
+          "date": "2026-10-14",
+          "title": "Learnings re-homed",
+          "detail": "The weekly update loop moved into this repo's LEARNINGS.md and the site opted into the web-static learnings index (ADR-121).",
+          "prs": [92, 93]
+        },
+        {
+          "date": "2026-10-11",
+          "title": "Weekly sweep v34 — hooks that block",
+          "detail": "Hooks onFailure: block, the Haiku 5.5 budget line, Claude Max API credits, WebSearch refill with claude attach and logs, Dynamic Workflows tiers, per-dispatch subagent effort, MCP 2026-07-28 negotiation, Claude Code Projects beta, and NN/g on context-library maintenance.",
+          "prs": [91]
+        },
+        {
+          "date": "2026-10-03",
+          "title": "Weekly sweep v33 and a wider net",
+          "detail": "Alias-first budget row (ADR-112), Claude Mods, the auto-mode default, Figma opacity aliasing, the build-eval and hillclimb row, and NN/g and LukeW citations. The sweep gained twenty sources and now routes judgment to Fable and fetching to Sonnet; the COO audit committed the workspace manifest.",
+          "prs": [86, 87, 88, 89, 90]
+        }
+      ]
+    },
+    {
+      "id": "2026-09",
+      "label": "September 2026",
+      "entries": [
+        {
+          "date": "2026-09-27",
+          "title": "Weekly sweep v32 — formal verification",
+          "detail": "Opus 5.5 migration-benchmark note, a formal-verification row for Lean and TLA+, /doctor prompt-audit, and Figma auto layout vertical wrap.",
+          "prs": [85]
+        },
+        {
+          "date": "2026-09-23",
+          "title": "Weekly sweep v31 — Opus 5.5 default",
+          "detail": "Opus 5.5 becomes the default model, and permission dialogs move to Enter and Esc in v2.1.280.",
+          "prs": [83]
+        },
+        {
+          "date": "2026-09-12",
+          "title": "Weekly sweep v30 — plugin evals",
+          "detail": "Figma Opacity in Variables, claude plugin eval, and Function Hooks shipping.",
+          "prs": [82]
+        },
+        {
+          "date": "2026-09-06",
+          "title": "Hygiene and premortem tools",
+          "detail": "sc-hygiene and sc-premortem rows added to the Project Workflow table.",
+          "prs": [81]
+        },
+        {
+          "date": "2026-09-05",
+          "title": "Three weeks of sweeps land",
+          "detail": "The Fable 5.1 rename, stale promo pricing removed, and /skill-doctor; the orchestration-layer pipeline row, Gate 4 security and load-test line, and four-tier model roster; Concise output style, /design, Remote Control GA, and --restricted from the Aug 28 sweep.",
+          "prs": [78, 79, 80]
+        }
+      ]
+    },
+    {
+      "id": "2026-08",
+      "label": "August 2026",
+      "entries": [
+        {
+          "date": "2026-08-15",
+          "title": "Weekly sweep — context engineering",
+          "detail": "Context-engineering row, Agent View @ mentions, forking and code review, and Figma Agent community skills.",
+          "prs": [77]
+        },
+        {
+          "date": "2026-08-08",
+          "title": "Weekly sweep — Agent View orchestration",
+          "detail": "Figma Agent beta, Code Connect in MCP, the Agent View rewrite with the spawn cap removed and cross-session messaging, and the self-hosted runner row.",
+          "prs": [76]
+        },
+        {
+          "date": "2026-08-01",
+          "title": "Weekly sweep — /checkup",
+          "detail": "/doctor renamed /checkup and the MCP 2026-07-28 stateless spec row added.",
+          "prs": [75]
+        }
+      ]
+    },
+    {
       "id": "2026-07",
       "label": "July 2026",
       "entries": [
+        {
+          "date": "2026-07-22",
+          "title": "Footer changelog",
+          "detail": "This changelog shipped: an overlay panel on desktop and a bottom sheet on mobile.",
+          "prs": [73]
+        },
         {
           "date": "2026-07-21",
           "title": "Weekly sweep — /fork becomes /subtask",

@@ -554,6 +554,12 @@ If items approved:
 
 3. **Update content files.** Apply only approved changes. Surgical edits only.
 
+   a. **Render each change on the page.** Make the same edit in `index.html`, in the element that shows that audit line. The audit is the record; the page is what readers see. An audit-only edit does not ship. Between 2026-08-01 and 2026-11-07, ten applies changed only the audit, and the page fell three months behind.
+
+   b. **Add the changelog entry.** Prepend one entry for this sweep to `data/changelog.json`. Put it under the current month (`id: "YYYY-MM"`) at the top of `months`. Give it `date`, `title`, a one-sentence `detail`, and `prs: []`. Fill in the PR number after the PR opens. Then run `python3 -c "import json;json.load(open('data/changelog.json'))"` and confirm it exits 0.
+
+   c. **Check the diff before you commit.** Run `git diff --name-only`. It must list `content/site-content-audit.md`, `index.html`, and `data/changelog.json`. If a file is missing, stop and finish step a or b. A change that cannot be shown on the page (a structural or design change) goes in the handoff under `## Not rendered` with the reason.
+
 4. **Write the handoff file** to `_pending/approved-[YYYY-MM-DD].md`:
 
 ```markdown
