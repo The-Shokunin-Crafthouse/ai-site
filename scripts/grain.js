@@ -50,6 +50,15 @@ function initGrain() {
   function resize() {
     canvas.width  = Math.ceil(window.innerWidth  / SCALE);
     canvas.height = Math.ceil(window.innerHeight / SCALE);
+    // A zero-size viewport (hidden iframe, background tab, preview pane)
+    // makes createImageData throw, which used to abort initGrain before
+    // the resize listener was attached. Skip the buffer; drawGrain idles
+    // on null data until the next resize gives a real size.
+    if (!canvas.width || !canvas.height) {
+      imageData = null;
+      data = null;
+      return;
+    }
     // Allocate the noise buffer once per resize. The per-frame draw loop
     // re-randomizes the channels in place — no per-frame allocation.
     imageData = ctx.createImageData(canvas.width, canvas.height);
