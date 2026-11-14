@@ -9,7 +9,7 @@
           "date": "2026-11-14",
           "title": "Weekly sweep v40 — unattended-run settings and the Figma agent",
           "detail": "The restricted-mode row names the two settings an unattended run needs since v2.1.325, the Figma Agent row now says it is generally available and draws AI credits, and seven rows and steps gain Code Mode, plugin version pins, always-on agents, eval controls, /learn-taste, research-in-the-loop and design as search.",
-          "prs": []
+          "prs": [104]
         },
         {
           "date": "2026-11-11",
