@@ -6,6 +6,20 @@
       "label": "November 2026",
       "entries": [
         {
+          "date": "2026-11-21",
+          "title": "Weekly sweep v41 — the 30-day loop ceiling and a review that cannot edit its judge",
+          "detail": "The /loop row now gives the 30-day ceiling from v2.1.330 in place of a stale 3 days, the /code-review row says it reads REVIEW.md from the base branch and reports only bugs, and Step 08, Step 10 and the real-users row gain design by playground, the Claude Code team's verify-plus-grader split and NN/g's raw-versus-synthesized research test.",
+          "prs": [
+            104
+          ]
+        },
+        {
+          "date": "2026-11-14",
+          "title": "Weekly sweep v40 — unattended-run settings and the Figma agent",
+          "detail": "The restricted-mode row names the two settings an unattended run needs since v2.1.325, the Figma Agent row now says it is generally available and draws AI credits, and seven rows and steps gain Code Mode, plugin version pins, always-on agents, eval controls, /learn-taste, research-in-the-loop and design as search.",
+          "prs": [104]
+        },
+        {
           "date": "2026-11-11",
           "title": "Weekly sweep v39 — Fable 5.2 and mods",
           "detail": "The budget row names Fable 5.2 and Anthropic's measured case for changing effort before model, and the Claude Mods row now says an ask rule no longer fences a mod after v2.1.321.",
